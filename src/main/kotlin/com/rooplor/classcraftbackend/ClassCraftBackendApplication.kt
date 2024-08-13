@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RestController
 @SpringBootApplication
 @RestController
 class ClassCraftBackendApplication {
-	@GetMapping("/hello")
-	fun hello(): String {
-		return "hello"
-	}
+    @GetMapping("/hello")
+    fun hello(): String {
+        return "hello"
+    }
 }
 
 fun main(args: Array<String>) {
-	runApplication<ClassCraftBackendApplication>(*args)
+    runApplication<ClassCraftBackendApplication>(*args)
 }
