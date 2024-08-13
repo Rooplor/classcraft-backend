@@ -22,10 +22,73 @@ jobs:
         run: ./mvnw install
 
       - name: build
-        run: ./mvnw compile
+        run: ./mvnw package
 
       - name: ktlint
         run: ./mvnw ktlint:check
 
       - name: unit-test
         run: ./mvnw test
+
+      - name: Upload build files
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-app-jar
+          path: target/*.jar
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download build files
+        uses: actions/download-artifact@v3
+        with:
+          name: my-app-jar
+          path: ./build
+
+      - name: Install SSH client
+        run: sudo apt-get install -y openssh-client
+
+      - name: Install OpenVPN
+        run: |
+          sudo apt update
+          sudo apt install -y openvpn openvpn-systemd-resolved
+
+      - name: Connect to VPN
+        uses: "kota65535/github-openvpn-connect-action@v2"
+        with:
+          config_file: .github/workflows/sitst-client.ovpn
+          username: ${{ secrets.VPN_USERNAME }}
+          password: ${{ secrets.VPN_PASSWORD }}
+
+      - name: Copy build files to VM
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p 22 $REMOTE_HOST >> ~/.ssh/known_hosts
+          scp -P 22 -i ~/.ssh/id_rsa build/*.jar $REMOTE_USER@$REMOTE_HOST:/home/sysadmin/classCraftBackend
+
+      - name: Deploy Docker container on VM
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        run: |
+          ssh -p 22 -i ~/.ssh/id_rsa $REMOTE_USER@$REMOTE_HOST << 'EOF'
+            cd /home/sysadmin/classCraftBackend
+            tar -xzf target.tar.gz
+          
+            docker stop classCraftBackend || true
+            docker rm classCraftBackend || true
+            docker build -t classcraftbackendimg:latest .
+            docker run -d --name classCraftBackend -p 8080:8080 classcraftbackendimg:latest
+          EOF
