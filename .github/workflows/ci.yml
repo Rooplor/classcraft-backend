@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -22,8 +21,13 @@ jobs:
       - name: Install dependencies
         run: ./mvnw install
 
-      - name: Run ktlint check
+      - name: build
+        run: ./mvnw compile
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ktlint
         run: ./mvnw ktlint:check
 
-      - name: Run tests
+      - name: unit-test
         run: ./mvnw test
