@@ -9,29 +9,31 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme
 import io.swagger.v3.oas.annotations.servers.Server
 
 @OpenAPIDefinition(
-    info = Info(
-        contact = Contact(
-            name = "Rooplor",
-            email = "rooplorgit@gmail.com"
+    info =
+        Info(
+            contact =
+                Contact(
+                    name = "Rooplor",
+                    email = "rooplorgit@gmail.com",
+                ),
+            description = "The ClassCraft API definition",
+            title = "The ClassCraft API",
+            version = "1.0",
         ),
-        description = "The ClassCraft API definition",
-        title = "The ClassCraft API",
-        version = "1.0"
-    ),
-    servers = arrayOf(
-        Server(
-            description = "Local ENV",
-            url = "http://localhost:8080"
-        )
-    )
+    servers =
+        arrayOf(
+            Server(
+                description = "Local ENV",
+                url = "http://localhost:8080",
+            ),
+        ),
 )
-//@SecurityScheme(
-//    name = "bearerAuth",
-//    description = "JWT auth description",
-//    scheme = "bearer",
-//    type = SecuritySchemeType.HTTP,
-//    bearerFormat = "JWT",
-//    `in` = SecuritySchemeIn.HEADER
-//)
-class OpenApiConfig {
-}
+@SecurityScheme(
+    name = "bearerAuth",
+    description = "JWT auth description",
+    scheme = "bearer",
+    type = SecuritySchemeType.HTTP,
+    bearerFormat = "JWT",
+    `in` = SecuritySchemeIn.HEADER,
+)
+class OpenApiConfig
