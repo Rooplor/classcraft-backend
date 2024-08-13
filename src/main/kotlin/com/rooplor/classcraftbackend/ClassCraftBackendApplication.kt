@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 class ClassCraftBackendApplication {
     @GetMapping("/hello")
     fun hello(): String {
-        return                         "hello"
+        return                  "hello"
     }
 }
 
