@@ -69,7 +69,7 @@ public class MavenWrapperDownloader {
                         mavenWrapperPropertyFileInputStream.close();
                     }
                 } catch (IOException e) {
-                    // Ignore ...
+                    System.out.println("ERROR: Unable to close '" + MAVEN_WRAPPER_PROPERTIES_PATH + "'" + " with cause: " + e.getMessage());
                 }
             }
         }
