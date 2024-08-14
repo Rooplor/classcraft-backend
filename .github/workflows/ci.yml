@@ -9,10 +9,10 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: checkout-code
         uses: actions/checkout@v3
 
-      - name: Set up Java 22
+      - name: setup-jave22
         uses: actions/setup-java@v3
         with:
           distribution: 'oracle'
@@ -30,7 +30,7 @@ jobs:
       - name: unit-test
         run: ./mvnw test
 
-      - name: Upload build files
+      - name: upload-build-files
         uses: actions/upload-artifact@v3
         with:
           name: my-app-jar
@@ -41,31 +41,31 @@ jobs:
     needs: build-test
 
     steps:
-      - name: Checkout code
+      - name: checkout-code
         uses: actions/checkout@v3
 
-      - name: Download build files
+      - name: dowload-build-files
         uses: actions/download-artifact@v3
         with:
           name: my-app-jar
           path: ./build
 
-      - name: Install SSH client
+      - name: install-ssh-client
         run: sudo apt-get install -y openssh-client
 
-      - name: Install OpenVPN
+      - name: install-openVPN
         run: |
           sudo apt update
           sudo apt install -y openvpn openvpn-systemd-resolved
 
-      - name: Connect to VPN
+      - name: connect-to-server
         uses: "kota65535/github-openvpn-connect-action@v2"
         with:
           config_file: .github/workflows/sitst-client.ovpn
           username: ${{ secrets.VPN_USERNAME }}
           password: ${{ secrets.VPN_PASSWORD }}
 
-      - name: Copy build files to VM
+      - name: copy-build-files-to-server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
@@ -77,7 +77,7 @@ jobs:
           ssh-keyscan -p 22 $REMOTE_HOST >> ~/.ssh/known_hosts
           scp -P 22 -i ~/.ssh/id_rsa build/*.jar $REMOTE_USER@$REMOTE_HOST:/home/sysadmin/classCraftBackend
 
-      - name: Deploy Docker container on VM
+      - name: deploy-to-server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
@@ -85,7 +85,6 @@ jobs:
         run: |
           ssh -p 22 -i ~/.ssh/id_rsa $REMOTE_USER@$REMOTE_HOST << 'EOF'
             cd /home/sysadmin/classCraftBackend
-            tar -xzf target.tar.gz
           
             docker stop classCraftBackend || true
             docker rm classCraftBackend || true
