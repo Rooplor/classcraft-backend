@@ -11,5 +11,5 @@ class HelloController {
     @GetMapping("/{name}")
     fun hello(
         @PathVariable name: String,
-    ): String = "Hello 123, $name!"
+    ): String = "Hello, $name!"
 }
