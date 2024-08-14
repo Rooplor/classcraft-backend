@@ -6,17 +6,20 @@ import org.springframework.stereotype.Service
 
 @Service
 class LoggerService {
-    private val logger: Logger = LoggerFactory.getLogger(LoggerService::class.java)
+    private fun getLogger(): Logger {
+        val callerClassName = Thread.currentThread().stackTrace[3].className
+        return LoggerFactory.getLogger(Class.forName(callerClassName))
+    }
 
     fun info(message: String) {
-        logger.info(message)
+        getLogger().info(message)
     }
 
     fun error(message: String) {
-        logger.error(message)
+        getLogger().error(message)
     }
 
     fun waring(message: String) {
-        logger.warn(message)
+        getLogger().warn(message)
     }
 }
