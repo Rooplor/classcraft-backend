@@ -1,7 +1,7 @@
-package com.rooplor.classcraftbackend.controller
+package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.entities.Class
-import com.rooplor.classcraftbackend.service.ClassService
+import com.rooplor.classcraftbackend.services.ClassService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping

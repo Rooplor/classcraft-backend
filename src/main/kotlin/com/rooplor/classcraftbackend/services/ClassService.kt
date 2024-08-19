@@ -1,4 +1,4 @@
-package com.rooplor.classcraftbackend.service
+package com.rooplor.classcraftbackend.services
 
 import com.rooplor.classcraftbackend.entities.Class
 import com.rooplor.classcraftbackend.repositories.ClassRepository
