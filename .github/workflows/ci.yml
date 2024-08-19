@@ -33,11 +33,11 @@ jobs:
       - name: unit-test
         run: ./mvnw test
 
-      - name: upload-build-files
-        uses: actions/upload-artifact@v3
-        with:
-          name: my-app-jar
-          path: target/*.jar
+      # - name: upload-build-files
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: my-app-jar
+      #     path: target/*.jar
 
   # deploy:
   #   runs-on: ubuntu-latest
