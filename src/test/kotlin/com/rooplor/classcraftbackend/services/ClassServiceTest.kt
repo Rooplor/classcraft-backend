@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.util.Optional
 
 @SpringBootTest
-class ClassServiceSpec {
+class ClassServiceTest {
     private val classRepository: ClassRepository = Mockito.mock(ClassRepository::class.java)
     private val classService: ClassService = ClassService(classRepository)
 

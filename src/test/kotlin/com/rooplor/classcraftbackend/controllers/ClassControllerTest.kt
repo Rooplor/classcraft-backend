@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(ClassController::class)
-class ClassControllerSpec {
+class ClassControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 

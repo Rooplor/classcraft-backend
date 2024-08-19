@@ -11,7 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import java.util.Optional
 
 @DataMongoTest
-class ClassRepositorySpec {
+class ClassRepositoryTest {
     @MockBean
     private lateinit var classRepository: ClassRepository
 
