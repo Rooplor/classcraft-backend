@@ -1,4 +1,4 @@
-package com.rooplor.classcraftbackend.service
+package com.rooplor.classcraftbackend.service.logger
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
