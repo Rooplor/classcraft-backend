@@ -15,7 +15,7 @@ class ClassService
     ) {
         fun findAllClass(): List<Class> = classRepository.findAll()
 
-        fun insertClass(addedClass: Class) = classRepository.insert(addedClass)
+        fun insertClass(addedClass: Class): Class = classRepository.insert(addedClass)
 
         fun findClassById(id: String): Class = classRepository.findById(id).orElseThrow()
     }
