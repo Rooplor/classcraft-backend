@@ -4,6 +4,7 @@ import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.enums.Status
 import com.rooplor.classcraftbackend.enums.Type
 import com.rooplor.classcraftbackend.enums.Venue
+import com.rooplor.classcraftbackend.enums.VenueStatus
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.LocalDateTime
@@ -23,7 +24,7 @@ data class Class(
     var stepperStatus: Status? = Status.FILL_CASS_DETAIL,
     var meetingUrl: String? = null,
     var venue: Venue? = null,
-    var venueStatus: String? = null,
+    var venueStatus: VenueStatus? = null,
     var content: String? = null,
     var registrationUrl: String? = null,
     var registrationStatus: Boolean? = null,

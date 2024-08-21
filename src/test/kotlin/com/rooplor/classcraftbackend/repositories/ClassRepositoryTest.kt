@@ -71,4 +71,53 @@ class ClassRepositoryTest {
         val foundClasses = classRepository.findAll()
         assertEquals(classes, foundClasses)
     }
+
+    @Test
+    fun `should delete class by id`() {
+        val classToDelete =
+            Class(
+                id = "1",
+                title = "Test Class",
+                details = "Details",
+                target = "Target",
+                prerequisite = "None",
+                type = Type.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                date = listOf(),
+            )
+        `when`(classRepository.save(classToDelete)).thenReturn(classToDelete)
+        `when`(classRepository.findById(classToDelete.id!!)).thenReturn(Optional.of(classToDelete))
+        `when`(classRepository.existsById(classToDelete.id!!)).thenReturn(true)
+
+        val savedClass = classRepository.save(classToDelete)
+        val foundClass = classRepository.findById(savedClass.id!!).get()
+        classRepository.deleteById(foundClass.id!!)
+        val isDeleted = classRepository.existsById(foundClass.id!!)
+        assertEquals(true, isDeleted)
+    }
+
+    @Test
+    fun `should update class`() {
+        val classToUpdate =
+            Class(
+                id = "1",
+                title = "Test Class",
+                details = "Details",
+                target = "Target",
+                prerequisite = "None",
+                type = Type.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                date = listOf(),
+            )
+        `when`(classRepository.save(classToUpdate)).thenReturn(classToUpdate)
+        `when`(classRepository.findById(classToUpdate.id!!)).thenReturn(Optional.of(classToUpdate))
+
+        val savedClass = classRepository.save(classToUpdate)
+        val foundClass = classRepository.findById(savedClass.id!!).get()
+        foundClass.title = "Updated Title"
+        val updatedClass = classRepository.save(foundClass)
+        assertEquals("Updated Title", updatedClass.title)
+    }
 }
