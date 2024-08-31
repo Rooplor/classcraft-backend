@@ -21,6 +21,9 @@ jobs:
           distribution: 'oracle'
           java-version: '22'
 
+      - name: init mongodb
+        run: docker compose up -d
+
       - name: install-dependency
         run: ./mvnw install
 
@@ -31,7 +34,7 @@ jobs:
         run: ./mvnw ktlint:check
 
       - name: unit-test
-        run: ./mvnw test
+        run:  ./mvnw test
 
       # - name: upload-build-files
       #   uses: actions/upload-artifact@v3
