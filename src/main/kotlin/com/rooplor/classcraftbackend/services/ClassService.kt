@@ -1,6 +1,5 @@
 package com.rooplor.classcraftbackend.services
 
-import com.rooplor.classcraftbackend.dtos.VenueUpdateDTO
 import com.rooplor.classcraftbackend.entities.Class
 import com.rooplor.classcraftbackend.repositories.ClassRepository
 import com.rooplor.classcraftbackend.utils.JsonValid.isValidJson
@@ -14,6 +13,7 @@ class ClassService
     @Autowired
     constructor(
         private val classRepository: ClassRepository,
+        private val venueService: VenueService,
     ) {
         fun findAllClass(): List<Class> = classRepository.findAll()
 
@@ -27,11 +27,10 @@ class ClassService
 
         fun updateVenueClass(
             id: String,
-            venueUpdateDTO: VenueUpdateDTO,
+            venueId: String,
         ): Class {
             val classToUpdate = findClassById(id)
-            classToUpdate.venue = venueUpdateDTO.venue
-            classToUpdate.venueStatus = venueUpdateDTO.status
+            classToUpdate.venue = venueService.findVenueById(venueId)
             return classRepository.save(classToUpdate)
         }
 

@@ -2,7 +2,6 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.ClassListDTO
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
-import com.rooplor.classcraftbackend.dtos.VenueUpdateDTO
 import com.rooplor.classcraftbackend.entities.Class
 import com.rooplor.classcraftbackend.services.ClassService
 import com.rooplor.classcraftbackend.utils.ListMapper
@@ -43,11 +42,11 @@ class ClassController
         ): Class = service.insertClass(modelMapper.map(addedClass, Class::class.java))
 
         @Operation(summary = "Update venue of a class")
-        @PatchMapping("/{id}/venue")
-        fun updateVuenueClass(
+        @PatchMapping("/{id}/venue/{venueId}")
+        fun updateVenueClass(
             @PathVariable id: String,
-            @RequestBody venueUpdateDTO: VenueUpdateDTO,
-        ): Class = service.updateVenueClass(id, venueUpdateDTO)
+            @PathVariable venueId: String,
+        ): Class = service.updateVenueClass(id, venueId)
 
         @Operation(summary = "Update meeting url of a class")
         @PatchMapping("/{id}/meeting-url")
