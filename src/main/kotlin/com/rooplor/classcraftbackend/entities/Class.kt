@@ -3,6 +3,7 @@ package com.rooplor.classcraftbackend.entities
 import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.enums.Status
+import com.rooplor.classcraftbackend.enums.VenueStatus
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
@@ -26,6 +27,7 @@ data class Class(
     var registrationUrl: String? = null,
     var registrationStatus: Boolean? = null,
     var isPublished: Boolean? = null,
+    var venueStatus: VenueStatus? = VenueStatus.PENDING,
     @DBRef
     var venue: Venue? = null,
 )

@@ -1,8 +1,8 @@
 package com.rooplor.classcraftbackend.repositories
 
 import com.rooplor.classcraftbackend.entities.Class
+import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
-import com.rooplor.classcraftbackend.enums.Type
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
@@ -20,11 +20,11 @@ class ClassRepositoryTest {
         val classToSave =
             Class(
                 id = "1",
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
@@ -43,22 +43,22 @@ class ClassRepositoryTest {
             listOf(
                 Class(
                     id = "1",
-                    title = "Test Class",
-                    details = "Details",
-                    target = "Target",
+                    title = "React Native",
+                    details = "Learn how to build mobile apps with React Native",
+                    target = "Beginner",
                     prerequisite = "None",
-                    type = Type.LECTURE,
+                    type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
                     date = listOf(),
                 ),
                 Class(
                     id = "2",
-                    title = "Test Class 2",
-                    details = "Details 2",
-                    target = "Target 2",
+                    title = "Spring Boot 101",
+                    details = "Learn how to build RESTful APIs with Spring Boot",
+                    target = "Beginner",
                     prerequisite = "None",
-                    type = Type.LECTURE,
+                    type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
                     date = listOf(),
@@ -77,11 +77,11 @@ class ClassRepositoryTest {
         val classToDelete =
             Class(
                 id = "1",
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
@@ -102,11 +102,11 @@ class ClassRepositoryTest {
         val classToUpdate =
             Class(
                 id = "1",
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),

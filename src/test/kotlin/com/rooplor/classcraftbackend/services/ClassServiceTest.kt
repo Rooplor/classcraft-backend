@@ -1,10 +1,9 @@
 package com.rooplor.classcraftbackend.services
 
-import com.rooplor.classcraftbackend.dtos.VenueUpdateDTO
 import com.rooplor.classcraftbackend.entities.Class
+import com.rooplor.classcraftbackend.entities.Venue
+import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
-import com.rooplor.classcraftbackend.enums.Type
-import com.rooplor.classcraftbackend.enums.Venue
 import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.repositories.ClassRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -16,28 +15,29 @@ import java.util.Optional
 @SpringBootTest
 class ClassServiceTest {
     private val classRepository: ClassRepository = Mockito.mock(ClassRepository::class.java)
-    private val classService: ClassService = ClassService(classRepository)
+    private val venueService: VenueService = Mockito.mock(VenueService::class.java)
+    private val classService: ClassService = ClassService(classRepository, venueService)
 
     @Test
     fun `should return all classes`() {
         val classes =
             listOf(
                 Class(
-                    title = "Test Class",
-                    details = "Details",
-                    target = "Target",
+                    title = "React Native",
+                    details = "Learn how to build mobile apps with React Native",
+                    target = "Beginner",
                     prerequisite = "None",
-                    type = Type.LECTURE,
+                    type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
                     date = listOf(),
                 ),
                 Class(
-                    title = "Test Class 2",
-                    details = "Details 2",
-                    target = "Target 2",
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps with Spring Boot",
+                    target = "Beginner",
                     prerequisite = "None",
-                    type = Type.LECTURE,
+                    type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
                     date = listOf(),
@@ -55,11 +55,11 @@ class ClassServiceTest {
         val classObj =
             Class(
                 id = classId,
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
@@ -74,11 +74,11 @@ class ClassServiceTest {
     fun `should insert a new class`() {
         val classObj =
             Class(
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
@@ -92,25 +92,29 @@ class ClassServiceTest {
     @Test
     fun `should update venue of a class`() {
         val classId = "1"
-        val venueUpdateDTO = VenueUpdateDTO(Venue.TRAIN_3, VenueStatus.PENDING)
+        val venues =
+            Venue(
+                id = "1",
+                name = "TRAIN_3",
+            )
         val classObj =
             Class(
                 id = classId,
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
-                venue = Venue.TRAIN_3,
+                venue = venues,
                 venueStatus = VenueStatus.PENDING,
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classObj))
         Mockito.`when`(classRepository.save(classObj)).thenReturn(classObj)
 
-        val result = classService.updateVenueClass(classId, venueUpdateDTO)
+        val result = classService.updateVenueClass(classId, "1")
         assertEquals(classObj, result)
     }
 
@@ -121,11 +125,11 @@ class ClassServiceTest {
         val classObj =
             Class(
                 id = classId,
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
@@ -145,11 +149,11 @@ class ClassServiceTest {
         val classObj =
             Class(
                 id = classId,
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
@@ -169,11 +173,11 @@ class ClassServiceTest {
         val classObj =
             Class(
                 id = classId,
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
@@ -192,11 +196,11 @@ class ClassServiceTest {
         val classObj =
             Class(
                 id = classId,
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
@@ -215,11 +219,11 @@ class ClassServiceTest {
         val classObj =
             Class(
                 id = classId,
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),

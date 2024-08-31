@@ -18,4 +18,6 @@ class VenueService
         fun insertVenue(addedVenue: Venue): Venue = venueRepository.insert(addedVenue)
 
         fun findVenueById(id: String): Venue = venueRepository.findById(id).orElseThrow()
+
+        fun deleteClass(id: String) = venueRepository.deleteById(id)
     }

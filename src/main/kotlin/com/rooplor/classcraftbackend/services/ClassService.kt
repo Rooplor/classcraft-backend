@@ -75,4 +75,8 @@ class ClassService
             classToUpdate.isPublished = !classToUpdate.isPublished!!
             return classRepository.save(classToUpdate)
         }
+
+        fun deleteClass(id: String) {
+            classRepository.deleteById(id)
+        }
     }

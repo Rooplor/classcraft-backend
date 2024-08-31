@@ -2,11 +2,10 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.ClassListDTO
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
-import com.rooplor.classcraftbackend.dtos.VenueUpdateDTO
 import com.rooplor.classcraftbackend.entities.Class
+import com.rooplor.classcraftbackend.entities.Venue
+import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
-import com.rooplor.classcraftbackend.enums.Type
-import com.rooplor.classcraftbackend.enums.Venue
 import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.services.ClassService
 import com.rooplor.classcraftbackend.utils.ListMapper
@@ -41,21 +40,21 @@ class ClassControllerTest {
         val classes =
             listOf(
                 Class(
-                    title = "Test Class",
-                    details = "Details",
-                    target = "Target",
+                    title = "React Native",
+                    details = "Learn how to build mobile apps using React Native",
+                    target = "Beginner",
                     prerequisite = "None",
-                    type = Type.LECTURE,
+                    type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
                     date = listOf(),
                 ),
                 Class(
-                    title = "Test Class 2",
-                    details = "Details 2",
-                    target = "Target 2",
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps using Spring Boot",
+                    target = "Beginner",
                     prerequisite = "None",
-                    type = Type.LECTURE,
+                    type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
                     date = listOf(),
@@ -65,11 +64,11 @@ class ClassControllerTest {
             listOf(
                 ClassListDTO(
                     id = "1",
-                    title = "Test Class",
+                    title = "React Native",
                 ),
                 ClassListDTO(
                     id = "2",
-                    title = "Test Class 2",
+                    title = "Spring Boot 101",
                 ),
             )
 
@@ -87,11 +86,11 @@ class ClassControllerTest {
         val classObj =
             Class(
                 id = classId,
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
@@ -107,22 +106,22 @@ class ClassControllerTest {
     fun `should insert a new class`() {
         val classObj =
             Class(
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
             )
         val initClassDTO =
             InitClassDTO(
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
@@ -137,9 +136,9 @@ class ClassControllerTest {
                     .content(
                         """
                         {
-                            "title": "Test Class",
-                            "details": "Details",
-                            "target": "Target",
+                            "title": "React Native",
+                            "details": "Learn how to build mobile apps using React Native",
+                            "target": "Beginner",
                             "prerequisite": "None",
                             "type": "LECTURE",
                             "format": "ONSITE",
@@ -154,35 +153,30 @@ class ClassControllerTest {
     @Test
     fun `should update venue of a class`() {
         val classId = "1"
-        val venueUpdateDTO = VenueUpdateDTO(venue = Venue.TRAIN_3, status = VenueStatus.PENDING)
+        val venues =
+            Venue(
+                id = "1",
+                name = "TRAIN_3",
+            )
         val classObj =
             Class(
                 id = classId,
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
-                venue = Venue.TRAIN_3,
+                venue = venues,
                 venueStatus = VenueStatus.PENDING,
             )
-        Mockito.`when`(classService.updateVenueClass(classId, venueUpdateDTO)).thenReturn(classObj)
+        Mockito.`when`(classService.updateVenueClass(classId, "1")).thenReturn(classObj)
 
         mockMvc
             .perform(
-                patch("/api/class/$classId/venue")
-                    .contentType("application/json")
-                    .content(
-                        """
-                        {
-                            "venue": "TRAIN_3",
-                            "status": "PENDING"
-                        }
-                        """.trimIndent(),
-                    ),
+                patch("/api/class/$classId/venue/1"),
             ).andExpect(status().isOk)
     }
 
@@ -193,11 +187,11 @@ class ClassControllerTest {
         val classObj =
             Class(
                 id = classId,
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
@@ -222,9 +216,9 @@ class ClassControllerTest {
         val content =
             """
             {
-                "title": "Test Class",
-                "details": "Details",
-                "target": "Target",
+                "title": "React Native",
+                "details": "Learn how to build mobile apps using React Native",
+                "target": "Beginner",
                 "prerequisite": "None",
                 "type": "LECTURE",
                 "format": "ONSITE",
@@ -235,11 +229,11 @@ class ClassControllerTest {
         val classObj =
             Class(
                 id = classId,
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
@@ -261,11 +255,11 @@ class ClassControllerTest {
         val classObj =
             Class(
                 id = classId,
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
@@ -290,11 +284,11 @@ class ClassControllerTest {
         val classObj =
             Class(
                 id = classId,
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
@@ -312,11 +306,11 @@ class ClassControllerTest {
         val classObj =
             Class(
                 id = classId,
-                title = "Test Class",
-                details = "Details",
-                target = "Target",
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
                 prerequisite = "None",
-                type = Type.LECTURE,
+                type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
