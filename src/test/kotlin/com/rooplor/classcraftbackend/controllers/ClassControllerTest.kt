@@ -1,6 +1,6 @@
 package com.rooplor.classcraftbackend.controllers
 
-import com.rooplor.classcraftbackend.dtos.ClassList
+import com.rooplor.classcraftbackend.dtos.ClassListDTO
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
 import com.rooplor.classcraftbackend.dtos.VenueUpdateDTO
 import com.rooplor.classcraftbackend.entities.Class
@@ -63,18 +63,18 @@ class ClassControllerTest {
             )
         val classList =
             listOf(
-                ClassList(
+                ClassListDTO(
                     id = "1",
                     title = "Test Class",
                 ),
-                ClassList(
+                ClassListDTO(
                     id = "2",
                     title = "Test Class 2",
                 ),
             )
 
         Mockito.`when`(classService.findAllClass()).thenReturn(classes)
-        Mockito.`when`(listMapper.mapList(classes, ClassList::class.java, modelMapper)).thenReturn(classList)
+        Mockito.`when`(listMapper.mapList(classes, ClassListDTO::class.java, modelMapper)).thenReturn(classList)
 
         mockMvc
             .perform(get("/api/class"))

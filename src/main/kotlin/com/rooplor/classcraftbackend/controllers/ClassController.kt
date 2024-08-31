@@ -1,6 +1,6 @@
 package com.rooplor.classcraftbackend.controllers
 
-import com.rooplor.classcraftbackend.dtos.ClassList
+import com.rooplor.classcraftbackend.dtos.ClassListDTO
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
 import com.rooplor.classcraftbackend.dtos.VenueUpdateDTO
 import com.rooplor.classcraftbackend.entities.Class
@@ -28,7 +28,7 @@ class ClassController
     ) {
         @Operation(summary = "Get all classes")
         @GetMapping("")
-        fun findAll(): List<ClassList> = listMapper.mapList(service.findAllClass(), ClassList::class.java, modelMapper)
+        fun findAll(): List<ClassListDTO> = listMapper.mapList(service.findAllClass(), ClassListDTO::class.java, modelMapper)
 
         @Operation(summary = "Get class by id")
         @GetMapping("/{id}")
