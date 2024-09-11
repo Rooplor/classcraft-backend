@@ -16,9 +16,10 @@ class FileUploadService(
         className: String,
     ): String {
         val objectName = "${System.currentTimeMillis()}-${file.originalFilename}"
+        val folder = "$classId-${className.toLowerCase()}/"
+
         val url = environment.getProperty("minio.url")
         val bucketName = environment.getProperty("minio.bucket-name")
-        val folder = "$classId-${className.toLowerCase()}/"
 
         try {
             minioClient.statObject(
