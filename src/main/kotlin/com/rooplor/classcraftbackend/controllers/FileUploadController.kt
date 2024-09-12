@@ -1,5 +1,6 @@
 package com.rooplor.classcraftbackend.controllers
 
+import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.services.FileUploadService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -36,10 +37,11 @@ class FileUploadController(
         @RequestParam("classId") classId: String,
         @Parameter(description = "Class Name", required = true)
         @RequestParam("className") className: String,
-    ): ResponseEntity<String> =
+    ): ResponseEntity<Response<Map<String, String>>> =
         try {
-            ResponseEntity.ok(fileUploadService.fileUpload(file, classId, className))
+            val url = fileUploadService.fileUpload(file, classId, className)
+            ResponseEntity.ok(Response(success = true, result = mapOf("url" to url), error = null))
         } catch (e: Exception) {
-            ResponseEntity.badRequest().body(e.message)
+            ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
         }
 }
