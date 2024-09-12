@@ -49,7 +49,8 @@ class FileUploadServiceTest {
         assertTrue(
             result.matches(
                 Regex(
-                    "http://localhost:7000/api/v1/buckets/classcraft/objects/download\\?preview=true&prefix=classId-classname/\\d+-testfile.txt",
+                    "http://localhost:7000/api/v1/buckets/classcraft/objects/download" +
+                        "\\?preview=true&prefix=classId-classname/\\d+-testfile.txt",
                 ),
             ),
         )
@@ -73,7 +74,8 @@ class FileUploadServiceTest {
         assertTrue(
             result.matches(
                 Regex(
-                    "http://localhost:7000/api/v1/buckets/classcraft/objects/download\\?preview=true&prefix=classId-classname/\\d+-testfile.txt",
+                    "http://localhost:7000/api/v1/buckets/classcraft/objects/download" +
+                        "\\?preview=true&prefix=classId-classname/\\d+-testfile.txt",
                 ),
             ),
         )
