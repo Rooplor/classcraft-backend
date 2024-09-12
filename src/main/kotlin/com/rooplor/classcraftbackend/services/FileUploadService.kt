@@ -1,6 +1,8 @@
 package com.rooplor.classcraftbackend.services
 
-import io.minio.*
+import io.minio.MinioClient
+import io.minio.PutObjectArgs
+import io.minio.StatObjectArgs
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -19,6 +21,7 @@ class FileUploadService(
         val folder = "$classId-${className.toLowerCase()}/"
 
         val url = environment.getProperty("minio.url")
+        val port = environment.getProperty("minio.service-port")
         val bucketName = environment.getProperty("minio.bucket-name")
 
         try {
@@ -49,6 +52,6 @@ class FileUploadService(
                 .build(),
         )
 
-        return "$url:7000/api/v1/buckets/$bucketName/objects/download?preview=true&prefix=$folder$objectName"
+        return "$url:$port/api/v1/buckets/$bucketName/objects/download?preview=true&prefix=$folder$objectName"
     }
 }

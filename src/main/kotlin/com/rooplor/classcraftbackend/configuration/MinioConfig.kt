@@ -12,7 +12,7 @@ class MinioConfig(
     @Bean
     fun minioClient(): MinioClient {
         val url = environment.getProperty("minio.url")
-        val port = environment.getProperty("minio.port")?.toInt()
+        val port = environment.getProperty("minio.api-port")?.toInt()
         val accessKey = environment.getProperty("minio.access-key")
         val secretKey = environment.getProperty("minio.secret-key")
 
