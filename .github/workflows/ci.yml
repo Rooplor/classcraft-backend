@@ -25,7 +25,7 @@ jobs:
         run: docker compose up -d
 
       - name: Create mock serviceAccountKey.json
-        run: echo ${{ secrets.SERVICE_ACCOUNT_KEY }} > src/main/resources/serviceAccountKey.json
+        run: printf "%s" "${{ secrets.SERVICE_ACCOUNT_KEY }}" > src/main/resources/serviceAccountKey.json
 
       - name: install-dependency
         run: ./mvnw install
