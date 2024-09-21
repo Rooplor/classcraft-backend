@@ -1,7 +1,7 @@
 package com.rooplor.classcraftbackend.services
 
 import com.rooplor.classcraftbackend.entities.Classroom
-import com.rooplor.classcraftbackend.repositories.ClassRepository
+import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import com.rooplor.classcraftbackend.utils.JsonValid.isValidJson
 import lombok.AllArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
 class ClassService
     @Autowired
     constructor(
-        private val classRepository: ClassRepository,
+        private val classRepository: ClassroomRepository,
         private val venueService: VenueService,
     ) {
         fun findAllClass(): List<Classroom> = classRepository.findAll()
