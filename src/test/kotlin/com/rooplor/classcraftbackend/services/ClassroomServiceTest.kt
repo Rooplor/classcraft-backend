@@ -1,6 +1,6 @@
 package com.rooplor.classcraftbackend.services
 
-import com.rooplor.classcraftbackend.entities.Class
+import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.entities.Venue
 import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
@@ -13,16 +13,16 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.util.Optional
 
 @SpringBootTest
-class ClassServiceTest {
+class ClassroomServiceTest {
     private val classRepository: ClassRepository = Mockito.mock(ClassRepository::class.java)
     private val venueService: VenueService = Mockito.mock(VenueService::class.java)
     private val classService: ClassService = ClassService(classRepository, venueService)
 
     @Test
     fun `should return all classes`() {
-        val classes =
+        val classrooms =
             listOf(
-                Class(
+                Classroom(
                     title = "React Native",
                     details = "Learn how to build mobile apps with React Native",
                     target = "Beginner",
@@ -32,7 +32,7 @@ class ClassServiceTest {
                     capacity = 30,
                     date = listOf(),
                 ),
-                Class(
+                Classroom(
                     title = "Spring Boot 101",
                     details = "Learn how to build web apps with Spring Boot",
                     target = "Beginner",
@@ -43,17 +43,17 @@ class ClassServiceTest {
                     date = listOf(),
                 ),
             )
-        Mockito.`when`(classRepository.findAll()).thenReturn(classes)
+        Mockito.`when`(classRepository.findAll()).thenReturn(classrooms)
 
         val result = classService.findAllClass()
-        assertEquals(classes, result)
+        assertEquals(classrooms, result)
     }
 
     @Test
     fun `should return class by id`() {
         val classId = "1"
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 id = classId,
                 title = "React Native",
                 details = "Learn how to build mobile apps with React Native",
@@ -64,16 +64,16 @@ class ClassServiceTest {
                 capacity = 30,
                 date = listOf(),
             )
-        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classObj))
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
 
         val result = classService.findClassById(classId)
-        assertEquals(classObj, result)
+        assertEquals(classroomObj, result)
     }
 
     @Test
     fun `should insert a new class`() {
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 title = "React Native",
                 details = "Learn how to build mobile apps with React Native",
                 target = "Beginner",
@@ -83,10 +83,10 @@ class ClassServiceTest {
                 capacity = 30,
                 date = listOf(),
             )
-        Mockito.`when`(classRepository.insert(classObj)).thenReturn(classObj)
+        Mockito.`when`(classRepository.insert(classroomObj)).thenReturn(classroomObj)
 
-        val result = classService.insertClass(classObj)
-        assertEquals(classObj, result)
+        val result = classService.insertClass(classroomObj)
+        assertEquals(classroomObj, result)
     }
 
     @Test
@@ -97,8 +97,8 @@ class ClassServiceTest {
                 id = "1",
                 name = "TRAIN_3",
             )
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 id = classId,
                 title = "React Native",
                 details = "Learn how to build mobile apps with React Native",
@@ -111,19 +111,19 @@ class ClassServiceTest {
                 venue = venues,
                 venueStatus = VenueStatus.PENDING,
             )
-        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classObj))
-        Mockito.`when`(classRepository.save(classObj)).thenReturn(classObj)
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
 
         val result = classService.updateVenueClass(classId, "1")
-        assertEquals(classObj, result)
+        assertEquals(classroomObj, result)
     }
 
     @Test
     fun `should update meeting url of a class`() {
         val classId = "1"
         val meetingUrl = "https://meet.google.com/abc-xyz"
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 id = classId,
                 title = "React Native",
                 details = "Learn how to build mobile apps with React Native",
@@ -135,19 +135,19 @@ class ClassServiceTest {
                 date = listOf(),
                 meetingUrl = "https://meet.google.com/abc-xyz",
             )
-        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classObj))
-        Mockito.`when`(classRepository.save(classObj)).thenReturn(classObj)
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
 
         val result = classService.updateMeetingUrlClass(classId, meetingUrl)
-        assertEquals(classObj, result)
+        assertEquals(classroomObj, result)
     }
 
     @Test
     fun `should update content of a class`() {
         val classId = "1"
         val classContent = "{\"key\": \"value\"}"
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 id = classId,
                 title = "React Native",
                 details = "Learn how to build mobile apps with React Native",
@@ -159,19 +159,19 @@ class ClassServiceTest {
                 date = listOf(),
                 content = "{\"key\": \"value\"}",
             )
-        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classObj))
-        Mockito.`when`(classRepository.save(classObj)).thenReturn(classObj)
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
 
         val result = classService.updateContent(classId, classContent)
-        assertEquals(classObj, result)
+        assertEquals(classroomObj, result)
     }
 
     @Test
     fun `should update registration url of a class`() {
         val classId = "1"
         val registrationUrl = "https://example.com/register"
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 id = classId,
                 title = "React Native",
                 details = "Learn how to build mobile apps with React Native",
@@ -183,18 +183,18 @@ class ClassServiceTest {
                 date = listOf(),
                 registrationUrl = "https://example.com/register",
             )
-        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classObj))
-        Mockito.`when`(classRepository.save(classObj)).thenReturn(classObj)
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
 
         val result = classService.updateRegistrationUrl(classId, registrationUrl)
-        assertEquals(classObj, result)
+        assertEquals(classroomObj, result)
     }
 
     @Test
     fun `should toggle registration status of a class`() {
         val classId = "1"
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 id = classId,
                 title = "React Native",
                 details = "Learn how to build mobile apps with React Native",
@@ -206,18 +206,18 @@ class ClassServiceTest {
                 date = listOf(),
                 registrationStatus = false,
             )
-        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classObj))
-        Mockito.`when`(classRepository.save(classObj)).thenReturn(classObj)
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
 
         val result = classService.toggleRegistrationStatus(classId)
-        assertEquals(classObj, result)
+        assertEquals(classroomObj, result)
     }
 
     @Test
     fun `should toggle publish status of a class`() {
         val classId = "1"
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 id = classId,
                 title = "React Native",
                 details = "Learn how to build mobile apps with React Native",
@@ -229,10 +229,10 @@ class ClassServiceTest {
                 date = listOf(),
                 isPublished = false,
             )
-        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classObj))
-        Mockito.`when`(classRepository.save(classObj)).thenReturn(classObj)
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
 
         val result = classService.togglePublishStatus(classId)
-        assertEquals(classObj, result)
+        assertEquals(classroomObj, result)
     }
 }

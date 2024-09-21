@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.time.LocalDateTime
 
 @Document(collection = "class")
-data class Class(
+data class Classroom(
     @Id
     var id: String? = null,
     var title: String = "",
@@ -21,7 +21,7 @@ data class Class(
     var format: Format = Format.ONSITE,
     var capacity: Int = 0,
     var date: List<LocalDateTime> = emptyList(),
-    var stepperStatus: Status? = Status.FILL_CASS_DETAIL,
+    var stepperStatus: Status? = Status.FILL_CLASS_DETAIL,
     var meetingUrl: String? = null,
     var content: String? = null,
     var registrationUrl: String? = null,
