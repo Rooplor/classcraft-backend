@@ -6,15 +6,20 @@ import com.google.firebase.FirebaseOptions
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.services.logger.LoggerService
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.env.Environment
 import java.io.FileInputStream
 
 @Configuration
 class FirebaseConfig(
     private val loggerService: LoggerService,
+    private val environment: Environment,
 ) {
     init {
         try {
-            val serviceAccount = FileInputStream("src/main/resources/serviceAccountKey.json")
+            val firebaseConfig =
+                environment.getProperty("firebase.path.config")
+                    ?: throw Exception(ErrorMessages.FIREBASE_CONFIG_NOT_FOUND)
+            val serviceAccount = FileInputStream(firebaseConfig)
 
             val option =
                 FirebaseOptions
