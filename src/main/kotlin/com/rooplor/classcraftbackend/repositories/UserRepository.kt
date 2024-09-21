@@ -8,4 +8,8 @@ interface UserRepository : MongoRepository<User, String> {
     override fun findAll(): List<User>
 
     override fun findById(id: String): Optional<User>
+
+    fun findByEmail(email: String): Optional<User>
+
+    fun findByUsername(username: String): Optional<User>
 }

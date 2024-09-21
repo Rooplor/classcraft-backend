@@ -3,7 +3,6 @@ package com.rooplor.classcraftbackend.controllers
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.dtos.UserRequest
 import com.rooplor.classcraftbackend.entities.User
-import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.services.UserService
 import io.swagger.v3.oas.annotations.Operation
 import org.modelmapper.ModelMapper
@@ -49,11 +48,11 @@ class UserController(
 
     @Operation(summary = "Insert a new user")
     @PostMapping("/create")
-    fun insertUser(
+    fun createUser(
         @RequestBody user: UserRequest,
     ): ResponseEntity<Response<User>> {
         try {
-            val addedUser = userService.insertUser(modelMapper.map(user, User::class.java))
+            val addedUser = userService.createUser(modelMapper.map(user, User::class.java))
             return ResponseEntity.ok(Response(success = true, result = addedUser, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
@@ -68,14 +67,9 @@ class UserController(
     ): ResponseEntity<Response<User>> {
         try {
             val existingUser = userService.findUserById(id)
-            if (existingUser == null) {
-                return ResponseEntity
-                    .badRequest()
-                    .body(Response(success = false, result = null, error = ErrorMessages.USER_NOT_FOUND))
-            }
-            modelMapper.map(userUpdate, existingUser)
-            val updatedUser = userService.updateUser(existingUser)
-            return ResponseEntity.ok(Response(success = true, result = updatedUser, error = null))
+            val updatedUser = modelMapper.map(userUpdate, User::class.java)
+            val result = userService.updateUser(existingUser, updatedUser)
+            return ResponseEntity.ok(Response(success = true, result = result, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
         }
