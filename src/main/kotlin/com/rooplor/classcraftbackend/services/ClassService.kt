@@ -1,6 +1,6 @@
 package com.rooplor.classcraftbackend.services
 
-import com.rooplor.classcraftbackend.entities.Class
+import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.repositories.ClassRepository
 import com.rooplor.classcraftbackend.utils.JsonValid.isValidJson
 import lombok.AllArgsConstructor
@@ -15,20 +15,20 @@ class ClassService
         private val classRepository: ClassRepository,
         private val venueService: VenueService,
     ) {
-        fun findAllClass(): List<Class> = classRepository.findAll()
+        fun findAllClass(): List<Classroom> = classRepository.findAll()
 
-        fun insertClass(addedClass: Class): Class {
-            addedClass.registrationStatus = false
-            addedClass.isPublished = false
-            return classRepository.insert(addedClass)
+        fun insertClass(addedClassroom: Classroom): Classroom {
+            addedClassroom.registrationStatus = false
+            addedClassroom.isPublished = false
+            return classRepository.insert(addedClassroom)
         }
 
-        fun findClassById(id: String): Class = classRepository.findById(id).orElseThrow()
+        fun findClassById(id: String): Classroom = classRepository.findById(id).orElseThrow()
 
         fun updateVenueClass(
             id: String,
             venueId: String,
-        ): Class {
+        ): Classroom {
             val classToUpdate = findClassById(id)
             classToUpdate.venue = venueService.findVenueById(venueId)
             return classRepository.save(classToUpdate)
@@ -37,7 +37,7 @@ class ClassService
         fun updateMeetingUrlClass(
             id: String,
             meetingUrl: String,
-        ): Class {
+        ): Classroom {
             val classToUpdate = findClassById(id)
             classToUpdate.meetingUrl = meetingUrl
             return classRepository.save(classToUpdate)
@@ -46,7 +46,7 @@ class ClassService
         fun updateContent(
             id: String,
             classContent: String,
-        ): Class {
+        ): Classroom {
             if (!isValidJson(classContent)) {
                 throw IllegalArgumentException("Content is not a valid JSON")
             }
@@ -58,19 +58,19 @@ class ClassService
         fun updateRegistrationUrl(
             id: String,
             registrationUrl: String,
-        ): Class {
+        ): Classroom {
             val classToUpdate = findClassById(id)
             classToUpdate.registrationUrl = registrationUrl
             return classRepository.save(classToUpdate)
         }
 
-        fun toggleRegistrationStatus(id: String): Class {
+        fun toggleRegistrationStatus(id: String): Classroom {
             val classToUpdate = findClassById(id)
             classToUpdate.registrationStatus = !classToUpdate.registrationStatus!!
             return classRepository.save(classToUpdate)
         }
 
-        fun togglePublishStatus(id: String): Class {
+        fun togglePublishStatus(id: String): Classroom {
             val classToUpdate = findClassById(id)
             classToUpdate.isPublished = !classToUpdate.isPublished!!
             return classRepository.save(classToUpdate)
