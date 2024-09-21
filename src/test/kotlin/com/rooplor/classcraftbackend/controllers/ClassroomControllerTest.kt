@@ -2,7 +2,7 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.ClassListDTO
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
-import com.rooplor.classcraftbackend.entities.Class
+import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.entities.Venue
 import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(ClassController::class)
-class ClassControllerTest {
+class ClassroomControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -37,9 +37,9 @@ class ClassControllerTest {
 
     @Test
     fun `should return all classes`() {
-        val classes =
+        val classrooms =
             listOf(
-                Class(
+                Classroom(
                     title = "React Native",
                     details = "Learn how to build mobile apps using React Native",
                     target = "Beginner",
@@ -49,7 +49,7 @@ class ClassControllerTest {
                     capacity = 30,
                     date = listOf(),
                 ),
-                Class(
+                Classroom(
                     title = "Spring Boot 101",
                     details = "Learn how to build web apps using Spring Boot",
                     target = "Beginner",
@@ -72,8 +72,8 @@ class ClassControllerTest {
                 ),
             )
 
-        Mockito.`when`(classService.findAllClass()).thenReturn(classes)
-        Mockito.`when`(listMapper.mapList(classes, ClassListDTO::class.java, modelMapper)).thenReturn(classList)
+        Mockito.`when`(classService.findAllClass()).thenReturn(classrooms)
+        Mockito.`when`(listMapper.mapList(classrooms, ClassListDTO::class.java, modelMapper)).thenReturn(classList)
 
         mockMvc
             .perform(get("/api/class"))
@@ -83,8 +83,8 @@ class ClassControllerTest {
     @Test
     fun `should return class by id`() {
         val classId = "1"
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 id = classId,
                 title = "React Native",
                 details = "Learn how to build mobile apps using React Native",
@@ -95,7 +95,7 @@ class ClassControllerTest {
                 capacity = 30,
                 date = listOf(),
             )
-        Mockito.`when`(classService.findClassById(classId)).thenReturn(classObj)
+        Mockito.`when`(classService.findClassById(classId)).thenReturn(classroomObj)
 
         mockMvc
             .perform(get("/api/class/$classId"))
@@ -104,8 +104,8 @@ class ClassControllerTest {
 
     @Test
     fun `should insert a new class`() {
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 title = "React Native",
                 details = "Learn how to build mobile apps using React Native",
                 target = "Beginner",
@@ -126,8 +126,8 @@ class ClassControllerTest {
                 capacity = 30,
                 date = listOf(),
             )
-        Mockito.`when`(modelMapper.map(initClassDTO, Class::class.java)).thenReturn(classObj)
-        Mockito.`when`(classService.insertClass(classObj)).thenReturn(classObj)
+        Mockito.`when`(modelMapper.map(initClassDTO, Classroom::class.java)).thenReturn(classroomObj)
+        Mockito.`when`(classService.insertClass(classroomObj)).thenReturn(classroomObj)
 
         mockMvc
             .perform(
@@ -158,8 +158,8 @@ class ClassControllerTest {
                 id = "1",
                 name = "TRAIN_3",
             )
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 id = classId,
                 title = "React Native",
                 details = "Learn how to build mobile apps using React Native",
@@ -172,7 +172,7 @@ class ClassControllerTest {
                 venue = venues,
                 venueStatus = VenueStatus.PENDING,
             )
-        Mockito.`when`(classService.updateVenueClass(classId, "1")).thenReturn(classObj)
+        Mockito.`when`(classService.updateVenueClass(classId, "1")).thenReturn(classroomObj)
 
         mockMvc
             .perform(
@@ -184,8 +184,8 @@ class ClassControllerTest {
     fun `should update meeting url of a class`() {
         val classId = "1"
         val meetingUrl = "https://meet.google.com/abc-xyz"
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 id = classId,
                 title = "React Native",
                 details = "Learn how to build mobile apps using React Native",
@@ -196,7 +196,7 @@ class ClassControllerTest {
                 capacity = 30,
                 date = listOf(),
             )
-        Mockito.`when`(classService.updateMeetingUrlClass(classId, meetingUrl)).thenReturn(classObj)
+        Mockito.`when`(classService.updateMeetingUrlClass(classId, meetingUrl)).thenReturn(classroomObj)
 
         mockMvc
             .perform(
@@ -226,8 +226,8 @@ class ClassControllerTest {
                 "date": []
             }
             """.trimIndent()
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 id = classId,
                 title = "React Native",
                 details = "Learn how to build mobile apps using React Native",
@@ -238,7 +238,7 @@ class ClassControllerTest {
                 capacity = 30,
                 date = listOf(),
             )
-        Mockito.`when`(classService.updateContent(classId, content)).thenReturn(classObj)
+        Mockito.`when`(classService.updateContent(classId, content)).thenReturn(classroomObj)
 
         mockMvc
             .perform(
@@ -252,8 +252,8 @@ class ClassControllerTest {
     fun `should update registration url of a class`() {
         val classId = "1"
         val registrationUrl = "https://example.com/register"
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 id = classId,
                 title = "React Native",
                 details = "Learn how to build mobile apps using React Native",
@@ -264,7 +264,7 @@ class ClassControllerTest {
                 capacity = 30,
                 date = listOf(),
             )
-        Mockito.`when`(classService.updateRegistrationUrl(classId, registrationUrl)).thenReturn(classObj)
+        Mockito.`when`(classService.updateRegistrationUrl(classId, registrationUrl)).thenReturn(classroomObj)
 
         mockMvc
             .perform(
@@ -281,8 +281,8 @@ class ClassControllerTest {
     @Test
     fun `should toggle registration status of a class`() {
         val classId = "1"
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 id = classId,
                 title = "React Native",
                 details = "Learn how to build mobile apps using React Native",
@@ -293,7 +293,7 @@ class ClassControllerTest {
                 capacity = 30,
                 date = listOf(),
             )
-        Mockito.`when`(classService.toggleRegistrationStatus(classId)).thenReturn(classObj)
+        Mockito.`when`(classService.toggleRegistrationStatus(classId)).thenReturn(classroomObj)
 
         mockMvc
             .perform(patch("/api/class/$classId/toggle-registration-status"))
@@ -303,8 +303,8 @@ class ClassControllerTest {
     @Test
     fun `should toggle publish status of a class`() {
         val classId = "1"
-        val classObj =
-            Class(
+        val classroomObj =
+            Classroom(
                 id = classId,
                 title = "React Native",
                 details = "Learn how to build mobile apps using React Native",
@@ -315,7 +315,7 @@ class ClassControllerTest {
                 capacity = 30,
                 date = listOf(),
             )
-        Mockito.`when`(classService.togglePublishStatus(classId)).thenReturn(classObj)
+        Mockito.`when`(classService.togglePublishStatus(classId)).thenReturn(classroomObj)
 
         mockMvc
             .perform(patch("/api/class/$classId/toggle-publish-status"))

@@ -2,7 +2,7 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.ClassListDTO
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
-import com.rooplor.classcraftbackend.entities.Class
+import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.services.ClassService
 import com.rooplor.classcraftbackend.utils.ListMapper
 import io.swagger.v3.oas.annotations.Operation
@@ -34,53 +34,53 @@ class ClassController
         @GetMapping("/{id}")
         fun findById(
             @PathVariable id: String,
-        ): Class = service.findClassById(id)
+        ): Classroom = service.findClassById(id)
 
         @Operation(summary = "Insert a new class")
         @PostMapping("")
         fun insertClass(
             @RequestBody addedClass: InitClassDTO,
-        ): Class = service.insertClass(modelMapper.map(addedClass, Class::class.java))
+        ): Classroom = service.insertClass(modelMapper.map(addedClass, Classroom::class.java))
 
         @Operation(summary = "Update venue of a class")
         @PatchMapping("/{id}/venue/{venueId}")
         fun updateVenueClass(
             @PathVariable id: String,
             @PathVariable venueId: String,
-        ): Class = service.updateVenueClass(id, venueId)
+        ): Classroom = service.updateVenueClass(id, venueId)
 
         @Operation(summary = "Update meeting url of a class")
         @PatchMapping("/{id}/meeting-url")
         fun updateMeetingUrlClass(
             @PathVariable id: String,
             @RequestBody meetingUrl: String,
-        ): Class = service.updateMeetingUrlClass(id, meetingUrl)
+        ): Classroom = service.updateMeetingUrlClass(id, meetingUrl)
 
         @Operation(summary = "Update content of a class")
         @PatchMapping("/{id}/content")
         fun updateContent(
             @PathVariable id: String,
             @RequestBody content: String,
-        ): Class = service.updateContent(id, content)
+        ): Classroom = service.updateContent(id, content)
 
         @Operation(summary = "Update registration url of a class")
         @PatchMapping("/{id}/registration-url")
         fun updateRegistrationUrl(
             @PathVariable id: String,
             @RequestBody registration: String,
-        ): Class = service.updateRegistrationUrl(id, registration)
+        ): Classroom = service.updateRegistrationUrl(id, registration)
 
         @Operation(summary = "Toggle registration status of a class")
         @PatchMapping("/{id}/toggle-registration-status")
         fun toggleRegistrationStatus(
             @PathVariable id: String,
-        ): Class = service.toggleRegistrationStatus(id)
+        ): Classroom = service.toggleRegistrationStatus(id)
 
         @Operation(summary = "Toggle publish status of a class")
         @PatchMapping("/{id}/toggle-publish-status")
         fun togglePublicationStatus(
             @PathVariable id: String,
-        ): Class = service.togglePublishStatus(id)
+        ): Classroom = service.togglePublishStatus(id)
 
         @Operation(summary = "Remove a class")
         @DeleteMapping("/{id}")
