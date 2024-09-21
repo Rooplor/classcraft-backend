@@ -9,14 +9,18 @@ import java.io.FileInputStream
 @Configuration
 class FirebaseConfig {
     init {
-        val serviceAccount = FileInputStream("src/main/resources/serviceAccountKey.json")
+        try {
+            val serviceAccount = FileInputStream("src/main/resources/serviceAccountKey.json")
 
-        val option =
-            FirebaseOptions
-                .builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .build()
+            val option =
+                FirebaseOptions
+                    .builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .build()
 
-        FirebaseApp.initializeApp(option)
+            FirebaseApp.initializeApp(option)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
