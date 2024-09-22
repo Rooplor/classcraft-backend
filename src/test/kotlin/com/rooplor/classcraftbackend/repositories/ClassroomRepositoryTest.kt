@@ -13,7 +13,7 @@ import java.util.Optional
 @DataMongoTest
 class ClassroomRepositoryTest {
     @MockBean
-    private lateinit var classRepository: ClassRepository
+    private lateinit var classRepository: ClassroomRepository
 
     @Test
     fun `should save and find class by id`() {

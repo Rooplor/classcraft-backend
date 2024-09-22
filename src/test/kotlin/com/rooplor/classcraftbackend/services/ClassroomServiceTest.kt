@@ -5,7 +5,7 @@ import com.rooplor.classcraftbackend.entities.Venue
 import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.enums.VenueStatus
-import com.rooplor.classcraftbackend.repositories.ClassRepository
+import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -14,7 +14,7 @@ import java.util.Optional
 
 @SpringBootTest
 class ClassroomServiceTest {
-    private val classRepository: ClassRepository = Mockito.mock(ClassRepository::class.java)
+    private val classRepository: ClassroomRepository = Mockito.mock(ClassroomRepository::class.java)
     private val venueService: VenueService = Mockito.mock(VenueService::class.java)
     private val classService: ClassService = ClassService(classRepository, venueService)
 
