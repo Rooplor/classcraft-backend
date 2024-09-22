@@ -31,9 +31,9 @@ class UserService(
 
     fun deleteUserById(id: String) = userRepository.deleteById(id)
 
-    private fun isUserExistByEmail(email: String): Boolean = userRepository.findByEmail(email).isPresent
+    fun isUserExistByEmail(email: String): Boolean = userRepository.findByEmail(email).isPresent
 
-    private fun isUserExistByUsername(username: String): Boolean = userRepository.findByUsername(username).isPresent
+    fun isUserExistByUsername(username: String): Boolean = userRepository.findByUsername(username).isPresent
 
     private fun validateCreateUser(user: User) {
         val errorList = mutableListOf<String>()
