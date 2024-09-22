@@ -47,7 +47,7 @@ class UserController(
     }
 
     @Operation(summary = "Insert a new user")
-    @PostMapping("/create")
+    @PostMapping
     fun createUser(
         @RequestBody user: UserRequest,
     ): ResponseEntity<Response<User>> {

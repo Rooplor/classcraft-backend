@@ -68,7 +68,7 @@ class UserControllerTest {
 
         mockMvc
             .perform(
-                post("/api/user/create")
+                post("/api/user")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
                         """
