@@ -2,6 +2,7 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.dtos.ValidateTokenRequest
+import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.services.AuthService
 import com.rooplor.classcraftbackend.services.cookie.CookieService
 import jakarta.servlet.http.HttpServletResponse
@@ -33,7 +34,7 @@ class AuthController(
             response.addCookie(refreshTokenCookie)
             ResponseEntity.ok(Response(success = true, result = true, error = null))
         } else {
-            ResponseEntity.status(401).body(Response(success = false, result = false, error = "Invalid token"))
+            ResponseEntity.status(401).body(Response(success = false, result = false, error = ErrorMessages.FIREBASE_INVALID_ID_TOKEN))
         }
     }
 }
