@@ -3,7 +3,6 @@ import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.UserRepository
 import com.rooplor.classcraftbackend.services.UserDetailService
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -20,7 +19,6 @@ class UserDetailServiceTest {
         userRepository = Mockito.mock(UserRepository::class.java)
         userDetailService = UserDetailService()
 
-        // Use reflection to set the private userRepository field
         val userRepositoryField = UserDetailService::class.java.getDeclaredField("userRepository")
         userRepositoryField.isAccessible = true
         userRepositoryField.set(userDetailService, userRepository)

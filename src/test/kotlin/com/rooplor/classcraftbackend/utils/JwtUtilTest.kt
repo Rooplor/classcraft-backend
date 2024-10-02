@@ -38,7 +38,6 @@ class JwtUtilTest {
                 .signWith(SignatureAlgorithm.HS256, "asdfasdfasdfasdfasdfwerfsfdffsdfzvsdfwrfwerwsewdefrasdfasdfasdfasdfasdfadfasdfsdf")
                 .compact()
 
-        // Use reflection to access the private isTokenExpired method
         val method = JwtUtil::class.java.getDeclaredMethod("isTokenExpired", String::class.java)
         method.isAccessible = true
 
