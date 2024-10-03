@@ -34,8 +34,8 @@ class AuthControllerTest {
         val tokenResponse = Token(accessToken, refreshToken)
 
         `when`(authService.login(idToken)).thenReturn(tokenResponse)
-        `when`(cookieService.createCookie("accessToken", accessToken, 36000)).thenReturn(null)
-        `when`(cookieService.createCookie("refreshToken", refreshToken, 604800)).thenReturn(null)
+        `when`(cookieService.createCookie("accessToken", accessToken, 10 * 60 * 60)).thenReturn(null)
+        `when`(cookieService.createCookie("refreshToken", refreshToken, 7 * 24 * 60 * 60)).thenReturn(null)
 
         mockMvc
             .perform(
