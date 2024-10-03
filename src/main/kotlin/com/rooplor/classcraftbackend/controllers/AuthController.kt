@@ -7,6 +7,7 @@ import com.rooplor.classcraftbackend.services.AuthService
 import com.rooplor.classcraftbackend.services.cookie.CookieService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -21,20 +22,32 @@ class AuthController(
     private val accessTokenCookieAge = 10 * 60 * 60 // 10 hours
     private val refreshTokenCookieAge = 7 * 24 * 60 * 60 // 7 days
 
-    @PostMapping("/validate")
-    fun validateToken(
+    private val acToken = "accessToken"
+    private val rfToken = "refreshToken"
+
+    @PostMapping("/login")
+    fun login(
         @RequestBody request: ValidateTokenRequest,
         response: HttpServletResponse,
     ): ResponseEntity<Response<Boolean>> {
         val token = authService.login(request.idToken)
         return if (token != null) {
-            val accessTokenCookie = cookieService.createCookie("accessToken", token.accessToken, accessTokenCookieAge)
-            val refreshTokenCookie = cookieService.createCookie("refreshToken", token.refreshToken, refreshTokenCookieAge)
+            val accessTokenCookie = cookieService.createCookie(acToken, token.accessToken, accessTokenCookieAge)
+            val refreshTokenCookie = cookieService.createCookie(rfToken, token.refreshToken, refreshTokenCookieAge)
             response.addCookie(accessTokenCookie)
             response.addCookie(refreshTokenCookie)
             ResponseEntity.ok(Response(success = true, result = true, error = null))
         } else {
             ResponseEntity.status(401).body(Response(success = false, result = false, error = ErrorMessages.FIREBASE_INVALID_ID_TOKEN))
         }
+    }
+
+    @GetMapping("/logout")
+    fun logout(response: HttpServletResponse): ResponseEntity<Response<Boolean>> {
+        val accessTokenCookie = cookieService.deleteCookie(acToken)
+        val refreshTokenCookie = cookieService.deleteCookie(rfToken)
+        response.addCookie(accessTokenCookie)
+        response.addCookie(refreshTokenCookie)
+        return ResponseEntity.ok(Response(success = true, result = true, error = null))
     }
 }

@@ -27,7 +27,7 @@ class AuthControllerTest {
     private lateinit var cookieService: CookieService
 
     @Test
-    fun `test validateToken valid`() {
+    fun `test login valid`() {
         val idToken = "validToken"
         val accessToken = "accessToken"
         val refreshToken = "refreshToken"
@@ -39,20 +39,20 @@ class AuthControllerTest {
 
         mockMvc
             .perform(
-                post("/api/auth/validate")
+                post("/api/auth/login")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("{\"idToken\": \"$idToken\"}"),
             )
     }
 
     @Test
-    fun `test validateToken invalid`() {
+    fun `test login invalid`() {
         val idToken = "invalidToken"
         `when`(authService.login(idToken)).thenReturn(null)
 
         mockMvc
             .perform(
-                post("/api/auth/validate")
+                post("/api/auth/login")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("{\"idToken\": \"$idToken\"}"),
             )
