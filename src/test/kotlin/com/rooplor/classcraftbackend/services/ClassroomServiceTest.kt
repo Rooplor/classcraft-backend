@@ -19,7 +19,7 @@ class ClassroomServiceTest {
     private val classService: ClassService = ClassService(classRepository, venueService)
 
     @Test
-    fun `should return all classes`() {
+    fun `should return all classes is published`() {
         val classrooms =
             listOf(
                 Classroom(
@@ -30,6 +30,8 @@ class ClassroomServiceTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
+                    isPublished = true,
+                    registrationStatus = true,
                     date = listOf(),
                 ),
                 Classroom(
@@ -40,12 +42,95 @@ class ClassroomServiceTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
+                    isPublished = true,
+                    registrationStatus = true,
                     date = listOf(),
                 ),
             )
-        Mockito.`when`(classRepository.findAll()).thenReturn(classrooms)
+        Mockito.`when`(classRepository.findByRegistrationStatusAndIsPublishedTrue(true)).thenReturn(classrooms)
 
-        val result = classService.findAllClass()
+        val result = classService.findAllClass(true)
+        assertEquals(classrooms, result)
+    }
+
+    @Test
+    fun `should return all classes is published and registrationStatus is false`() {
+        val classrooms =
+            listOf(
+                Classroom(
+                    title = "React Native",
+                    details = "Learn how to build mobile apps with React Native",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    isPublished = true,
+                    registrationStatus = false,
+                    date = listOf(),
+                ),
+                Classroom(
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps with Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    isPublished = true,
+                    registrationStatus = false,
+                    date = listOf(),
+                ),
+            )
+        Mockito.`when`(classRepository.findByRegistrationStatusAndIsPublishedTrue(false)).thenReturn(classrooms)
+
+        val result = classService.findAllClass(false)
+        assertEquals(classrooms, result)
+    }
+
+    @Test
+    fun `should return all classes is not published and registrationStatus is false`() {
+        val classrooms =
+            listOf(
+                Classroom(
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps with Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    isPublished = false,
+                    registrationStatus = false,
+                    date = listOf(),
+                ),
+            )
+        Mockito.`when`(classRepository.findByRegistrationStatusAndIsPublishedTrue(false)).thenReturn(classrooms)
+
+        val result = classService.findAllClass(false)
+        assertEquals(classrooms, result)
+    }
+
+    @Test
+    fun `should return all classes is not published and registrationStatus is true`() {
+        val classrooms =
+            listOf(
+                Classroom(
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps with Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    isPublished = false,
+                    registrationStatus = true,
+                    date = listOf(),
+                ),
+            )
+        Mockito.`when`(classRepository.findByRegistrationStatusAndIsPublishedTrue(true)).thenReturn(classrooms)
+
+        val result = classService.findAllClass(true)
         assertEquals(classrooms, result)
     }
 

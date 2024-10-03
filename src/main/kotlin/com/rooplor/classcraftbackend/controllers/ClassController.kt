@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -28,7 +29,7 @@ class ClassController
     ) {
         @Operation(summary = "Get all classes")
         @GetMapping("")
-        fun findAll(): List<ClassListDTO> = listMapper.mapList(service.findAllClass(), ClassListDTO::class.java, modelMapper)
+        fun findAll(@RequestParam(name = "registrationStatus") registrationStatus: Boolean): List<ClassListDTO> = listMapper.mapList(service.findAllClass(registrationStatus), ClassListDTO::class.java, modelMapper)
 
         @Operation(summary = "Get class by id")
         @GetMapping("/{id}")

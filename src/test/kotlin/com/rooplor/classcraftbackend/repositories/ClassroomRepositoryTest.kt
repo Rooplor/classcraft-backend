@@ -73,6 +73,48 @@ class ClassroomRepositoryTest {
     }
 
     @Test
+    fun `should find all classes then filter published and registration`() {
+        val classrooms =
+            listOf(
+                Classroom(
+                    id = "1",
+                    title = "React Native",
+                    details = "Learn how to build mobile apps with React Native",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                    registrationStatus = true,
+                    isPublished = true,
+                ),
+                Classroom(
+                    id = "2",
+                    title = "Spring Boot 101",
+                    details = "Learn how to build RESTful APIs with Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                    registrationStatus = false,
+                    isPublished = true,
+                ),
+            )
+        `when`(classRepository.saveAll(classrooms)).thenReturn(classrooms)
+        `when`(classRepository.findAll()).thenReturn(classrooms)
+        `when`(classRepository.findByRegistrationStatusAndIsPublishedTrue(true)).thenReturn(classrooms.filter { it.registrationStatus == true && it.isPublished == true })
+
+        classRepository.saveAll(classrooms)
+        val foundClasses = classRepository.findAll()
+        val filteredClasses = classRepository.findByRegistrationStatusAndIsPublishedTrue(true)
+        assertEquals(classrooms, foundClasses)
+        assertEquals(classrooms.filter { it.registrationStatus == true && it.isPublished == true }, filteredClasses)
+    }
+
+    @Test
     fun `should delete class by id`() {
         val classroomToDelete =
             Classroom(

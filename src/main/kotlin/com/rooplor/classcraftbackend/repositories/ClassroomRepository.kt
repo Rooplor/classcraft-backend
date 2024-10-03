@@ -8,4 +8,6 @@ interface ClassroomRepository : MongoRepository<Classroom, String> {
     override fun findAll(): List<Classroom>
 
     override fun findById(id: String): Optional<Classroom>
+
+    fun findByRegistrationStatusAndIsPublishedTrue(status: Boolean): List<Classroom>
 }
