@@ -1,5 +1,7 @@
 package com.rooplor.classcraftbackend.controllers
 
+import com.rooplor.classcraftbackend.configs.TestConfig
+import com.rooplor.classcraftbackend.configs.TestSecurityConfig
 import com.rooplor.classcraftbackend.dtos.ClassListDTO
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
 import com.rooplor.classcraftbackend.entities.Classroom
@@ -15,6 +17,8 @@ import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.context.annotation.Import
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
@@ -22,6 +26,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(ClassController::class)
+@Import(TestSecurityConfig::class, TestConfig::class)
+@ActiveProfiles("test")
 class ClassroomControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc

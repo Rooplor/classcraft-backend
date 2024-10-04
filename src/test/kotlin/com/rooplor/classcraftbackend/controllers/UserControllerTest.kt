@@ -1,5 +1,7 @@
 package com.rooplor.classcraftbackend.controllers
 
+import com.rooplor.classcraftbackend.configs.TestConfig
+import com.rooplor.classcraftbackend.configs.TestSecurityConfig
 import com.rooplor.classcraftbackend.dtos.UserRequest
 import com.rooplor.classcraftbackend.entities.User
 import com.rooplor.classcraftbackend.services.UserService
@@ -9,7 +11,9 @@ import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -19,6 +23,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(UserController::class)
+@Import(TestSecurityConfig::class, TestConfig::class)
+@ActiveProfiles("test")
 class UserControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
