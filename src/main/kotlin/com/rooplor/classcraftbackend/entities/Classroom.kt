@@ -16,7 +16,7 @@ data class Classroom(
     var title: String = "",
     var details: String = "",
     var target: String = "",
-    var prerequisite: String = "",
+    var prerequisite: String? = "",
     var type: ClassType = ClassType.LECTURE,
     var format: Format = Format.ONSITE,
     var capacity: Int = 0,
