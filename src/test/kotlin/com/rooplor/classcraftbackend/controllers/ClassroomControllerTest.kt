@@ -78,11 +78,11 @@ class ClassroomControllerTest {
                 ),
             )
 
-        Mockito.`when`(classService.findAllClass()).thenReturn(classrooms)
+        Mockito.`when`(classService.findAllClass(true)).thenReturn(classrooms)
         Mockito.`when`(listMapper.mapList(classrooms, ClassListDTO::class.java, modelMapper)).thenReturn(classList)
 
         mockMvc
-            .perform(get("/api/class"))
+            .perform(get("/api/class?registrationStatus=true"))
             .andExpect(status().isOk)
     }
 
