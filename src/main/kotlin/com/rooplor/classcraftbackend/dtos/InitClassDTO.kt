@@ -8,7 +8,7 @@ data class InitClassDTO(
     var title: String,
     var details: String,
     var target: String,
-    var prerequisite: String,
+    var prerequisite: String? = "",
     var type: ClassType,
     var format: Format,
     var capacity: Int,
