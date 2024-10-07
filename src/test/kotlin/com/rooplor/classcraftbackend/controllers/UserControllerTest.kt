@@ -4,6 +4,8 @@ import com.rooplor.classcraftbackend.configs.TestConfig
 import com.rooplor.classcraftbackend.configs.TestSecurityConfig
 import com.rooplor.classcraftbackend.dtos.UserRequest
 import com.rooplor.classcraftbackend.entities.User
+import com.rooplor.classcraftbackend.messages.ErrorMessages
+import com.rooplor.classcraftbackend.services.AuthService
 import com.rooplor.classcraftbackend.services.UserService
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -34,6 +36,9 @@ class UserControllerTest {
 
     @MockBean
     private lateinit var modelMapper: ModelMapper
+
+    @MockBean
+    private lateinit var authService: AuthService
 
     @Test
     fun `should get all users`() {
@@ -117,12 +122,32 @@ class UserControllerTest {
 
     @Test
     fun `should delete user`() {
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("user2")
+        Mockito
+            .`when`(userService.findUserById("2"))
+            .thenReturn(User(id = "1", username = "user1", email = "existing@example.com", profilePicture = null))
+        Mockito.doNothing().`when`(userService).deleteUserById("1")
+
+        mockMvc
+            .perform(delete("/api/user/2"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.result").value("User deleted"))
+    }
+
+    @Test
+    fun `should not delete when user try to delete themselves`() {
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("user1")
+        Mockito
+            .`when`(userService.findUserById("1"))
+            .thenReturn(User(id = "1", username = "user1", email = "existing@example.com", profilePicture = null))
         Mockito.doNothing().`when`(userService).deleteUserById("1")
 
         mockMvc
             .perform(delete("/api/user/1"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.result").value("User deleted"))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.success").value(false))
+            .andExpect(jsonPath("$.result").value(null))
+            .andExpect(jsonPath("$.error").value(ErrorMessages.USER_CANNOT_DELETE_OWN_ACCOUNT))
     }
 }
