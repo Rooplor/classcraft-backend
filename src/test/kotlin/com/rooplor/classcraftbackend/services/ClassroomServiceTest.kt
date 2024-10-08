@@ -51,7 +51,7 @@ class ClassroomServiceTest {
             .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(true))
             .thenReturn(classrooms)
 
-        val result = classService.findAllClass(true)
+        val result = classService.findAllClassPublished(true)
         assertEquals(classrooms, result)
     }
 
@@ -88,7 +88,7 @@ class ClassroomServiceTest {
             .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(false))
             .thenReturn(classrooms)
 
-        val result = classService.findAllClass(false)
+        val result = classService.findAllClassPublished(false)
         assertEquals(classrooms, result)
     }
 
@@ -113,7 +113,7 @@ class ClassroomServiceTest {
             .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(false))
             .thenReturn(classrooms)
 
-        val result = classService.findAllClass(false)
+        val result = classService.findAllClassPublished(false)
         assertEquals(classrooms, result)
     }
 
@@ -138,7 +138,7 @@ class ClassroomServiceTest {
             .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(true))
             .thenReturn(classrooms)
 
-        val result = classService.findAllClass(true)
+        val result = classService.findAllClassPublished(true)
         assertEquals(classrooms, result)
     }
 
