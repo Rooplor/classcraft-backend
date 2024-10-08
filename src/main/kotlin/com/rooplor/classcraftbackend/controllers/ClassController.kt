@@ -29,7 +29,9 @@ class ClassController
     ) {
         @Operation(summary = "Get all classes")
         @GetMapping("")
-        fun findAll(@RequestParam(name = "registrationStatus") registrationStatus: Boolean): List<ClassListDTO> = listMapper.mapList(service.findAllClass(registrationStatus), ClassListDTO::class.java, modelMapper)
+        fun findAll(
+            @RequestParam(name = "registrationStatus") registrationStatus: Boolean,
+        ): List<ClassListDTO> = listMapper.mapList(service.findAllClass(registrationStatus), ClassListDTO::class.java, modelMapper)
 
         @Operation(summary = "Get class by id")
         @GetMapping("/{id}")

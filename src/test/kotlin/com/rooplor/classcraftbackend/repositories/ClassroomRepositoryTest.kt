@@ -105,7 +105,13 @@ class ClassroomRepositoryTest {
             )
         `when`(classRepository.saveAll(classrooms)).thenReturn(classrooms)
         `when`(classRepository.findAll()).thenReturn(classrooms)
-        `when`(classRepository.findByRegistrationStatusAndIsPublishedTrue(true)).thenReturn(classrooms.filter { it.registrationStatus == true && it.isPublished == true })
+        `when`(classRepository.findByRegistrationStatusAndIsPublishedTrue(true)).thenReturn(
+            classrooms.filter {
+                it.registrationStatus ==
+                    true &&
+                    it.isPublished == true
+            },
+        )
 
         classRepository.saveAll(classrooms)
         val foundClasses = classRepository.findAll()
