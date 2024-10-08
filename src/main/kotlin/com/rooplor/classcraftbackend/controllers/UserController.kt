@@ -3,6 +3,8 @@ package com.rooplor.classcraftbackend.controllers
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.dtos.UserRequest
 import com.rooplor.classcraftbackend.entities.User
+import com.rooplor.classcraftbackend.messages.ErrorMessages
+import com.rooplor.classcraftbackend.services.AuthService
 import com.rooplor.classcraftbackend.services.UserService
 import io.swagger.v3.oas.annotations.Operation
 import org.modelmapper.ModelMapper
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/user")
 class UserController(
     private val userService: UserService,
+    private val authService: AuthService,
     private val modelMapper: ModelMapper,
 ) {
     @Operation(summary = "Get all users")
@@ -81,6 +84,13 @@ class UserController(
         @PathVariable id: String,
     ): ResponseEntity<Response<String>> {
         try {
+            val username = authService.getAuthenticatedUser()
+            val user = userService.findUserById(id)
+            if (user.username == username) {
+                return ResponseEntity
+                    .badRequest()
+                    .body(Response(success = false, result = null, error = ErrorMessages.USER_CANNOT_DELETE_OWN_ACCOUNT))
+            }
             userService.deleteUserById(id)
             return ResponseEntity.ok(Response(success = true, result = "User deleted", error = null))
         } catch (e: Exception) {

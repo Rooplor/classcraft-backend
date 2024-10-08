@@ -7,6 +7,7 @@ import com.rooplor.classcraftbackend.entities.User
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.services.logger.LoggerService
 import com.rooplor.classcraftbackend.utils.JwtUtil
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 
 @Service
@@ -37,6 +38,11 @@ class AuthService(
             return Token(accessToken, refreshToken)
         }
         return null
+    }
+
+    fun getAuthenticatedUser(): String? {
+        val authentication = SecurityContextHolder.getContext().authentication
+        return authentication?.name
     }
 
     private fun validateIdToken(idToken: String): FirebaseToken? =
