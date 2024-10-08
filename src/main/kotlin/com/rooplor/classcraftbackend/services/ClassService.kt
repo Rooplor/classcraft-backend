@@ -16,7 +16,7 @@ class ClassService
         private val venueService: VenueService,
     ) {
         fun findAllClass(registrationStatus: Boolean): List<Classroom> =
-            classRepository.findByRegistrationStatusAndIsPublishedTrue(registrationStatus)
+            classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(registrationStatus)
 
         fun insertClass(addedClassroom: Classroom): Classroom {
             addedClassroom.registrationStatus = false

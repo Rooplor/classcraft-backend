@@ -47,7 +47,9 @@ class ClassroomServiceTest {
                     date = listOf(),
                 ),
             )
-        Mockito.`when`(classRepository.findByRegistrationStatusAndIsPublishedTrue(true)).thenReturn(classrooms)
+        Mockito
+            .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(true))
+            .thenReturn(classrooms)
 
         val result = classService.findAllClass(true)
         assertEquals(classrooms, result)
@@ -82,7 +84,9 @@ class ClassroomServiceTest {
                     date = listOf(),
                 ),
             )
-        Mockito.`when`(classRepository.findByRegistrationStatusAndIsPublishedTrue(false)).thenReturn(classrooms)
+        Mockito
+            .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(false))
+            .thenReturn(classrooms)
 
         val result = classService.findAllClass(false)
         assertEquals(classrooms, result)
@@ -105,7 +109,9 @@ class ClassroomServiceTest {
                     date = listOf(),
                 ),
             )
-        Mockito.`when`(classRepository.findByRegistrationStatusAndIsPublishedTrue(false)).thenReturn(classrooms)
+        Mockito
+            .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(false))
+            .thenReturn(classrooms)
 
         val result = classService.findAllClass(false)
         assertEquals(classrooms, result)
@@ -128,7 +134,9 @@ class ClassroomServiceTest {
                     date = listOf(),
                 ),
             )
-        Mockito.`when`(classRepository.findByRegistrationStatusAndIsPublishedTrue(true)).thenReturn(classrooms)
+        Mockito
+            .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(true))
+            .thenReturn(classrooms)
 
         val result = classService.findAllClass(true)
         assertEquals(classrooms, result)
