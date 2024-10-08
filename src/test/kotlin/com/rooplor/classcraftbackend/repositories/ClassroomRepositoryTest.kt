@@ -71,11 +71,11 @@ class ClassroomRepositoryTest {
 
         classRepository.saveAll(classrooms)
         val foundClasses = classRepository.findAll()
-        println(foundClasses)
+        val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
         assertEquals(classrooms, foundClasses)
         assertEquals(
-            foundClasses[0].createdWhen.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")),
-            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")),
+            foundClasses[0].createdWhen.format(timeFormatter),
+            LocalDateTime.now().format(timeFormatter),
         )
     }
 
