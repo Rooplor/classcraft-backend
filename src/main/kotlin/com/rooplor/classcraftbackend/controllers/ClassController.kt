@@ -27,11 +27,11 @@ class ClassController
         val modelMapper: ModelMapper,
         val listMapper: ListMapper,
     ) {
-        @Operation(summary = "Get all classes")
+        @Operation(summary = "Get all classes with registration status and published status")
         @GetMapping("")
-        fun findAll(
+        fun findAllClassPublished(
             @RequestParam(name = "registrationStatus") registrationStatus: Boolean,
-        ): List<ClassListDTO> = listMapper.mapList(service.findAllClass(registrationStatus), ClassListDTO::class.java, modelMapper)
+        ): List<ClassListDTO> = listMapper.mapList(service.findAllClassPublished(registrationStatus), ClassListDTO::class.java, modelMapper)
 
         @Operation(summary = "Get class by id")
         @GetMapping("/{id}")
