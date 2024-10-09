@@ -20,9 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(ClassController::class)
@@ -326,5 +324,55 @@ class ClassroomControllerTest {
         mockMvc
             .perform(patch("/api/class/$classId/toggle-publish-status"))
             .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `should update class`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                date = listOf(),
+            )
+        val initClassDTO =
+            InitClassDTO(
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                date = listOf(),
+            )
+        Mockito.`when`(modelMapper.map(initClassDTO, Classroom::class.java)).thenReturn(classroomObj)
+        Mockito.`when`(classService.updateClass(classId, classroomObj)).thenReturn(classroomObj)
+
+        mockMvc
+            .perform(
+                put("/api/class/$classId")
+                    .contentType("application/json")
+                    .content(
+                        """
+                        {
+                            "title": "React Native",
+                            "details": "Learn how to build mobile apps using React Native",
+                            "target": "Beginner",
+                            "prerequisite": "None",
+                            "type": "LECTURE",
+                            "format": "ONSITE",
+                            "capacity": 30,
+                            "date": []
+                        }
+                        """.trimIndent(),
+                    ),
+            ).andExpect(status().isOk)
     }
 }

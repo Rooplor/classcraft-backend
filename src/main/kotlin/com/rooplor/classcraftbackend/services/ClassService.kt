@@ -25,6 +25,22 @@ class ClassService
             return classRepository.insert(addedClassroom)
         }
 
+        fun updateClass(
+            id: String,
+            updatedClassroom: Classroom,
+        ): Classroom {
+            val classToUpdate = findClassById(id)
+            classToUpdate.title = updatedClassroom.title
+            classToUpdate.details = updatedClassroom.details
+            classToUpdate.target = updatedClassroom.target
+            classToUpdate.prerequisite = updatedClassroom.prerequisite
+            classToUpdate.type = updatedClassroom.type
+            classToUpdate.format = updatedClassroom.format
+            classToUpdate.capacity = updatedClassroom.capacity
+            classToUpdate.date = updatedClassroom.date
+            return classRepository.save(updateUpdatedWhen(classToUpdate))
+        }
+
         fun findClassById(id: String): Classroom = classRepository.findById(id).orElseThrow()
 
         fun updateVenueClass(

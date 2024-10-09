@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -32,6 +33,13 @@ class ClassController
         fun findAllClassPublished(
             @RequestParam(name = "registrationStatus") registrationStatus: Boolean,
         ): List<ClassListDTO> = listMapper.mapList(service.findAllClassPublished(registrationStatus), ClassListDTO::class.java, modelMapper)
+
+        @Operation(summary = "Update a class")
+        @PutMapping("/{id}")
+        fun updateClass(
+            @RequestBody updatedClass: InitClassDTO,
+            @PathVariable id: String,
+        ): Classroom = service.updateClass(id, modelMapper.map(updatedClass, Classroom::class.java))
 
         @Operation(summary = "Get class by id")
         @GetMapping("/{id}")
