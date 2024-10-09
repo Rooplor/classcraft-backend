@@ -72,10 +72,10 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p 22 $REMOTE_HOST >> ~/.ssh/known_hosts
-          scp -P 22 -i ~/.ssh/id_ed25519 build/*.jar $REMOTE_USER@$REMOTE_HOST:/home/sysadmin/classCraftBackend
+          scp -P 22 -i ~/.ssh/id_rsa build/*.jar $REMOTE_USER@$REMOTE_HOST:/home/sysadmin/classCraftBackend
 
       - name: deploy-to-server
         env:
