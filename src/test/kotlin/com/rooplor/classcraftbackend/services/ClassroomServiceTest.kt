@@ -328,4 +328,26 @@ class ClassroomServiceTest {
         val result = classService.togglePublishStatus(classId)
         assertEquals(classroomObj, result)
     }
+
+    @Test
+    fun `should update class by id`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                date = listOf(),
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+
+        val result = classService.updateClass(classId, classroomObj)
+        assertEquals(classroomObj, result)
+    }
 }
