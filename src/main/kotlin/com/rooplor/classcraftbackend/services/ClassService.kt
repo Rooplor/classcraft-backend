@@ -6,6 +6,7 @@ import com.rooplor.classcraftbackend.utils.JsonValid.isValidJson
 import lombok.AllArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @AllArgsConstructor
 @Service
@@ -15,8 +16,8 @@ class ClassService
         private val classRepository: ClassroomRepository,
         private val venueService: VenueService,
     ) {
-        fun findAllClass(registrationStatus: Boolean): List<Classroom> =
-            classRepository.findByRegistrationStatusAndIsPublishedTrue(registrationStatus)
+        fun findAllClassPublished(registrationStatus: Boolean): List<Classroom> =
+            classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(registrationStatus)
 
         fun insertClass(addedClassroom: Classroom): Classroom {
             addedClassroom.registrationStatus = false
@@ -32,7 +33,7 @@ class ClassService
         ): Classroom {
             val classToUpdate = findClassById(id)
             classToUpdate.venue = venueService.findVenueById(venueId)
-            return classRepository.save(classToUpdate)
+            return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
         fun updateMeetingUrlClass(
@@ -41,7 +42,7 @@ class ClassService
         ): Classroom {
             val classToUpdate = findClassById(id)
             classToUpdate.meetingUrl = meetingUrl
-            return classRepository.save(classToUpdate)
+            return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
         fun updateContent(
@@ -53,7 +54,7 @@ class ClassService
             }
             val classToUpdate = findClassById(id)
             classToUpdate.content = classContent
-            return classRepository.save(classToUpdate)
+            return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
         fun updateRegistrationUrl(
@@ -62,22 +63,27 @@ class ClassService
         ): Classroom {
             val classToUpdate = findClassById(id)
             classToUpdate.registrationUrl = registrationUrl
-            return classRepository.save(classToUpdate)
+            return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
         fun toggleRegistrationStatus(id: String): Classroom {
             val classToUpdate = findClassById(id)
             classToUpdate.registrationStatus = !classToUpdate.registrationStatus!!
-            return classRepository.save(classToUpdate)
+            return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
         fun togglePublishStatus(id: String): Classroom {
             val classToUpdate = findClassById(id)
             classToUpdate.isPublished = !classToUpdate.isPublished!!
-            return classRepository.save(classToUpdate)
+            return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
         fun deleteClass(id: String) {
             classRepository.deleteById(id)
+        }
+
+        private fun updateUpdatedWhen(classroom: Classroom): Classroom {
+            classroom.updatedWhen = LocalDateTime.now()
+            return classroom
         }
     }

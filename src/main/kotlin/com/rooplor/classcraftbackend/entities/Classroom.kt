@@ -28,6 +28,8 @@ data class Classroom(
     var registrationStatus: Boolean? = null,
     var isPublished: Boolean? = null,
     var venueStatus: VenueStatus? = VenueStatus.PENDING,
+    var createdWhen: LocalDateTime = LocalDateTime.now(),
+    var updatedWhen: LocalDateTime = LocalDateTime.now(),
     @DBRef
     var venue: Venue? = null,
 )

@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Optional
 
 @DataMongoTest
@@ -69,7 +71,12 @@ class ClassroomRepositoryTest {
 
         classRepository.saveAll(classrooms)
         val foundClasses = classRepository.findAll()
+        val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
         assertEquals(classrooms, foundClasses)
+        assertEquals(
+            foundClasses[0].createdWhen.format(timeFormatter),
+            LocalDateTime.now().format(timeFormatter),
+        )
     }
 
     @Test
@@ -105,7 +112,7 @@ class ClassroomRepositoryTest {
             )
         `when`(classRepository.saveAll(classrooms)).thenReturn(classrooms)
         `when`(classRepository.findAll()).thenReturn(classrooms)
-        `when`(classRepository.findByRegistrationStatusAndIsPublishedTrue(true)).thenReturn(
+        `when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(true)).thenReturn(
             classrooms.filter {
                 it.registrationStatus ==
                     true &&
@@ -115,7 +122,7 @@ class ClassroomRepositoryTest {
 
         classRepository.saveAll(classrooms)
         val foundClasses = classRepository.findAll()
-        val filteredClasses = classRepository.findByRegistrationStatusAndIsPublishedTrue(true)
+        val filteredClasses = classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(true)
         assertEquals(classrooms, foundClasses)
         assertEquals(classrooms.filter { it.registrationStatus == true && it.isPublished == true }, filteredClasses)
     }

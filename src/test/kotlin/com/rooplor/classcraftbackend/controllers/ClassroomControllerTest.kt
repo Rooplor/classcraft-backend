@@ -78,7 +78,7 @@ class ClassroomControllerTest {
                 ),
             )
 
-        Mockito.`when`(classService.findAllClass(true)).thenReturn(classrooms)
+        Mockito.`when`(classService.findAllClassPublished(true)).thenReturn(classrooms)
         Mockito.`when`(listMapper.mapList(classrooms, ClassListDTO::class.java, modelMapper)).thenReturn(classList)
 
         mockMvc
