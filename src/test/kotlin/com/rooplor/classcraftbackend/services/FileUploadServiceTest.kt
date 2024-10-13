@@ -29,7 +29,7 @@ class FileUploadServiceTest {
     fun setUp() {
         `when`(environment.getProperty("minio.bucket-name")).thenReturn("classcraft")
         `when`(environment.getProperty("minio.url")).thenReturn("http://localhost")
-        `when`(environment.getProperty("minio.service-port")).thenReturn("7000")
+        `when`(environment.getProperty("minio.api-port")).thenReturn("7001")
     }
 
     @Test
@@ -49,8 +49,7 @@ class FileUploadServiceTest {
         assertTrue(
             result.matches(
                 Regex(
-                    "http://localhost:7000/api/v1/buckets/classcraft/objects/download" +
-                        "\\?preview=true&prefix=classId-classname/\\d+-testfile.txt",
+                    "http://localhost:7001/classcraft/classId-classname/\\d+-testfile.txt",
                 ),
             ),
         )
@@ -74,8 +73,7 @@ class FileUploadServiceTest {
         assertTrue(
             result.matches(
                 Regex(
-                    "http://localhost:7000/api/v1/buckets/classcraft/objects/download" +
-                        "\\?preview=true&prefix=classId-classname/\\d+-testfile.txt",
+                    "http://localhost:7001/classcraft/classId-classname/\\d+-testfile.txt",
                 ),
             ),
         )
