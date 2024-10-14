@@ -19,8 +19,7 @@ class AuthController(
     private val authService: AuthService,
     private val cookieService: CookieService,
 ) {
-    private val accessTokenCookieAge = 10 * 60 * 60 // 10 hours
-    private val refreshTokenCookieAge = 7 * 24 * 60 * 60 // 7 days
+    private val cookieAge = 7 * 24 * 60 * 60 // 7 days
 
     private val acToken = "accessToken"
     private val rfToken = "refreshToken"
@@ -32,8 +31,8 @@ class AuthController(
     ): ResponseEntity<Response<Boolean>> {
         val token = authService.login(request.idToken)
         return if (token != null) {
-            val accessTokenCookie = cookieService.createCookie(acToken, token.accessToken, accessTokenCookieAge)
-            val refreshTokenCookie = cookieService.createCookie(rfToken, token.refreshToken, refreshTokenCookieAge)
+            val accessTokenCookie = cookieService.createCookie(acToken, token.accessToken, cookieAge)
+            val refreshTokenCookie = cookieService.createCookie(rfToken, token.refreshToken, cookieAge)
             response.addCookie(accessTokenCookie)
             response.addCookie(refreshTokenCookie)
             ResponseEntity.ok(Response(success = true, result = true, error = null))

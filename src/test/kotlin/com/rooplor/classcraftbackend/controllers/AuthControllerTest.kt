@@ -26,6 +26,8 @@ class AuthControllerTest {
     @MockBean
     private lateinit var cookieService: CookieService
 
+    private val cookieAge = 7 * 24 * 60 * 60 // 7 days
+
     @Test
     fun `test login valid`() {
         val idToken = "validToken"
@@ -34,8 +36,8 @@ class AuthControllerTest {
         val tokenResponse = Token(accessToken, refreshToken)
 
         `when`(authService.login(idToken)).thenReturn(tokenResponse)
-        `when`(cookieService.createCookie("accessToken", accessToken, 10 * 60 * 60)).thenReturn(null)
-        `when`(cookieService.createCookie("refreshToken", refreshToken, 7 * 24 * 60 * 60)).thenReturn(null)
+        `when`(cookieService.createCookie("accessToken", accessToken, cookieAge)).thenReturn(null)
+        `when`(cookieService.createCookie("refreshToken", refreshToken, cookieAge)).thenReturn(null)
 
         mockMvc
             .perform(
