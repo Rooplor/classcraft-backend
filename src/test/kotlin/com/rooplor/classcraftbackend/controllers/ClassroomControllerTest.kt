@@ -132,6 +132,7 @@ class ClassroomControllerTest {
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
+                owners = listOf(),
             )
         Mockito.`when`(modelMapper.map(initClassDTO, Classroom::class.java)).thenReturn(classroomObj)
         Mockito.`when`(classService.insertClass(classroomObj)).thenReturn(classroomObj)
@@ -150,7 +151,8 @@ class ClassroomControllerTest {
                             "type": "LECTURE",
                             "format": "ONSITE",
                             "capacity": 30,
-                            "date": []
+                            "date": [],
+                            "owners": []
                         }
                         """.trimIndent(),
                     ),
@@ -354,6 +356,7 @@ class ClassroomControllerTest {
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
+                owners = listOf(),
             )
         Mockito.`when`(modelMapper.map(initClassDTO, Classroom::class.java)).thenReturn(classroomObj)
         Mockito.`when`(classService.updateClass(classId, classroomObj)).thenReturn(classroomObj)
@@ -372,10 +375,53 @@ class ClassroomControllerTest {
                             "type": "LECTURE",
                             "format": "ONSITE",
                             "capacity": 30,
-                            "date": []
+                            "date": [],
+                            "owners": []
                         }
                         """.trimIndent(),
                     ),
             ).andExpect(status().isOk)
+    }
+
+    @Test
+    fun `should return classes by owners`() {
+        val owners = listOf("owner1", "owner2")
+        val classrooms =
+            listOf(
+                Classroom(
+                    title = "React Native",
+                    details = "Learn how to build mobile apps using React Native",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                    owners = owners,
+                ),
+                Classroom(
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps using Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                    owners = owners,
+                ),
+            )
+        val classList =
+            listOf(
+                ClassListDTO(id = "1", title = "React Native"),
+                ClassListDTO(id = "2", title = "Spring Boot 101"),
+            )
+
+        Mockito.`when`(classService.findClassByOwners(owners)).thenReturn(classrooms)
+        Mockito.`when`(listMapper.mapList(classrooms, ClassListDTO::class.java, modelMapper)).thenReturn(classList)
+
+        mockMvc
+            .perform(get("/api/class/owners").param("owners", "owner1,owner2"))
+            .andExpect(status().isOk)
     }
 }

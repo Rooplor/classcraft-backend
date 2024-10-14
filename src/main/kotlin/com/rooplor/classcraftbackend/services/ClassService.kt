@@ -98,6 +98,8 @@ class ClassService
             classRepository.deleteById(id)
         }
 
+        fun findClassByOwners(owners: List<String>): List<Classroom> = classRepository.findByOwners(owners)
+
         private fun updateUpdatedWhen(classroom: Classroom): Classroom {
             classroom.updatedWhen = LocalDateTime.now()
             return classroom

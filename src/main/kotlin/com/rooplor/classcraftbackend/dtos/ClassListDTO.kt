@@ -15,4 +15,5 @@ data class ClassListDTO(
     var capacity: Int? = 0,
     var date: List<LocalDateTime?> = listOf(),
     var registrationUrl: String? = "",
+    var owners: List<String>? = listOf(),
 )

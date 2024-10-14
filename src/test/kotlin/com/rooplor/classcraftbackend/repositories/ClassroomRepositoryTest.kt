@@ -175,4 +175,41 @@ class ClassroomRepositoryTest {
         val updatedClass = classRepository.save(foundClass)
         assertEquals("Updated Title", updatedClass.title)
     }
+
+    @Test
+    fun `should return classes by owners`() {
+        val owners = listOf("owner1", "owner2")
+        val classrooms =
+            listOf(
+                Classroom(
+                    id = "1",
+                    title = "React Native",
+                    details = "Learn how to build mobile apps using React Native",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                    owners = owners,
+                ),
+                Classroom(
+                    id = "2",
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps using Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                    owners = owners,
+                ),
+            )
+
+        `when`(classRepository.findByOwners(owners)).thenReturn(classrooms)
+
+        val result = classRepository.findByOwners(owners)
+        assertEquals(classrooms, result)
+    }
 }
