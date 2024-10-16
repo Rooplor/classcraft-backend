@@ -94,6 +94,6 @@ jobs:
           
             docker stop classCraftBackendPROD || true
             docker rm classCraftBackendPROD || true
-            docker build -t classcraftbackendPRODimg:latest .
+            docker build -t classcraftbackendprodimg:latest .
             docker run -d --name classCraftBackendPROD -p 8080:8080 classcraftbackendPRODimg:latest
           EOF
