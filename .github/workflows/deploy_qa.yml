@@ -94,6 +94,6 @@ jobs:
           
             docker stop classCraftBackendQA || true
             docker rm classCraftBackendQA || true
-            docker build -t classcraftbackendQAimg:latest .
+            docker build -t classcraftbackendqaimg:latest .
             docker run -d --name classCraftBackendQA -p 8081:8080 classcraftbackendQAimg:latest
           EOF
