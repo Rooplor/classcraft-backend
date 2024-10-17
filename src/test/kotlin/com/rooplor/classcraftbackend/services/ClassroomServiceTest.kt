@@ -350,4 +350,39 @@ class ClassroomServiceTest {
         val result = classService.updateClass(classId, classroomObj)
         assertEquals(classroomObj, result)
     }
+
+    @Test
+    fun `should return classes by owners`() {
+        val owners = listOf("owner1", "owner2")
+        val classrooms =
+            listOf(
+                Classroom(
+                    title = "React Native",
+                    details = "Learn how to build mobile apps using React Native",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                    owners = owners,
+                ),
+                Classroom(
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps using Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                    owners = owners,
+                ),
+            )
+
+        Mockito.`when`(classRepository.findByOwners(owners)).thenReturn(classrooms)
+
+        val result = classService.findClassByOwners(owners)
+        assertEquals(classrooms, result)
+    }
 }

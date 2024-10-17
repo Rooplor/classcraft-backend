@@ -10,4 +10,6 @@ interface ClassroomRepository : MongoRepository<Classroom, String> {
     override fun findById(id: String): Optional<Classroom>
 
     fun findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(status: Boolean): List<Classroom>
+
+    fun findByOwners(owners: List<String>): List<Classroom>
 }
