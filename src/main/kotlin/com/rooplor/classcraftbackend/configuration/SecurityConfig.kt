@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -20,6 +21,7 @@ class SecurityConfig {
 
     @Throws(Exception::class)
     @Bean
+    @Profile("production")
     fun configure(http: HttpSecurity): DefaultSecurityFilterChain {
         http
             .csrf { it.disable() }
@@ -36,6 +38,17 @@ class SecurityConfig {
             }.sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
+        return http.build()
+    }
+
+    @Throws(Exception::class)
+    @Bean
+    @Profile("development")
+    fun configureDevelopment(http: HttpSecurity): DefaultSecurityFilterChain {
+        http
+            .cors { it.disable() }
+            .csrf { it.disable() }
+            .authorizeRequests { it.anyRequest().permitAll() }
         return http.build()
     }
 }

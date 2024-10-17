@@ -21,7 +21,7 @@ class FileUploadService(
         val folder = "$classId-${className.toLowerCase()}/"
 
         val url = environment.getProperty("minio.url")
-        val port = environment.getProperty("minio.service-port")
+        val port = environment.getProperty("minio.api-port")
         val bucketName = environment.getProperty("minio.bucket-name")
 
         try {
@@ -52,6 +52,6 @@ class FileUploadService(
                 .build(),
         )
 
-        return "$url:$port/api/v1/buckets/$bucketName/objects/download?preview=true&prefix=$folder$objectName"
+        return "$url:$port/$bucketName/$folder$objectName"
     }
 }
