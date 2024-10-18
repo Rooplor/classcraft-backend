@@ -47,7 +47,6 @@ class AuthService(
 
     fun getAuthenticatedUserDetails(): User? {
         val username = getAuthenticatedUser()
-        print(username)
         return username?.let { userService.findByUsername(it) }
     }
 
