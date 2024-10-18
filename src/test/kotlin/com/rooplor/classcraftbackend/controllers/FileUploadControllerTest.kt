@@ -34,7 +34,7 @@ class FileUploadControllerTest {
         `when`(file.contentType).thenReturn("text/plain")
         val response =
             @Suppress("ktlint:standard:max-line-length")
-            "http://localhost:7000/api/v1/buckets/classcraft/objects/download?preview=true&prefix=classId-classname/123-testfile.txt"
+            "http://localhost/classcraft/classId-classname/123-testfile.txt"
         `when`(fileUploadService.fileUpload(file, "classId", "className")).thenReturn(response)
 
         mockMvc
