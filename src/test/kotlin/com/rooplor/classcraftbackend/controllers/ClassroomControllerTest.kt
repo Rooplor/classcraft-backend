@@ -121,6 +121,7 @@ class ClassroomControllerTest {
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
+                owner = "owner1",
             )
         val initClassDTO =
             InitClassDTO(
@@ -132,7 +133,6 @@ class ClassroomControllerTest {
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
-                owners = listOf(),
             )
         Mockito.`when`(modelMapper.map(initClassDTO, Classroom::class.java)).thenReturn(classroomObj)
         Mockito.`when`(classService.insertClass(classroomObj)).thenReturn(classroomObj)
@@ -152,7 +152,8 @@ class ClassroomControllerTest {
                             "format": "ONSITE",
                             "capacity": 30,
                             "date": [],
-                            "owners": []
+                            "owner": "owner1",
+                            "coOwners": []
                         }
                         """.trimIndent(),
                     ),
@@ -345,6 +346,7 @@ class ClassroomControllerTest {
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
+                owner = "owner1",
             )
         val initClassDTO =
             InitClassDTO(
@@ -356,7 +358,6 @@ class ClassroomControllerTest {
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
-                owners = listOf(),
             )
         Mockito.`when`(modelMapper.map(initClassDTO, Classroom::class.java)).thenReturn(classroomObj)
         Mockito.`when`(classService.updateClass(classId, classroomObj)).thenReturn(classroomObj)
@@ -376,7 +377,8 @@ class ClassroomControllerTest {
                             "format": "ONSITE",
                             "capacity": 30,
                             "date": [],
-                            "owners": []
+                            "owner": "owner1",
+                            "coOwners": []
                         }
                         """.trimIndent(),
                     ),
@@ -397,7 +399,7 @@ class ClassroomControllerTest {
                     format = Format.ONSITE,
                     capacity = 30,
                     date = listOf(),
-                    owners = owners,
+                    owner = "owner1",
                 ),
                 Classroom(
                     title = "Spring Boot 101",
@@ -408,7 +410,7 @@ class ClassroomControllerTest {
                     format = Format.ONSITE,
                     capacity = 30,
                     date = listOf(),
-                    owners = owners,
+                    owner = "owner2",
                 ),
             )
         val classList =

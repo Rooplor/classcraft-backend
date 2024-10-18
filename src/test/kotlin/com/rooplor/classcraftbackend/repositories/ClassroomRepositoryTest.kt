@@ -177,8 +177,7 @@ class ClassroomRepositoryTest {
     }
 
     @Test
-    fun `should return classes by owners`() {
-        val owners = listOf("owner1", "owner2")
+    fun `should return classes by owner`() {
         val classrooms =
             listOf(
                 Classroom(
@@ -191,7 +190,7 @@ class ClassroomRepositoryTest {
                     format = Format.ONSITE,
                     capacity = 30,
                     date = listOf(),
-                    owners = owners,
+                    owner = "owner1",
                 ),
                 Classroom(
                     id = "2",
@@ -203,13 +202,13 @@ class ClassroomRepositoryTest {
                     format = Format.ONSITE,
                     capacity = 30,
                     date = listOf(),
-                    owners = owners,
+                    owner = "owner1",
                 ),
             )
 
-        `when`(classRepository.findByOwners(owners)).thenReturn(classrooms)
+        `when`(classRepository.findByOwner("owner1")).thenReturn(classrooms)
 
-        val result = classRepository.findByOwners(owners)
+        val result = classRepository.findByOwner("owner1")
         assertEquals(classrooms, result)
     }
 }

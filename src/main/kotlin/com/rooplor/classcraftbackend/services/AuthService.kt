@@ -45,6 +45,12 @@ class AuthService(
         return authentication?.name
     }
 
+    fun getAuthenticatedUserDetails(): User? {
+        val username = getAuthenticatedUser()
+        print(username)
+        return username?.let { userService.findByUsername(it) }
+    }
+
     private fun validateIdToken(idToken: String): FirebaseToken? =
         try {
             val decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken)

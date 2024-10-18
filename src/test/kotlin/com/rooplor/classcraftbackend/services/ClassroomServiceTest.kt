@@ -1,6 +1,7 @@
 package com.rooplor.classcraftbackend.services
 
 import com.rooplor.classcraftbackend.entities.Classroom
+import com.rooplor.classcraftbackend.entities.User
 import com.rooplor.classcraftbackend.entities.Venue
 import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
@@ -16,7 +17,9 @@ import java.util.Optional
 class ClassroomServiceTest {
     private val classRepository: ClassroomRepository = Mockito.mock(ClassroomRepository::class.java)
     private val venueService: VenueService = Mockito.mock(VenueService::class.java)
-    private val classService: ClassService = ClassService(classRepository, venueService)
+    private val authService: AuthService = Mockito.mock(AuthService::class.java)
+    private val userService: UserService = Mockito.mock(UserService::class.java)
+    private val classService: ClassService = ClassService(classRepository, venueService, authService, userService)
 
     @Test
     fun `should return all classes is published`() {
@@ -175,8 +178,13 @@ class ClassroomServiceTest {
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
+                owner = "owner1",
             )
         Mockito.`when`(classRepository.insert(classroomObj)).thenReturn(classroomObj)
+        Mockito
+            .`when`(
+                authService.getAuthenticatedUserDetails(),
+            ).thenReturn(User(id = "owner1", username = "owner1", email = "owner1@mail.com", profilePicture = null))
 
         val result = classService.insertClass(classroomObj)
         assertEquals(classroomObj, result)
@@ -354,9 +362,10 @@ class ClassroomServiceTest {
     @Test
     fun `should return classes by owners`() {
         val owners = listOf("owner1", "owner2")
-        val classrooms =
+        val classroomsByOwner1 =
             listOf(
                 Classroom(
+                    id = "1",
                     title = "React Native",
                     details = "Learn how to build mobile apps using React Native",
                     target = "Beginner",
@@ -365,9 +374,10 @@ class ClassroomServiceTest {
                     format = Format.ONSITE,
                     capacity = 30,
                     date = listOf(),
-                    owners = owners,
+                    owner = "owner1",
                 ),
                 Classroom(
+                    id = "2",
                     title = "Spring Boot 101",
                     details = "Learn how to build web apps using Spring Boot",
                     target = "Beginner",
@@ -376,11 +386,40 @@ class ClassroomServiceTest {
                     format = Format.ONSITE,
                     capacity = 30,
                     date = listOf(),
-                    owners = owners,
+                    owner = "owner1",
+                ),
+            )
+        val classroomsByOwner2 =
+            listOf(
+                Classroom(
+                    id = "3",
+                    title = "React Native - Advanced",
+                    details = "Learn how to build mobile apps using React Native",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                    owner = "owner1",
+                ),
+                Classroom(
+                    id = "4",
+                    title = "Spring Boot 101 - Advanced",
+                    details = "Learn how to build web apps using Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                    owner = "owner1",
                 ),
             )
 
-        Mockito.`when`(classRepository.findByOwners(owners)).thenReturn(classrooms)
+        val classrooms = classroomsByOwner1 + classroomsByOwner2
+        Mockito.`when`(classRepository.findByOwner("owner1")).thenReturn(classroomsByOwner1)
+        Mockito.`when`(classRepository.findByOwner("owner2")).thenReturn(classroomsByOwner2)
 
         val result = classService.findClassByOwners(owners)
         assertEquals(classrooms, result)
