@@ -4,6 +4,7 @@ on: workflow_dispatch
 
 jobs:
   build-test:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: checkout-code
@@ -37,6 +38,7 @@ jobs:
           path: target/*.jar
 
   deploy-prod:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: build-test
 
@@ -90,10 +92,5 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
         run: |
           sshpass -p "$REMOTE_PASSWORD" ssh -t -o StrictHostKeyChecking=no -p 22 $REMOTE_USER@$REMOTE_HOST << 'EOF'          
-            cd /home/sysadmin/classCraftBackend/PROD
-          
-            docker stop classCraftBackendPROD || true
-            docker rm classCraftBackendPROD || true
-            docker build -t classcraftbackendPRODimg:latest .
-            docker run -d --name classCraftBackendPROD -p 8080:8080 classcraftbackendPRODimg:latest
+            docker compose -p classcraft-qa -f compose.prod.yaml restart backend || true
           EOF

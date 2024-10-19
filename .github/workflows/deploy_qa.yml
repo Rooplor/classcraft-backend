@@ -90,10 +90,5 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
         run: |
           sshpass -p "$REMOTE_PASSWORD" ssh -t -o StrictHostKeyChecking=no -p 22 $REMOTE_USER@$REMOTE_HOST << 'EOF'          
-            cd /home/sysadmin/classCraftBackend/QA
-          
-            docker stop classCraftBackendQA || true
-            docker rm classCraftBackendQA || true
-            docker build -t classcraftbackendQAimg:latest .
-            docker run -d --name classCraftBackendQA -p 8081:8080 classcraftbackendQAimg:latest
+            docker compose -p classcraft-qa -f compose.qa.yaml restart backend-qa || true
           EOF
