@@ -92,5 +92,5 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
         run: |
           sshpass -p "$REMOTE_PASSWORD" ssh -t -o StrictHostKeyChecking=no -p 22 $REMOTE_USER@$REMOTE_HOST << 'EOF'          
-            docker compose -p classcraft-qa -f compose.prod.yaml restart backend || true
+            docker compose -p classcraft-prod -f compose.prod.yaml restart backend || true
           EOF
