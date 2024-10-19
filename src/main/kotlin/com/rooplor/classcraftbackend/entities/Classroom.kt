@@ -32,4 +32,6 @@ data class Classroom(
     var updatedWhen: LocalDateTime = LocalDateTime.now(),
     @DBRef
     var venue: Venue? = null,
+    var owner: String = "",
+    var coOwners: List<String>? = emptyList(),
 )
