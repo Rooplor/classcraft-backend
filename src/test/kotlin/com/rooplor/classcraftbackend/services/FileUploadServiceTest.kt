@@ -28,7 +28,7 @@ class FileUploadServiceTest {
     @BeforeEach
     fun setUp() {
         `when`(environment.getProperty("minio.bucket-name")).thenReturn("classcraft")
-        `when`(environment.getProperty("minio.revert-url")).thenReturn("http://localhost")
+        `when`(environment.getProperty("minio.reverse-url")).thenReturn("http://localhost")
         `when`(environment.getProperty("minio.api-port")).thenReturn("80")
     }
 

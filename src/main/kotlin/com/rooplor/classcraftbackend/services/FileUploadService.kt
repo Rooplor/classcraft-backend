@@ -20,7 +20,7 @@ class FileUploadService(
         val objectName = "${System.currentTimeMillis()}-${file.originalFilename}"
         val folder = "$classId-${className.toLowerCase()}/"
 
-        val url = environment.getProperty("minio.revert-url")
+        val url = environment.getProperty("minio.reverse-url")
         val bucketName = environment.getProperty("minio.bucket-name")
 
         try {
