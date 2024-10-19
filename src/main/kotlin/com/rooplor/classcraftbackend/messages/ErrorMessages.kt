@@ -15,4 +15,5 @@ object ErrorMessages {
     const val USER_WITH_EMAIL_ALREADY_EXISTS = "User with email $0 already exists"
     const val USER_WITH_USERNAME_ALREADY_EXISTS = "User with username $0 already exists"
     const val USER_CANNOT_DELETE_OWN_ACCOUNT = "User cannot delete own account"
+    const val USER_WITH_ID_DOSE_NOT_EXIST = "User with id $0 does not exist"
 }

@@ -13,4 +13,5 @@ data class InitClassDTO(
     var format: Format,
     var capacity: Int,
     var date: List<LocalDateTime>,
+    var coOwners: List<String>? = emptyList(),
 )

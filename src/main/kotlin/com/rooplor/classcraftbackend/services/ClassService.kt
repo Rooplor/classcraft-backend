@@ -1,6 +1,7 @@
 package com.rooplor.classcraftbackend.services
 
 import com.rooplor.classcraftbackend.entities.Classroom
+import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import com.rooplor.classcraftbackend.utils.JsonValid.isValidJson
 import lombok.AllArgsConstructor
@@ -15,6 +16,8 @@ class ClassService
     constructor(
         private val classRepository: ClassroomRepository,
         private val venueService: VenueService,
+        private val authService: AuthService,
+        private val userService: UserService,
     ) {
         fun findAllClassPublished(registrationStatus: Boolean): List<Classroom> =
             classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(registrationStatus)
@@ -22,6 +25,8 @@ class ClassService
         fun insertClass(addedClassroom: Classroom): Classroom {
             addedClassroom.registrationStatus = false
             addedClassroom.isPublished = false
+            addedClassroom.owner =
+                authService.getAuthenticatedUserDetails()?.id ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
             return classRepository.insert(addedClassroom)
         }
 
@@ -38,6 +43,11 @@ class ClassService
             classToUpdate.format = updatedClassroom.format
             classToUpdate.capacity = updatedClassroom.capacity
             classToUpdate.date = updatedClassroom.date
+            if (updatedClassroom.coOwners != null) {
+                validateCoOwners(updatedClassroom.coOwners!!)
+                classToUpdate.coOwners = updatedClassroom.coOwners
+            }
+            classToUpdate.coOwners = updatedClassroom.coOwners
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
@@ -98,8 +108,22 @@ class ClassService
             classRepository.deleteById(id)
         }
 
+        fun findClassByOwners(owners: List<String>): List<Classroom> = owners.flatMap { owner -> classRepository.findByOwner(owner) }
+
         private fun updateUpdatedWhen(classroom: Classroom): Classroom {
             classroom.updatedWhen = LocalDateTime.now()
             return classroom
+        }
+
+        private fun validateCoOwners(coOwners: List<String>) {
+            val errorList = mutableListOf<String>()
+            coOwners.forEach {
+                if (!userService.isUserExistById(it)) {
+                    errorList.add(ErrorMessages.USER_WITH_ID_DOSE_NOT_EXIST.replace("\$0", it))
+                }
+            }
+            if (errorList.isNotEmpty()) {
+                throw Exception(errorList.joinToString(", "))
+            }
         }
     }

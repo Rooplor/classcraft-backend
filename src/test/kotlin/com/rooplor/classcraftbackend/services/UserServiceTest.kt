@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import java.util.Optional
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @SpringBootTest
 class UserServiceTest {
@@ -165,5 +167,44 @@ class UserServiceTest {
         `when`(userRepository.findByEmail(updatedUser.email)).thenReturn(Optional.of(someUser))
         val exception = assertThrows<Exception> { userService.updateUser(existingUser, updatedUser) }
         assertEquals(ErrorMessages.USER_WITH_EMAIL_ALREADY_EXISTS.replace("\$0", updatedUser.email), exception.message)
+    }
+
+    @Test
+    fun `should find user by username`() {
+        val username = "testuser"
+        val user = User(id = "1", username = username, email = "testuser@example.com", profilePicture = null)
+        `when`(userRepository.findByUsername(username)).thenReturn(Optional.of(user))
+
+        val foundUser = userService.findByUsername(username)
+        assertEquals(user, foundUser)
+    }
+
+    @Test
+    fun `should throw exception when user not found by username`() {
+        val username = "notfound"
+        `when`(userRepository.findByUsername(username)).thenReturn(Optional.empty())
+
+        val exception = assertThrows<Exception> { userService.findByUsername(username) }
+        assertEquals(ErrorMessages.USER_NOT_FOUND, exception.message)
+    }
+
+    @Test
+    fun `should return true if user exists by id`() {
+        val id = "1"
+        `when`(
+            userRepository.findById(id),
+        ).thenReturn(Optional.of(User(id = id, username = "testuser", email = "testuser@example.com", profilePicture = null)))
+
+        val exists = userService.isUserExistById(id)
+        assertTrue(exists)
+    }
+
+    @Test
+    fun `should return false if user does not exist by id`() {
+        val id = "notfound"
+        `when`(userRepository.findById(id)).thenReturn(Optional.empty())
+
+        val exists = userService.isUserExistById(id)
+        assertFalse(exists)
     }
 }

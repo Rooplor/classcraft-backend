@@ -98,4 +98,10 @@ class ClassController
         fun removeClass(
             @PathVariable id: String,
         ): Unit = service.deleteClass(id)
+
+        @Operation(summary = "Find classes by owners")
+        @GetMapping("/owners")
+        fun findClassByOwners(
+            @RequestParam owners: List<String>,
+        ): List<ClassListDTO> = listMapper.mapList(service.findClassByOwners(owners), ClassListDTO::class.java, modelMapper)
     }

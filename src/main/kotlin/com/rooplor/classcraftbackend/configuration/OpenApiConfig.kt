@@ -26,6 +26,10 @@ import io.swagger.v3.oas.annotations.servers.Server
                 description = "Local ENV",
                 url = "http://localhost:8080",
             ),
+            Server(
+                description = "QA ENV",
+                url = "http://cp24kp2.sit.kmutt.ac.th:5000",
+            ),
         ),
 )
 @SecurityScheme(

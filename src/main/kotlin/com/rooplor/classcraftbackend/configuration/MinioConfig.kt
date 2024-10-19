@@ -18,7 +18,7 @@ class MinioConfig(
 
         return MinioClient
             .builder()
-            .endpoint(url, port ?: 7001, false)
+            .endpoint(url, port ?: 9001, false)
             .credentials(accessKey, secretKey)
             .build()
     }
