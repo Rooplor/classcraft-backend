@@ -104,4 +104,10 @@ class ClassController
         fun findClassByOwners(
             @RequestParam owners: List<String>,
         ): List<ClassListDTO> = listMapper.mapList(service.findClassByOwners(owners), ClassListDTO::class.java, modelMapper)
+
+        @Operation(summary = "Update classroom stepper status")
+        @PatchMapping("/{id}/stepper-status")
+        fun updateClassroomStepperStatus(
+            @PathVariable id: String,
+        ): Classroom = service.updateStepperStatus(id)
     }

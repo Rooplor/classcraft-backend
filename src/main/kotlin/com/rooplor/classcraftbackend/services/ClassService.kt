@@ -1,6 +1,7 @@
 package com.rooplor.classcraftbackend.services
 
 import com.rooplor.classcraftbackend.entities.Classroom
+import com.rooplor.classcraftbackend.enums.Status
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import com.rooplor.classcraftbackend.utils.JsonValid.isValidJson
@@ -109,6 +110,17 @@ class ClassService
         }
 
         fun findClassByOwners(owners: List<String>): List<Classroom> = owners.flatMap { owner -> classRepository.findByOwner(owner) }
+
+        fun updateStepperStatus(id: String): Classroom {
+            val classToUpdate = findClassById(id)
+            when (classToUpdate.stepperStatus) {
+                Status.FILL_CLASS_DETAIL -> classToUpdate.stepperStatus = Status.RESERVE_VENUE
+                Status.RESERVE_VENUE -> classToUpdate.stepperStatus = Status.CRAFT_CONTENT
+                Status.CRAFT_CONTENT -> classToUpdate.stepperStatus = Status.PREPARE_FOR_REG
+                else -> throw Exception("Invalid stepper status or this class is already completed")
+            }
+            return classRepository.save(updateUpdatedWhen(classToUpdate))
+        }
 
         private fun updateUpdatedWhen(classroom: Classroom): Classroom {
             classroom.updatedWhen = LocalDateTime.now()
