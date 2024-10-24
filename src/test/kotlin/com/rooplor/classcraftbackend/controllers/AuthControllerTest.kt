@@ -1,6 +1,7 @@
 package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.configs.TestConfig
+import com.rooplor.classcraftbackend.constant.Age
 import com.rooplor.classcraftbackend.dtos.Token
 import com.rooplor.classcraftbackend.services.AuthService
 import com.rooplor.classcraftbackend.services.cookie.CookieService
@@ -26,8 +27,6 @@ class AuthControllerTest {
     @MockBean
     private lateinit var cookieService: CookieService
 
-    private val cookieAge = 7 * 24 * 60 * 60 // 7 days
-
     @Test
     fun `test login valid`() {
         val idToken = "validToken"
@@ -36,8 +35,8 @@ class AuthControllerTest {
         val tokenResponse = Token(accessToken, refreshToken)
 
         `when`(authService.login(idToken)).thenReturn(tokenResponse)
-        `when`(cookieService.createCookie("accessToken", accessToken, cookieAge)).thenReturn(null)
-        `when`(cookieService.createCookie("refreshToken", refreshToken, cookieAge)).thenReturn(null)
+        `when`(cookieService.createCookie("accessToken", accessToken, Age.COOKIE_AGE)).thenReturn(null)
+        `when`(cookieService.createCookie("refreshToken", refreshToken, Age.COOKIE_AGE)).thenReturn(null)
 
         mockMvc
             .perform(

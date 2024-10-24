@@ -1,5 +1,6 @@
 package com.rooplor.classcraftbackend.configuration
 
+import com.rooplor.classcraftbackend.filters.DevJwtRequestFilter
 import com.rooplor.classcraftbackend.filters.JwtRequestFilter
 import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +19,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfig {
     @Autowired
     private lateinit var jwtRequestFilter: JwtRequestFilter
+
+    @Autowired
+    private lateinit var devJwtRequestFilter: DevJwtRequestFilter
 
     @Throws(Exception::class)
     @Bean
@@ -49,6 +53,7 @@ class SecurityConfig {
             .cors { it.disable() }
             .csrf { it.disable() }
             .authorizeRequests { it.anyRequest().permitAll() }
+            .addFilterBefore(devJwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
 }
