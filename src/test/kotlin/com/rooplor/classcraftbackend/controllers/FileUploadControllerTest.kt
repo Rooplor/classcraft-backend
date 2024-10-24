@@ -35,13 +35,12 @@ class FileUploadControllerTest {
         val response =
             @Suppress("ktlint:standard:max-line-length")
             "http://localhost/classcraft/classId-classname/123-testfile.txt"
-        `when`(fileUploadService.fileUpload(file, "classId", "className")).thenReturn(response)
+        `when`(fileUploadService.fileUpload(file, "classId")).thenReturn(response)
 
         mockMvc
             .perform(
                 post("/api/file/upload")
                     .param("classId", "classId")
-                    .param("className", "classname")
                     .param("file", "testfile.txt"),
             )
     }
