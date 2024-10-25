@@ -43,13 +43,13 @@ class FileUploadServiceTest {
         doThrow(ErrorResponseException::class.java).`when`(minioClient).statObject(any(StatObjectArgs::class.java))
         doAnswer { mock(ObjectWriteResponse::class.java) }.`when`(minioClient).putObject(any(PutObjectArgs::class.java))
 
-        val result = fileUploadService.fileUpload(file, "classId", "className")
+        val result = fileUploadService.fileUpload(file, "classId")
 
         verify(minioClient, times(2)).putObject(any(PutObjectArgs::class.java))
         assertTrue(
             result.matches(
                 Regex(
-                    "http://localhost/classcraft/classId-classname/\\d+-testfile.txt",
+                    "http://localhost/classcraft/classId/\\d+-testfile.txt",
                 ),
             ),
         )
@@ -67,13 +67,13 @@ class FileUploadServiceTest {
             mock(ObjectWriteResponse::class.java)
         }.`when`(minioClient).putObject(any(PutObjectArgs::class.java))
 
-        val result = fileUploadService.fileUpload(file, "classId", "className")
+        val result = fileUploadService.fileUpload(file, "classId")
 
         verify(minioClient, times(1)).putObject(any(PutObjectArgs::class.java))
         assertTrue(
             result.matches(
                 Regex(
-                    "http://localhost/classcraft/classId-classname/\\d+-testfile.txt",
+                    "http://localhost/classcraft/classId/\\d+-testfile.txt",
                 ),
             ),
         )
