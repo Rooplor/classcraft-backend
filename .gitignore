@@ -8,6 +8,7 @@
 .idea
 
 data
+loki-data
 
 # User-specific stuff
 .idea/**/workspace.xml
