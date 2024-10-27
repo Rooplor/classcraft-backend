@@ -23,7 +23,7 @@ class VenueController
         @GetMapping("")
         fun findAll(): List<Venue> = service.findAllVenue()
 
-        @Operation(summary = "Get venue by id")
+        @Operation(summary = "Insert a new venue")
         @PostMapping("")
         fun insertVenue(
             @RequestBody addedVenue: Venue,
