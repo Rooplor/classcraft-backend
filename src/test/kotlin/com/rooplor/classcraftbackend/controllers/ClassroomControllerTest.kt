@@ -88,6 +88,52 @@ class ClassroomControllerTest {
     }
 
     @Test
+    fun `should return classes by owners`() {
+        val owners = listOf("owner1", "owner2")
+        val classrooms =
+            listOf(
+                Classroom(
+                    title = "React Native",
+                    details = "Learn how to build mobile apps using React Native",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                ),
+                Classroom(
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps using Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                ),
+            )
+        val classList =
+            listOf(
+                ClassListDTO(
+                    id = "1",
+                    title = "React Native",
+                ),
+                ClassListDTO(
+                    id = "2",
+                    title = "Spring Boot 101",
+                ),
+            )
+
+        Mockito.`when`(classService.findClassByOwners(owners)).thenReturn(classrooms)
+        Mockito.`when`(listMapper.mapList(classrooms, ClassListDTO::class.java, modelMapper)).thenReturn(classList)
+
+        mockMvc
+            .perform(get("/api/class?userId=owner1,owner2"))
+            .andExpect(status().isOk)
+    }
+
+    @Test
     fun `should return class by id`() {
         val classId = "1"
         val classroomObj =
@@ -383,48 +429,6 @@ class ClassroomControllerTest {
                         """.trimIndent(),
                     ),
             ).andExpect(status().isOk)
-    }
-
-    @Test
-    fun `should return classes by owners`() {
-        val owners = listOf("owner1", "owner2")
-        val classrooms =
-            listOf(
-                Classroom(
-                    title = "React Native",
-                    details = "Learn how to build mobile apps using React Native",
-                    target = "Beginner",
-                    prerequisite = "None",
-                    type = ClassType.LECTURE,
-                    format = Format.ONSITE,
-                    capacity = 30,
-                    date = listOf(),
-                    owner = "owner1",
-                ),
-                Classroom(
-                    title = "Spring Boot 101",
-                    details = "Learn how to build web apps using Spring Boot",
-                    target = "Beginner",
-                    prerequisite = "None",
-                    type = ClassType.LECTURE,
-                    format = Format.ONSITE,
-                    capacity = 30,
-                    date = listOf(),
-                    owner = "owner2",
-                ),
-            )
-        val classList =
-            listOf(
-                ClassListDTO(id = "1", title = "React Native"),
-                ClassListDTO(id = "2", title = "Spring Boot 101"),
-            )
-
-        Mockito.`when`(classService.findClassByOwners(owners)).thenReturn(classrooms)
-        Mockito.`when`(listMapper.mapList(classrooms, ClassListDTO::class.java, modelMapper)).thenReturn(classList)
-
-        mockMvc
-            .perform(get("/api/class/owners").param("owners", "owner1,owner2"))
-            .andExpect(status().isOk)
     }
 
     @Test
