@@ -223,7 +223,19 @@ class ClassController
         @DeleteMapping("/{id}")
         fun removeClass(
             @PathVariable id: String,
-        ): Unit = service.deleteClass(id)
+        ): ResponseEntity<Response<Unit>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            service.deleteClass(id),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
 
         @Operation(summary = "Find classes by owners")
         @GetMapping("/owners")
@@ -236,6 +248,24 @@ class ClassController
                         success = true,
                         result =
                             listMapper.mapList(service.findClassByOwners(owners), ClassListDTO::class.java, modelMapper),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
+
+        @Operation(summary = "Update classroom stepper status")
+        @PatchMapping("/{id}/stepper-status")
+        fun updateClassroomStepperStatus(
+            @PathVariable id: String,
+        ): ResponseEntity<Response<Classroom>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            service.updateStepperStatus(id),
                         error = null,
                     ),
                 )

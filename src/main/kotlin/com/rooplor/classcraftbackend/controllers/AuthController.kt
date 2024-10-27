@@ -1,5 +1,6 @@
 package com.rooplor.classcraftbackend.controllers
 
+import com.rooplor.classcraftbackend.constant.Age
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.dtos.ValidateTokenRequest
 import com.rooplor.classcraftbackend.messages.ErrorMessages
@@ -19,8 +20,6 @@ class AuthController(
     private val authService: AuthService,
     private val cookieService: CookieService,
 ) {
-    private val cookieAge = 7 * 24 * 60 * 60 // 7 days
-
     private val acToken = "accessToken"
     private val rfToken = "refreshToken"
 
@@ -31,8 +30,8 @@ class AuthController(
     ): ResponseEntity<Response<Boolean>> {
         val token = authService.login(request.idToken)
         return if (token != null) {
-            val accessTokenCookie = cookieService.createCookie(acToken, token.accessToken, cookieAge)
-            val refreshTokenCookie = cookieService.createCookie(rfToken, token.refreshToken, cookieAge)
+            val accessTokenCookie = cookieService.createCookie(acToken, token.accessToken, Age.COOKIE_AGE)
+            val refreshTokenCookie = cookieService.createCookie(rfToken, token.refreshToken, Age.COOKIE_AGE)
             response.addCookie(accessTokenCookie)
             response.addCookie(refreshTokenCookie)
             ResponseEntity.ok(Response(success = true, result = true, error = null))
