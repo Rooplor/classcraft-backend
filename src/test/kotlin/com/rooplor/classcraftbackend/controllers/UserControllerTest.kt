@@ -2,19 +2,24 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.configs.TestConfig
 import com.rooplor.classcraftbackend.configs.TestSecurityConfig
+import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.dtos.UserRequest
 import com.rooplor.classcraftbackend.entities.User
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.services.AuthService
 import com.rooplor.classcraftbackend.services.UserService
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.Mockito.mock
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
@@ -149,5 +154,51 @@ class UserControllerTest {
             .andExpect(jsonPath("$.success").value(false))
             .andExpect(jsonPath("$.result").value(null))
             .andExpect(jsonPath("$.error").value(ErrorMessages.USER_CANNOT_DELETE_OWN_ACCOUNT))
+    }
+
+    @Test
+    fun `getUserProfile should return user profile if authenticated`() {
+        val username = "testUser"
+        val user = User(username = username, email = "test@mail.com", profilePicture = "https://rooplor.com")
+
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn(username)
+        Mockito.`when`(userService.findByUsername(username)).thenReturn(user)
+
+        val userController = UserController(userService, authService, mock())
+        val response: ResponseEntity<Response<User>> = userController.getUserProfile()
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(true, response.body?.success)
+        assertEquals(user, response.body?.result)
+        assertEquals(null, response.body?.error)
+    }
+
+    @Test
+    fun `getUserProfile should return error if user not authenticated`() {
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn(null)
+
+        val userController = UserController(userService, authService, mock())
+        val response: ResponseEntity<Response<User>> = userController.getUserProfile()
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+        assertEquals(false, response.body?.success)
+        assertEquals(null, response.body?.result)
+        assertEquals(ErrorMessages.USER_NOT_FOUND, response.body?.error)
+    }
+
+    @Test
+    fun `getUserProfile should return error if exception occurs`() {
+        val username = "testUser"
+
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn(username)
+        Mockito.`when`(userService.findByUsername(username)).thenThrow(RuntimeException("Database error"))
+
+        val userController = UserController(userService, authService, mock())
+        val response: ResponseEntity<Response<User>> = userController.getUserProfile()
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+        assertEquals(false, response.body?.success)
+        assertEquals(null, response.body?.result)
+        assertEquals("Database error", response.body?.error)
     }
 }
