@@ -426,4 +426,26 @@ class ClassroomControllerTest {
             .perform(get("/api/class/owners").param("owners", "owner1,owner2"))
             .andExpect(status().isOk)
     }
+
+    @Test
+    fun `should update classroom stepper status`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                date = listOf(),
+            )
+        Mockito.`when`(classService.updateStepperStatus(classId)).thenReturn(classroomObj)
+
+        mockMvc
+            .perform(patch("/api/class/$classId/stepper-status"))
+            .andExpect(status().isOk)
+    }
 }
