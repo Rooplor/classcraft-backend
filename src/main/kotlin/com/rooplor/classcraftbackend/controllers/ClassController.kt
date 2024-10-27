@@ -30,24 +30,24 @@ class ClassController
         val modelMapper: ModelMapper,
         val listMapper: ListMapper,
     ) {
-        @Operation(summary = "Get all classes with registration status and published status")
+        @Operation(summary = "Get all classes with registration status and published status, or by owners if provided")
         @GetMapping("")
-        fun findAllClassPublished(
-            @RequestParam(name = "registrationStatus") registrationStatus: Boolean,
+        fun findAllClassPublishedOrByOwners(
+            @RequestParam(name = "registrationStatus", required = false) registrationStatus: Boolean?,
+            @RequestParam(name = "userId", required = false) userId: List<String>?,
         ): ResponseEntity<Response<List<ClassListDTO>>> =
             try {
-                ResponseEntity.ok(
-                    Response(
-                        success = true,
-                        result =
-                            listMapper.mapList(
-                                service.findAllClassPublished(registrationStatus),
-                                ClassListDTO::class.java,
-                                modelMapper,
-                            ),
-                        error = null,
-                    ),
-                )
+                val result =
+                    if (userId != null && userId.isNotEmpty()) {
+                        listMapper.mapList(service.findClassByOwners(userId), ClassListDTO::class.java, modelMapper)
+                    } else {
+                        listMapper.mapList(
+                            service.findAllClassPublished(registrationStatus ?: false),
+                            ClassListDTO::class.java,
+                            modelMapper,
+                        )
+                    }
+                ResponseEntity.ok(Response(success = true, result = result, error = null))
             } catch (e: Exception) {
                 ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
             }
@@ -230,24 +230,6 @@ class ClassController
                         success = true,
                         result =
                             service.deleteClass(id),
-                        error = null,
-                    ),
-                )
-            } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
-            }
-
-        @Operation(summary = "Find classes by owners")
-        @GetMapping("/owners")
-        fun findClassByOwners(
-            @RequestParam owners: List<String>,
-        ): ResponseEntity<Response<List<ClassListDTO>>> =
-            try {
-                ResponseEntity.ok(
-                    Response(
-                        success = true,
-                        result =
-                            listMapper.mapList(service.findClassByOwners(owners), ClassListDTO::class.java, modelMapper),
                         error = null,
                     ),
                 )
