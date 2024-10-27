@@ -2,12 +2,14 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.ClassListDTO
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
+import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.services.ClassService
 import com.rooplor.classcraftbackend.utils.ListMapper
 import io.swagger.v3.oas.annotations.Operation
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -32,82 +34,242 @@ class ClassController
         @GetMapping("")
         fun findAllClassPublished(
             @RequestParam(name = "registrationStatus") registrationStatus: Boolean,
-        ): List<ClassListDTO> = listMapper.mapList(service.findAllClassPublished(registrationStatus), ClassListDTO::class.java, modelMapper)
+        ): ResponseEntity<Response<List<ClassListDTO>>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            listMapper.mapList(
+                                service.findAllClassPublished(registrationStatus),
+                                ClassListDTO::class.java,
+                                modelMapper,
+                            ),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
 
         @Operation(summary = "Update a class")
         @PutMapping("/{id}")
         fun updateClass(
             @RequestBody updatedClass: InitClassDTO,
             @PathVariable id: String,
-        ): Classroom = service.updateClass(id, modelMapper.map(updatedClass, Classroom::class.java))
+        ): ResponseEntity<Response<Classroom>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            service.updateClass(id, modelMapper.map(updatedClass, Classroom::class.java)),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
 
         @Operation(summary = "Get class by id")
         @GetMapping("/{id}")
         fun findById(
             @PathVariable id: String,
-        ): Classroom = service.findClassById(id)
+        ): ResponseEntity<Response<Classroom>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            service.findClassById(id),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
 
         @Operation(summary = "Insert a new class")
         @PostMapping("")
         fun insertClass(
             @RequestBody addedClass: InitClassDTO,
-        ): Classroom = service.insertClass(modelMapper.map(addedClass, Classroom::class.java))
+        ): ResponseEntity<Response<Classroom>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            service.insertClass(modelMapper.map(addedClass, Classroom::class.java)),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
 
         @Operation(summary = "Update venue of a class")
         @PatchMapping("/{id}/venue/{venueId}")
         fun updateVenueClass(
             @PathVariable id: String,
             @PathVariable venueId: String,
-        ): Classroom = service.updateVenueClass(id, venueId)
+        ): ResponseEntity<Response<Classroom>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            service.updateVenueClass(id, venueId),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
 
         @Operation(summary = "Update meeting url of a class")
         @PatchMapping("/{id}/meeting-url")
         fun updateMeetingUrlClass(
             @PathVariable id: String,
             @RequestBody meetingUrl: String,
-        ): Classroom = service.updateMeetingUrlClass(id, meetingUrl)
+        ): ResponseEntity<Response<Classroom>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            service.updateMeetingUrlClass(id, meetingUrl),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
 
         @Operation(summary = "Update content of a class")
         @PatchMapping("/{id}/content")
         fun updateContent(
             @PathVariable id: String,
             @RequestBody content: String,
-        ): Classroom = service.updateContent(id, content)
+        ): ResponseEntity<Response<Classroom>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            service.updateContent(id, content),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
 
         @Operation(summary = "Update registration url of a class")
         @PatchMapping("/{id}/registration-url")
         fun updateRegistrationUrl(
             @PathVariable id: String,
             @RequestBody registration: String,
-        ): Classroom = service.updateRegistrationUrl(id, registration)
+        ): ResponseEntity<Response<Classroom>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            service.updateRegistrationUrl(id, registration),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
 
         @Operation(summary = "Toggle registration status of a class")
         @PatchMapping("/{id}/toggle-registration-status")
         fun toggleRegistrationStatus(
             @PathVariable id: String,
-        ): Classroom = service.toggleRegistrationStatus(id)
+        ): ResponseEntity<Response<Classroom>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            service.toggleRegistrationStatus(id),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
 
         @Operation(summary = "Toggle publish status of a class")
         @PatchMapping("/{id}/toggle-publish-status")
         fun togglePublicationStatus(
             @PathVariable id: String,
-        ): Classroom = service.togglePublishStatus(id)
+        ): ResponseEntity<Response<Classroom>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            service.togglePublishStatus(id),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
 
         @Operation(summary = "Remove a class")
         @DeleteMapping("/{id}")
         fun removeClass(
             @PathVariable id: String,
-        ): Unit = service.deleteClass(id)
+        ): ResponseEntity<Response<Unit>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            service.deleteClass(id),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
 
         @Operation(summary = "Find classes by owners")
         @GetMapping("/owners")
         fun findClassByOwners(
             @RequestParam owners: List<String>,
-        ): List<ClassListDTO> = listMapper.mapList(service.findClassByOwners(owners), ClassListDTO::class.java, modelMapper)
+        ): ResponseEntity<Response<List<ClassListDTO>>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            listMapper.mapList(service.findClassByOwners(owners), ClassListDTO::class.java, modelMapper),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
 
         @Operation(summary = "Update classroom stepper status")
         @PatchMapping("/{id}/stepper-status")
         fun updateClassroomStepperStatus(
             @PathVariable id: String,
-        ): Classroom = service.updateStepperStatus(id)
+        ): ResponseEntity<Response<Classroom>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            service.updateStepperStatus(id),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
     }
