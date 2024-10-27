@@ -44,6 +44,11 @@ class ClassService
             classToUpdate.format = updatedClassroom.format
             classToUpdate.capacity = updatedClassroom.capacity
             classToUpdate.date = updatedClassroom.date
+            classToUpdate.instructorName = updatedClassroom.instructorName
+            classToUpdate.instructorBio = updatedClassroom.instructorBio
+            classToUpdate.instructorAvatar = updatedClassroom.instructorAvatar
+            classToUpdate.instructorFamiliarity = updatedClassroom.instructorFamiliarity
+            classToUpdate.coverImage = updatedClassroom.coverImage
             if (updatedClassroom.coOwners != null) {
                 validateCoOwners(updatedClassroom.coOwners!!)
                 classToUpdate.coOwners = updatedClassroom.coOwners

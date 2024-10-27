@@ -13,5 +13,10 @@ data class InitClassDTO(
     var format: Format,
     var capacity: Int,
     var date: List<LocalDateTime>,
+    var instructorName: String = "",
+    var instructorBio: String = "",
+    var instructorAvatar: String = "",
+    var instructorFamiliarity: String = "",
+    var coverImage: String = "",
     var coOwners: List<String>? = emptyList(),
 )
