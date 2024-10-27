@@ -36,6 +36,21 @@ class UserController(
         }
     }
 
+    @Operation(summary = "Get user profile")
+    @GetMapping("/profile")
+    fun getUserProfile(): ResponseEntity<Response<User>> {
+        try {
+            val username =
+                authService.getAuthenticatedUser() ?: return ResponseEntity.badRequest().body(
+                    Response(success = false, result = null, error = ErrorMessages.USER_NOT_FOUND),
+                )
+            val user = userService.findByUsername(username)
+            return ResponseEntity.ok(Response(success = true, result = user, error = null))
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+        }
+    }
+
     @Operation(summary = "Get user by id")
     @GetMapping("/{id}")
     fun getUserById(
