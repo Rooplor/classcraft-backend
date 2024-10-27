@@ -166,6 +166,11 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
+                instructorName = "John Doe",
+                instructorBio = "John Doe is a software engineer",
+                instructorAvatar = "https://example.com/johndoe.jpg",
+                instructorFamiliarity = "John Doe has 5 years of experience",
+                coverImage = "https://example.com/cover.jpg",
                 date = listOf(),
                 owner = "owner1",
             )
@@ -178,6 +183,11 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
+                instructorName = "John Doe",
+                instructorBio = "John Doe is a software engineer",
+                instructorAvatar = "https://example.com/johndoe.jpg",
+                instructorFamiliarity = "John Doe has 5 years of experience",
+                coverImage = "https://example.com/cover.jpg",
                 date = listOf(),
             )
         Mockito.`when`(modelMapper.map(initClassDTO, Classroom::class.java)).thenReturn(classroomObj)
@@ -197,6 +207,11 @@ class ClassroomControllerTest {
                             "type": "LECTURE",
                             "format": "ONSITE",
                             "capacity": 30,
+                            "instructorName": "John Doe",
+                            "instructorBio": "John Doe is a software engineer",
+                            "instructorAvatar": "https://example.com/johndoe.jpg",
+                            "instructorFamiliarity": "John Doe has 5 years of experience",
+                            "coverImage": "https://example.com/cover.jpg",
                             "date": [],
                             "owner": "owner1",
                             "coOwners": []
@@ -391,6 +406,11 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
+                instructorName = "John Doe",
+                instructorBio = "John Doe is a software engineer",
+                instructorAvatar = "https://example.com/johndoe.jpg",
+                instructorFamiliarity = "John Doe has 5 years of experience",
+                coverImage = "https://example.com/cover.jpg",
                 date = listOf(),
                 owner = "owner1",
             )
@@ -403,6 +423,11 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
+                instructorName = "John Doe",
+                instructorBio = "John Doe is a software engineer",
+                instructorAvatar = "https://example.com/johndoe.jpg",
+                instructorFamiliarity = "John Doe has 5 years of experience",
+                coverImage = "https://example.com/cover.jpg",
                 date = listOf(),
             )
         Mockito.`when`(modelMapper.map(initClassDTO, Classroom::class.java)).thenReturn(classroomObj)
@@ -422,6 +447,11 @@ class ClassroomControllerTest {
                             "type": "LECTURE",
                             "format": "ONSITE",
                             "capacity": 30,
+                            "instructorName": "John Doe",
+                            "instructorBio": "John Doe is a software engineer",
+                            "instructorAvatar": "https://example.com/johndoe.jpg",
+                            "instructorFamiliarity": "John Doe has 5 years of experience",
+                            "coverImage": "https://example.com/cover.jpg",
                             "date": [],
                             "owner": "owner1",
                             "coOwners": []

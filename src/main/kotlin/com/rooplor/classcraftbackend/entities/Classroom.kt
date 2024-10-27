@@ -28,6 +28,11 @@ data class Classroom(
     var registrationStatus: Boolean? = null,
     var isPublished: Boolean? = null,
     var venueStatus: VenueStatus? = VenueStatus.PENDING,
+    var instructorName: String = "",
+    var instructorBio: String = "",
+    var instructorAvatar: String = "",
+    var instructorFamiliarity: String = "",
+    var coverImage: String = "",
     var createdWhen: LocalDateTime = LocalDateTime.now(),
     var updatedWhen: LocalDateTime = LocalDateTime.now(),
     @DBRef

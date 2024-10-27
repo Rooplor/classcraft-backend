@@ -15,6 +15,11 @@ data class ClassListDTO(
     var capacity: Int? = 0,
     var date: List<LocalDateTime?> = listOf(),
     var registrationUrl: String? = "",
+    var instructorName: String = "",
+    var instructorBio: String = "",
+    var instructorAvatar: String = "",
+    var instructorFamiliarity: String = "",
+    var coverImage: String = "",
     var owner: String? = "",
     var coOwners: List<String>? = listOf(),
 )
