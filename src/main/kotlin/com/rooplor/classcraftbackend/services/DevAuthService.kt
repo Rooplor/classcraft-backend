@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 
 @Service
-@Profile("development")
+@Profile("dev")
 class DevAuthService(
     private val userService: UserService,
     private val jwtUtil: JwtUtil,
@@ -20,7 +20,7 @@ class DevAuthService(
                 User(
                     username = username,
                     email = "test@mail.com",
-                    profilePicture = "https://rooplor.com",
+                    profilePicture = "https://media.stickerswiki.app/oneesanstickers117/6747778.512.webp",
                 )
             userService.createUser(newUser)
         }

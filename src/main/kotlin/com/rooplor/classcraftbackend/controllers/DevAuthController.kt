@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/dev/auth")
-@Profile("development")
+@Profile("dev")
 class DevAuthController(
     private val devAuthService: DevAuthService,
     private val cookieService: CookieService,

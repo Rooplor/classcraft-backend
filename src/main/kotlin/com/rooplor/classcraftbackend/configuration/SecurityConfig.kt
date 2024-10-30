@@ -25,7 +25,7 @@ class SecurityConfig {
 
     @Throws(Exception::class)
     @Bean
-    @Profile("production")
+    @Profile("prod")
     fun configure(http: HttpSecurity): DefaultSecurityFilterChain {
         http
             .csrf { it.disable() }
@@ -47,7 +47,7 @@ class SecurityConfig {
 
     @Throws(Exception::class)
     @Bean
-    @Profile("development")
+    @Profile("dev")
     fun configureDevelopment(http: HttpSecurity): DefaultSecurityFilterChain {
         http
             .cors { it.disable() }
