@@ -2,7 +2,6 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.configs.TestConfig
 import com.rooplor.classcraftbackend.configs.TestSecurityConfig
-import com.rooplor.classcraftbackend.dtos.ClassListDTO
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.entities.Venue
@@ -10,7 +9,6 @@ import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.services.ClassService
-import com.rooplor.classcraftbackend.utils.ListMapper
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.modelmapper.ModelMapper
@@ -38,9 +36,6 @@ class ClassroomControllerTest {
 
     @MockBean
     private lateinit var modelMapper: ModelMapper
-
-    @MockBean
-    private lateinit var listMapper: ListMapper
 
     @Test
     fun `should return all classes with registration status`() {
@@ -134,20 +129,8 @@ class ClassroomControllerTest {
                     date = listOf(),
                 ),
             )
-        val classList =
-            listOf(
-                ClassListDTO(
-                    id = "1",
-                    title = "React Native",
-                ),
-                ClassListDTO(
-                    id = "2",
-                    title = "Spring Boot 101",
-                ),
-            )
 
         Mockito.`when`(classService.findClassByOwners(owners)).thenReturn(classrooms)
-        Mockito.`when`(listMapper.mapList(classrooms, ClassListDTO::class.java, modelMapper)).thenReturn(classList)
 
         mockMvc
             .perform(get("/api/class?userId=owner1,owner2"))

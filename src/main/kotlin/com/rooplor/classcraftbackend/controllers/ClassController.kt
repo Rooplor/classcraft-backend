@@ -1,11 +1,9 @@
 package com.rooplor.classcraftbackend.controllers
 
-import com.rooplor.classcraftbackend.dtos.ClassListDTO
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.services.ClassService
-import com.rooplor.classcraftbackend.utils.ListMapper
 import io.swagger.v3.oas.annotations.Operation
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
