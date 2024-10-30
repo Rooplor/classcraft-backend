@@ -20,8 +20,10 @@ class ClassService
         private val authService: AuthService,
         private val userService: UserService,
     ) {
-        fun findAllClassPublished(registrationStatus: Boolean): List<Classroom> =
+        fun findAllClassPublishedWithRegistrationCondition(registrationStatus: Boolean): List<Classroom> =
             classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(registrationStatus)
+
+        fun findAllClassPublished(): List<Classroom> = classRepository.findByIsPublishedTrueOrderByCreatedWhen()
 
         fun insertClass(addedClassroom: Classroom): Classroom {
             addedClassroom.registrationStatus = false

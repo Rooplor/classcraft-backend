@@ -43,7 +43,7 @@ class ClassroomControllerTest {
     private lateinit var listMapper: ListMapper
 
     @Test
-    fun `should return all classes`() {
+    fun `should return all classes with registration status`() {
         val classrooms =
             listOf(
                 Classroom(
@@ -67,23 +67,44 @@ class ClassroomControllerTest {
                     date = listOf(),
                 ),
             )
-        val classList =
-            listOf(
-                ClassListDTO(
-                    id = "1",
-                    title = "React Native",
-                ),
-                ClassListDTO(
-                    id = "2",
-                    title = "Spring Boot 101",
-                ),
-            )
 
-        Mockito.`when`(classService.findAllClassPublished(true)).thenReturn(classrooms)
-        Mockito.`when`(listMapper.mapList(classrooms, ClassListDTO::class.java, modelMapper)).thenReturn(classList)
+        Mockito.`when`(classService.findAllClassPublishedWithRegistrationCondition(true)).thenReturn(classrooms)
 
         mockMvc
             .perform(get("/api/class?registrationStatus=true"))
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `should return all classes with no condition`() {
+        val classrooms =
+            listOf(
+                Classroom(
+                    title = "React Native",
+                    details = "Learn how to build mobile apps using React Native",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                ),
+                Classroom(
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps using Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                ),
+            )
+
+        Mockito.`when`(classService.findAllClassPublished()).thenReturn(classrooms)
+
+        mockMvc
+            .perform(get("/api/class"))
             .andExpect(status().isOk)
     }
 
