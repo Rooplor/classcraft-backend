@@ -452,4 +452,37 @@ class ClassroomServiceTest {
         val craftContent = classService.updateStepperStatus(classId)
         assertEquals(craftContent.stepperStatus, Status.PREPARE_FOR_REG)
     }
+
+    @Test
+    fun `should get all class without condition and published`() {
+        val classrooms =
+            listOf(
+                Classroom(
+                    title = "React Native",
+                    details = "Learn how to build mobile apps with React Native",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                ),
+                Classroom(
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps with Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                ),
+            )
+        Mockito
+            .`when`(classRepository.findByIsPublishedTrueOrderByCreatedWhen())
+            .thenReturn(classrooms)
+
+        val result = classService.findAllClassPublished()
+        assertEquals(classrooms, result)
+    }
 }
