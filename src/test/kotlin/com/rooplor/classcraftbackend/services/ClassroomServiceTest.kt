@@ -55,7 +55,7 @@ class ClassroomServiceTest {
             .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(true))
             .thenReturn(classrooms)
 
-        val result = classService.findAllClassPublished(true)
+        val result = classService.findAllClassPublishedWithRegistrationCondition(true)
         assertEquals(classrooms, result)
     }
 
@@ -92,7 +92,7 @@ class ClassroomServiceTest {
             .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(false))
             .thenReturn(classrooms)
 
-        val result = classService.findAllClassPublished(false)
+        val result = classService.findAllClassPublishedWithRegistrationCondition(false)
         assertEquals(classrooms, result)
     }
 
@@ -117,7 +117,7 @@ class ClassroomServiceTest {
             .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(false))
             .thenReturn(classrooms)
 
-        val result = classService.findAllClassPublished(false)
+        val result = classService.findAllClassPublishedWithRegistrationCondition(false)
         assertEquals(classrooms, result)
     }
 
@@ -142,7 +142,7 @@ class ClassroomServiceTest {
             .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(true))
             .thenReturn(classrooms)
 
-        val result = classService.findAllClassPublished(true)
+        val result = classService.findAllClassPublishedWithRegistrationCondition(true)
         assertEquals(classrooms, result)
     }
 
@@ -451,5 +451,38 @@ class ClassroomServiceTest {
         assertEquals(reserveVenue.stepperStatus, Status.CRAFT_CONTENT)
         val craftContent = classService.updateStepperStatus(classId)
         assertEquals(craftContent.stepperStatus, Status.PREPARE_FOR_REG)
+    }
+
+    @Test
+    fun `should get all class without condition and published`() {
+        val classrooms =
+            listOf(
+                Classroom(
+                    title = "React Native",
+                    details = "Learn how to build mobile apps with React Native",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                ),
+                Classroom(
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps with Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                ),
+            )
+        Mockito
+            .`when`(classRepository.findByIsPublishedTrueOrderByCreatedWhen())
+            .thenReturn(classrooms)
+
+        val result = classService.findAllClassPublished()
+        assertEquals(classrooms, result)
     }
 }

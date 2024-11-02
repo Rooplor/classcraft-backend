@@ -11,5 +11,7 @@ interface ClassroomRepository : MongoRepository<Classroom, String> {
 
     fun findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(status: Boolean): List<Classroom>
 
+    fun findByIsPublishedTrueOrderByCreatedWhen(): List<Classroom>
+
     fun findByOwner(owners: String): List<Classroom>
 }

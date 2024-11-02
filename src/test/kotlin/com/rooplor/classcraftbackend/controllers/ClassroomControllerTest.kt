@@ -2,7 +2,6 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.configs.TestConfig
 import com.rooplor.classcraftbackend.configs.TestSecurityConfig
-import com.rooplor.classcraftbackend.dtos.ClassListDTO
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.entities.Venue
@@ -10,7 +9,6 @@ import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.services.ClassService
-import com.rooplor.classcraftbackend.utils.ListMapper
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.modelmapper.ModelMapper
@@ -39,11 +37,8 @@ class ClassroomControllerTest {
     @MockBean
     private lateinit var modelMapper: ModelMapper
 
-    @MockBean
-    private lateinit var listMapper: ListMapper
-
     @Test
-    fun `should return all classes`() {
+    fun `should return all classes with registration status`() {
         val classrooms =
             listOf(
                 Classroom(
@@ -67,23 +62,44 @@ class ClassroomControllerTest {
                     date = listOf(),
                 ),
             )
-        val classList =
-            listOf(
-                ClassListDTO(
-                    id = "1",
-                    title = "React Native",
-                ),
-                ClassListDTO(
-                    id = "2",
-                    title = "Spring Boot 101",
-                ),
-            )
 
-        Mockito.`when`(classService.findAllClassPublished(true)).thenReturn(classrooms)
-        Mockito.`when`(listMapper.mapList(classrooms, ClassListDTO::class.java, modelMapper)).thenReturn(classList)
+        Mockito.`when`(classService.findAllClassPublishedWithRegistrationCondition(true)).thenReturn(classrooms)
 
         mockMvc
             .perform(get("/api/class?registrationStatus=true"))
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `should return all classes with no condition`() {
+        val classrooms =
+            listOf(
+                Classroom(
+                    title = "React Native",
+                    details = "Learn how to build mobile apps using React Native",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                ),
+                Classroom(
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps using Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    date = listOf(),
+                ),
+            )
+
+        Mockito.`when`(classService.findAllClassPublished()).thenReturn(classrooms)
+
+        mockMvc
+            .perform(get("/api/class"))
             .andExpect(status().isOk)
     }
 
@@ -113,20 +129,8 @@ class ClassroomControllerTest {
                     date = listOf(),
                 ),
             )
-        val classList =
-            listOf(
-                ClassListDTO(
-                    id = "1",
-                    title = "React Native",
-                ),
-                ClassListDTO(
-                    id = "2",
-                    title = "Spring Boot 101",
-                ),
-            )
 
         Mockito.`when`(classService.findClassByOwners(owners)).thenReturn(classrooms)
-        Mockito.`when`(listMapper.mapList(classrooms, ClassListDTO::class.java, modelMapper)).thenReturn(classList)
 
         mockMvc
             .perform(get("/api/class?userId=owner1,owner2"))
