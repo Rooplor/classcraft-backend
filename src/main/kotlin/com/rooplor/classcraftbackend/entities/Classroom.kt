@@ -21,7 +21,7 @@ data class Classroom(
     var format: Format = Format.ONSITE,
     var capacity: Int = 0,
     var date: List<LocalDateTime> = emptyList(),
-    var stepperStatus: Status? = Status.FILL_CLASS_DETAIL,
+    var stepperStatus: Int? = Status.FILL_CLASS_DETAIL.id,
     var meetingUrl: String? = null,
     var content: String? = null,
     var registrationUrl: String? = null,

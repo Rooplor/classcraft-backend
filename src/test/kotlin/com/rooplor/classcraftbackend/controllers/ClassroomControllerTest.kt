@@ -480,10 +480,20 @@ class ClassroomControllerTest {
                 capacity = 30,
                 date = listOf(),
             )
-        Mockito.`when`(classService.updateStepperStatus(classId)).thenReturn(classroomObj)
+        Mockito.`when`(classService.updateStepperStatus(classId, 2)).thenReturn(classroomObj)
 
         mockMvc
-            .perform(patch("/api/class/$classId/stepper-status"))
+            .perform(patch("/api/class/$classId/stepper-status?status=1"))
             .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `should return 400 when update classroom stepper status with unsupport status id`() {
+        val classId = "1"
+        Mockito.`when`(classService.updateStepperStatus(classId, 5)).thenThrow(IllegalArgumentException("Stepper status is not valid"))
+
+        mockMvc
+            .perform(patch("/api/class/$classId/stepper-status?status=5"))
+            .andExpect(status().isBadRequest)
     }
 }
