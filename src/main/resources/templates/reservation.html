@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Request</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            width: 100%;
+            height: 800px;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 500px;
+            background: #ffffff;
+            padding: 20px;
+            border: 1px solid #D9D9D9;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .container_header {
+            max-width: 500px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .header {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .class-info {
+            margin: 10px 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .user-info, .reservation-details {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .user-info {
+            font-weight: bold;
+            color: #000000;
+            font-size: 13px;
+        }
+
+        .reservation-time {
+            color: #1a73e8;
+        }
+
+        .reservation-venue {
+            font-size: 13px;
+            color: #666;
+            margin: 15px 0;
+        }
+
+        .button-group {
+            margin-top: 20px;
+            align-items: center;
+            align-items: center;
+
+        }
+
+        .button {
+            font-size: 14px;
+            padding: 10px 20px;
+            margin: 5px;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .approve-button {
+            background-color: #007AFF;
+        }
+
+        .reject-button {
+            background-color: #F5F5F5;
+            color: #007AFF;
+            border: 1px solid #D9D9D9;
+        }
+
+        .date-info {
+            color: #007AFF;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        .profile-picture {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .icon-date {
+            width: 15px;
+            height: 15px;
+            margin: 0px 3px;
+            vertical-align: middle;
+        }
+
+        .icon-time {
+            width: 20px;
+            height: 20px;
+            margin: 0px 5px;
+            vertical-align: middle;
+        }
+
+    </style>
+</head>
+<body>
+<div>
+    <div class="container_header">
+        <p class="header">Hi, <strong th:text="${username}">Anutra</strong></p>
+        <p>There's a new venue reservation request from <br> <strong th:text="${requestor}">Naronkrach's</strong> "<span
+                th:text="${className}">Astro 101</span>" class</p>
+    </div>
+    <div class="container">
+        <div class="class-info" th:text="${className}">Astro 101</div>
+        <div>
+            <img th:src="${profilePicture}" alt="Profile Picture" class="profile-picture" />
+            <span class="user-info" th:text="${requestor}">Naronkrach Tanajarusawas</span>
+        </div>
+        <p class="reservation-details" th:text="${description}">
+            สอนใช้ framework Astro ขั้นพื้นฐาน สอนใช้ framework Astro ขั้นพื้นฐานสอนใช้ framework Astro
+            ขั้นพื้นฐานสอนใช้ framework Astro ขั้นพื้นฐานสอนใช้ framework Astro ขั้นพื้นฐานสอนใช้ framework Astro
+            ขั้นพื้นฐาน
+        </p>
+        <div class="reservation-details">
+            <p> <img src="https://cdn.discordapp.com/attachments/1304001658937675776/1304001781814005780/date.png?ex=672dcdcb&is=672c7c4b&hm=5f02d1c9adde06041b446905347bd19c7b1e231acd2f804de02d2241cff3ae0f&" alt="data-icon" class="icon-date"> <span class="date-info" th:text="${date}">23 August 2024</span></p>
+            <p> <img src="https://cdn.discordapp.com/attachments/1304001658937675776/1304003049252982825/prime_clock.png?ex=672dcefa&is=672c7d7a&hm=ba0dcd3be70b160b35c241e0f9af5c3b4738fedff347b86dff487b301b44cefb&" alt="time-icon" class="icon-time"><span class="date-info" th:text="${time}">10:00 - 16:00</span></p>
+        </div>
+        <p class="reservation-venue">Would like to reserve venues </p>
+        <strong th:text="${venue}">LX10 - 4, LX10 5</strong>
+        <div class="button-group">
+            <span>
+                <input type="hidden" th:name="id"/>
+                <button type="submit" class="button approve-button">Approve</button>
+            </span>
+            <span>
+                <input type="hidden" th:name="id"/>
+                <button type="submit" class="button reject-button">Reject</button>
+            </span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

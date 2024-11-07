@@ -6,6 +6,7 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 import org.thymeleaf.TemplateEngine
+import org.thymeleaf.context.Context
 
 @Service
 class MailService
@@ -20,7 +21,8 @@ class MailService
         fun sendEmail(
             to: String?,
             subject: String?,
-            message: String?,
+            template: String?,
+            context: Context?,
         ): String {
             try {
                 val mailMessage = javaMailSender!!.createMimeMessage()
@@ -30,8 +32,8 @@ class MailService
                 helper.setSubject(subject!!)
                 helper.setText("Hello", false)
 
-//            val htmlTemplate: String = templateEngine?.process(template, context) ?: ""
-//            helper.setText(htmlTemplate, true)
+                val htmlTemplate: String = templateEngine?.process(template, context) ?: ""
+                helper.setText(htmlTemplate, true)
 
                 //            FileSystemResource file = new FileSystemResource(new File(System.getProperty("user.home") + "/Pictures/Untitled.jpeg    "));
 //            helper.addAttachment(file.getFilename(), file);
