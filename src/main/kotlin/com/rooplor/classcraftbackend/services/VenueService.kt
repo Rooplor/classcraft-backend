@@ -1,11 +1,13 @@
 package com.rooplor.classcraftbackend.services
 
-import com.rooplor.classcraftbackend.dtos.ReservationDTO
+import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.entities.Venue
+import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.VenueRepository
 import com.rooplor.classcraftbackend.services.mail.MailService
 import lombok.AllArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.thymeleaf.context.Context
 
@@ -16,7 +18,12 @@ class VenueService
     constructor(
         private val venueRepository: VenueRepository,
         private val mailService: MailService,
+        private val authService: AuthService,
+        private val userService: UserService,
     ) {
+        @Value("\${staff.username}")
+        private val staffUsername: String? = null
+
         fun findAllVenue(): List<Venue> = venueRepository.findAll()
 
         fun insertVenue(addedVenue: Venue): Venue = venueRepository.insert(addedVenue)
@@ -25,45 +32,37 @@ class VenueService
 
         fun deleteClass(id: String) = venueRepository.deleteById(id)
 
-        fun reserveVenue(reservation: ReservationDTO) {
+        fun reserveVenue(
+            classroom: Classroom,
+            venueId: List<String>,
+        ) {
+            val username = authService.getAuthenticatedUser() ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
+            val user = userService.findByUsername(username)
+            val owner = userService.findUserById(classroom.owner).username
             val context = Context()
-            context.setVariable(
-                "username",
-                "Anutra",
-            )
-            context.setVariable(
-                "className",
-                "Astro 101",
-            )
-            context.setVariable("profilePicture", "https://media.stickerswiki.app/oneesanstickers117/6747778.512.webp")
-            context.setVariable(
-                "requestor",
-                "Naronkrach Tanajarusawas",
-            )
-            context.setVariable(
-                "description",
-                " สอนใช้ framework Astro ขั้นพื้นฐาน สอนใช้ framework Astro ขั้นพื้นฐานสอนใช้ framework Astro\n" +
-                    "            ขั้นพื้นฐานสอนใช้ framework Astro ขั้นพื้นฐานสอนใช้ framework Astro ขั้นพื้นฐานสอนใช้ framework Astro\n" +
-                    "            ขั้นพื้นฐาน",
-            )
-            context.setVariable(
-                "date",
-                "23 August 2024",
-            )
-            context.setVariable(
-                "time",
-                "10:00 - 12:00",
-            )
+            context.setVariable("username", staffUsername)
+            context.setVariable("className", classroom.title)
+            context.setVariable("profilePicture", user.profilePicture)
+            context.setVariable("requestor", user.username)
+            context.setVariable("owners", owner)
+            context.setVariable("description", classroom.details)
+            context.setVariable("date", classroom.date.map { it.toLocalDate().toString() })
+            context.setVariable("time", classroom.date.map { it.toLocalTime().toString() })
             context.setVariable(
                 "venue",
-                "LX10 - 4, LX10 - 5",
+                removeBucketFromArray(
+                    venueId
+                        .map { findVenueById(it).name }
+                        .toString(),
+                ),
             )
 
             mailService.sendEmail(
-                to = "c3bosskung@gmail.com",
-                subject = "Reservation",
+                subject = "[ClassCraft] Reservation venue for ${classroom.title} request from ${user.username}",
                 template = "reservation",
                 context = context,
             )
         }
+
+        private fun removeBucketFromArray(str: String) = str.replace("[", "").replace("]", "")
     }

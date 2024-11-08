@@ -119,7 +119,7 @@
         .icon-time {
             width: 20px;
             height: 20px;
-            margin: 0px 5px;
+            margin: 0px 3px;
             vertical-align: middle;
         }
     </style>
@@ -135,7 +135,7 @@
             <div class="class-info" th:text="${className}">Astro 101</div>
             <div>
                 <img th:src="${profilePicture}" alt="Profile Picture" class="profile-picture" />
-                <span class="user-info" th:text="${requestor}">Naronkrach Tanajarusawas</span>
+                <span class="user-info" th:text="${owners}">Naronkrach Tanajarusawas</span>
             </div>
             <p class="reservation-details" th:text="${description}">
                 สอนใช้ framework Astro ขั้นพื้นฐาน สอนใช้ framework Astro ขั้นพื้นฐานสอนใช้ framework Astro ขั้นพื้นฐานสอนใช้ framework Astro ขั้นพื้นฐานสอนใช้ framework Astro ขั้นพื้นฐานสอนใช้ framework Astro ขั้นพื้นฐาน
@@ -144,9 +144,9 @@
             </p>
 
             <div class="reservation-details">
-                <p> <img src="https://cdn.discordapp.com/attachments/1304001658937675776/1304001781814005780/date.png?ex=672dcdcb&is=672c7c4b&hm=5f02d1c9adde06041b446905347bd19c7b1e231acd2f804de02d2241cff3ae0f&" alt="data-icon" class="icon-date"> <span class="date-info"
+                <p> <img src="https://cdn.discordapp.com/attachments/1304001658937675776/1304001781814005780/date.png?ex=672fc80b&is=672e768b&hm=0ab018cd37d89ef95b34b2c6f57ea188f4edbbb3e5a75b5f5af3743bfef7ff0d&" alt="data-icon" class="icon-date"> <span class="date-info"
                         th:text="${date}">23 August 2024</span></p>
-                <p> <img src="https://cdn.discordapp.com/attachments/1304001658937675776/1304003049252982825/prime_clock.png?ex=672dcefa&is=672c7d7a&hm=ba0dcd3be70b160b35c241e0f9af5c3b4738fedff347b86dff487b301b44cefb&" alt="time-icon" class="icon-time">
+                <p> <img src="https://cdn.discordapp.com/attachments/1304001658937675776/1304003049252982825/prime_clock.png?ex=672fc93a&is=672e77ba&hm=3192188576d0cf2cd95e9b14ef7a4de9ee7144a118089b1d5a05d141bd91a904&" alt="time-icon" class="icon-time">
                     <span class="date-info" th:text="${time}">10:00 - 16:00</span>
                 </p>
             </div>

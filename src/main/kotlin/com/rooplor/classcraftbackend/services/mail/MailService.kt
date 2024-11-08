@@ -18,8 +18,10 @@ class MailService
         @Value("\${spring.mail.username}")
         private val from: String? = null
 
+        @Value("\${staff.email}")
+        private val to: String? = null
+
         fun sendEmail(
-            to: String?,
             subject: String?,
             template: String?,
             context: Context?,
