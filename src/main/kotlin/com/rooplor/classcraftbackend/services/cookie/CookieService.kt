@@ -2,10 +2,15 @@ package com.rooplor.classcraftbackend.services.cookie
 
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
+import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 
 @Service
-class CookieService {
+class CookieService(
+    private val environment: Environment,
+) {
+    val isCookieSecure: Boolean = environment.getProperty("cookie.secure")?.toBoolean() ?: true
+
     fun createCookie(
         name: String,
         value: String,
@@ -15,6 +20,7 @@ class CookieService {
         cookie.isHttpOnly = true
         cookie.path = "/"
         cookie.maxAge = maxAge
+        cookie.secure = isCookieSecure
         return cookie
     }
 
@@ -38,6 +44,7 @@ class CookieService {
         cookie.isHttpOnly = true
         cookie.path = "/"
         cookie.maxAge = 0
+        cookie.secure = isCookieSecure
         return cookie
     }
 }
