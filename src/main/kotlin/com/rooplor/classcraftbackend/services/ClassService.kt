@@ -30,6 +30,7 @@ class ClassService
             addedClassroom.isPublished = false
             addedClassroom.owner =
                 authService.getAuthenticatedUserDetails()?.id ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
+            addedClassroom.stepperStatus = 1
             return classRepository.insert(addedClassroom)
         }
 
@@ -118,13 +119,15 @@ class ClassService
 
         fun findClassByOwners(owners: List<String>): List<Classroom> = owners.flatMap { owner -> classRepository.findByOwner(owner) }
 
-        fun updateStepperStatus(id: String): Classroom {
+        fun updateStepperStatus(
+            id: String,
+            stepperStatus: Int,
+        ): Classroom {
             val classToUpdate = findClassById(id)
-            when (classToUpdate.stepperStatus) {
-                Status.FILL_CLASS_DETAIL -> classToUpdate.stepperStatus = Status.RESERVE_VENUE
-                Status.RESERVE_VENUE -> classToUpdate.stepperStatus = Status.CRAFT_CONTENT
-                Status.CRAFT_CONTENT -> classToUpdate.stepperStatus = Status.PREPARE_FOR_REG
-                else -> throw Exception("Invalid stepper status or this class is already completed")
+            if (Status.values().contains(Status.values().find { it.id == stepperStatus })) {
+                classToUpdate.stepperStatus = stepperStatus
+            } else {
+                throw IllegalArgumentException("Stepper status is not valid")
             }
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
