@@ -7,6 +7,7 @@ import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
+import com.rooplor.classcraftbackend.services.mail.MailService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -20,7 +21,8 @@ class ClassroomServiceTest {
     private val venueService: VenueService = Mockito.mock(VenueService::class.java)
     private val authService: AuthService = Mockito.mock(AuthService::class.java)
     private val userService: UserService = Mockito.mock(UserService::class.java)
-    private val classService: ClassService = ClassService(classRepository, venueService, authService, userService)
+    private val mailService: MailService = Mockito.mock(MailService::class.java)
+    private val classService: ClassService = ClassService(classRepository, venueService, authService, userService, mailService)
 
     @Test
     fun `should return all classes is published`() {
