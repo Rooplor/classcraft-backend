@@ -18,7 +18,7 @@ class CookieService(
     ): Cookie {
         val cookie = Cookie(name, value)
         cookie.isHttpOnly = true
-        cookie.path = "/"
+        cookie.path = if (isCookieSecure) "/kp2" else "/"
         cookie.maxAge = maxAge
         cookie.secure = isCookieSecure
         return cookie
@@ -42,7 +42,7 @@ class CookieService(
     fun deleteCookie(name: String): Cookie {
         val cookie = Cookie(name, "")
         cookie.isHttpOnly = true
-        cookie.path = "/"
+        cookie.path = if(isCookieSecure) "/kp2" else "/"
         cookie.maxAge = 0
         cookie.secure = isCookieSecure
         return cookie
