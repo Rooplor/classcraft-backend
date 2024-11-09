@@ -11,6 +11,13 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+
+    env:
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+      STAFF_EMAIL: ${{ secrets.STAFF_EMAIL }}
+      STAFF_USERNAME: ${{ secrets.STAFF_USERNAME }}
+
     steps:
       - name: checkout-code
         uses: actions/checkout@v3
