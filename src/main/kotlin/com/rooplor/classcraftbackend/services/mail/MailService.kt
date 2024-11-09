@@ -25,7 +25,7 @@ class MailService
             subject: String?,
             template: String?,
             context: Context?,
-        ): String {
+        ) {
             try {
                 val mailMessage = javaMailSender!!.createMimeMessage()
                 val helper = MimeMessageHelper(mailMessage, true)
@@ -36,13 +36,8 @@ class MailService
 
                 val htmlTemplate: String = templateEngine?.process(template, context) ?: ""
                 helper.setText(htmlTemplate, true)
-
-                //            FileSystemResource file = new FileSystemResource(new File(System.getProperty("user.home") + "/Pictures/Untitled.jpeg    "));
-//            helper.addAttachment(file.getFilename(), file);
                 javaMailSender.send(mailMessage)
-                return "Email sent successfully"
             } catch (e: Exception) {
-                println(e.message)
                 throw RuntimeException(e.message)
             }
         }
