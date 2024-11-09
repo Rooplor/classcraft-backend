@@ -15,7 +15,7 @@ jobs:
     env:
       MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
       MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
-      STAFF_EMAIL: ${{ secrets.STAFF_EMAIL }}
+      STAFF_EMAIL: ${{ secrets.STAFF_EMAIL_QA }}
       STAFF_USERNAME: ${{ secrets.STAFF_USERNAME }}
 
     steps:
