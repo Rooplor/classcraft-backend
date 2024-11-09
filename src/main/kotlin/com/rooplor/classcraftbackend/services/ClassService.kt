@@ -4,10 +4,13 @@ import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.enums.Status
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
+import com.rooplor.classcraftbackend.services.mail.MailService
 import com.rooplor.classcraftbackend.utils.JsonValid.isValidJson
 import lombok.AllArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import org.thymeleaf.context.Context
 import java.time.LocalDateTime
 
 @AllArgsConstructor
@@ -19,7 +22,11 @@ class ClassService
         private val venueService: VenueService,
         private val authService: AuthService,
         private val userService: UserService,
+        private val mailService: MailService,
     ) {
+        @Value("\${staff.username}")
+        private val staffUsername: String? = null
+
         fun findAllClassPublishedWithRegistrationCondition(registrationStatus: Boolean): List<Classroom> =
             classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(registrationStatus)
 
@@ -131,6 +138,40 @@ class ClassService
             }
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
+
+        fun reservationVenue(
+            classroom: Classroom,
+            venueId: List<String>,
+        ) {
+            val username = authService.getAuthenticatedUser() ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
+            val user = userService.findByUsername(username)
+            val owner = userService.findUserById(classroom.owner).username
+            val context = Context()
+            context.setVariable("username", staffUsername)
+            context.setVariable("className", classroom.title)
+            context.setVariable("profilePicture", user.profilePicture)
+            context.setVariable("requester", user.username)
+            context.setVariable("owners", owner)
+            context.setVariable("description", classroom.details)
+            context.setVariable("date", classroom.date.map { it.toLocalDate().toString() })
+            context.setVariable("time", classroom.date.map { it.toLocalTime().toString() })
+            context.setVariable(
+                "venue",
+                removeBucketFromArray(
+                    venueId
+                        .map { venueService.findVenueById(it).name }
+                        .toString(),
+                ),
+            )
+
+            mailService.sendEmail(
+                subject = "[ClassCraft] Reservation venue for ${classroom.title} request from ${user.username}",
+                template = "reservation", // reference to src/main/resources/templates/reservation.html
+                context = context,
+            )
+        }
+
+        private fun removeBucketFromArray(str: String) = str.replace("[", "").replace("]", "")
 
         private fun updateUpdatedWhen(classroom: Classroom): Classroom {
             classroom.updatedWhen = LocalDateTime.now()

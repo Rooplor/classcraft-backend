@@ -1,6 +1,7 @@
 package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
+import com.rooplor.classcraftbackend.dtos.ReservationDTO
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.services.ClassService
@@ -26,6 +27,7 @@ class ClassController
     constructor(
         val service: ClassService,
         val modelMapper: ModelMapper,
+        private val classService: ClassService,
     ) {
         @Operation(summary = "Get all classes with registration status and published status, or by owners if provided")
         @GetMapping("")
@@ -249,5 +251,17 @@ class ClassController
                 )
             } catch (e: Exception) {
                 ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
+
+        @PostMapping("/{id}/reservation")
+        fun reserveVenue(
+            @PathVariable id: String,
+            @RequestBody reservation: ReservationDTO,
+        ): ResponseEntity<Response<Boolean>> =
+            try {
+                classService.reservationVenue(classService.findClassById(id), reservation.venueId)
+                ResponseEntity.ok(Response(success = true, result = true, error = null))
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = false, error = e.message))
             }
     }
