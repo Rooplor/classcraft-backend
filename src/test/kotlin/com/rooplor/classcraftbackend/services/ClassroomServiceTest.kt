@@ -5,11 +5,11 @@ import com.rooplor.classcraftbackend.entities.User
 import com.rooplor.classcraftbackend.entities.Venue
 import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
-import com.rooplor.classcraftbackend.enums.Status
 import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.Optional
@@ -440,17 +440,41 @@ class ClassroomServiceTest {
                 format = Format.ONSITE,
                 capacity = 30,
                 date = listOf(),
-                stepperStatus = Status.FILL_CLASS_DETAIL,
+                stepperStatus = 1,
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
 
-        val fillCraftDetail = classService.updateStepperStatus(classId)
-        assertEquals(fillCraftDetail.stepperStatus, Status.RESERVE_VENUE)
-        val reserveVenue = classService.updateStepperStatus(classId)
-        assertEquals(reserveVenue.stepperStatus, Status.CRAFT_CONTENT)
-        val craftContent = classService.updateStepperStatus(classId)
-        assertEquals(craftContent.stepperStatus, Status.PREPARE_FOR_REG)
+        val fillCraftDetail = classService.updateStepperStatus(classId, 2)
+        assertEquals(fillCraftDetail.stepperStatus, 2)
+        val reserveVenue = classService.updateStepperStatus(classId, 3)
+        assertEquals(reserveVenue.stepperStatus, 3)
+        val craftContent = classService.updateStepperStatus(classId, 4)
+        assertEquals(craftContent.stepperStatus, 4)
+    }
+
+    @Test
+    fun `should throw error when update stepper status of a class with unsupport id`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                date = listOf(),
+                stepperStatus = 1,
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+
+        assertThrows<Exception> {
+            classService.updateStepperStatus(classId, 5)
+        }
     }
 
     @Test

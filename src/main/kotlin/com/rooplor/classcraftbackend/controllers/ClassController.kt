@@ -236,13 +236,14 @@ class ClassController
         @PatchMapping("/{id}/stepper-status")
         fun updateClassroomStepperStatus(
             @PathVariable id: String,
+            @RequestParam(name = "status", required = false) stepperStatus: Int,
         ): ResponseEntity<Response<Classroom>> =
             try {
                 ResponseEntity.ok(
                     Response(
                         success = true,
                         result =
-                            service.updateStepperStatus(id),
+                            service.updateStepperStatus(id, stepperStatus),
                         error = null,
                     ),
                 )

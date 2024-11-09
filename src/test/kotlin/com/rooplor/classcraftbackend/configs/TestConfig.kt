@@ -20,5 +20,8 @@ class TestConfig {
     }
 
     @Bean
-    fun cookieService(): CookieService = CookieService()
+    fun cookieService(): CookieService =
+        CookieService(
+            MockEnvironment().withProperty("cookie.secure", "false"),
+        )
 }

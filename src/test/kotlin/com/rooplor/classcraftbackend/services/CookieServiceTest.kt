@@ -7,9 +7,13 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
+import org.springframework.mock.env.MockEnvironment
 
 class CookieServiceTest {
-    private val cookieService = CookieService()
+    private val cookieService =
+        CookieService(
+            MockEnvironment().withProperty("cookie.secure", "false"),
+        )
 
     @Test
     fun `createCookie should return a cookie with correct properties`() {
