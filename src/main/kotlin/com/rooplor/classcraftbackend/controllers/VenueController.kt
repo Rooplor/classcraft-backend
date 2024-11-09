@@ -1,6 +1,5 @@
 package com.rooplor.classcraftbackend.controllers
 
-import com.rooplor.classcraftbackend.dtos.ReservationDTO
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.entities.Venue
 import com.rooplor.classcraftbackend.services.ClassService
@@ -55,18 +54,6 @@ class VenueController
                 venueService.deleteClass(id)
                 ResponseEntity.ok(Response(success = true, result = true, error = null))
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = false, error = e.message))
-            }
-
-        @PostMapping("/reservation")
-        fun reserveVenue(
-            @RequestBody reservation: ReservationDTO,
-        ): ResponseEntity<Response<Boolean>> =
-            try {
-                venueService.reserveVenue(classService.findClassById(reservation.classId), reservation.venueId)
-                ResponseEntity.ok(Response(success = true, result = true, error = null))
-            } catch (e: Exception) {
-                println(e)
                 ResponseEntity.badRequest().body(Response(success = false, result = false, error = e.message))
             }
     }
