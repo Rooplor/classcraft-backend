@@ -253,6 +253,7 @@ class ClassController
                 ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
             }
 
+        @Operation(summary = "Reserve a venue for a class")
         @PostMapping("/{id}/reservation")
         fun reserveVenue(
             @PathVariable id: String,
