@@ -2,7 +2,6 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.entities.Venue
-import com.rooplor.classcraftbackend.services.ClassService
 import com.rooplor.classcraftbackend.services.VenueService
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,7 +20,6 @@ class VenueController
     @Autowired
     constructor(
         val venueService: VenueService,
-        val classService: ClassService,
     ) {
         @Operation(summary = "Get all venues")
         @GetMapping("")
