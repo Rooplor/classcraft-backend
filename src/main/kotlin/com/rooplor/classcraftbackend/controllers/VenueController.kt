@@ -43,6 +43,19 @@ class VenueController
                 ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
             }
 
+        @Operation(summary = "Update venue by id")
+        @PostMapping("/{id}")
+        fun updateVenue(
+            @PathVariable id: String,
+            @RequestBody updatedVenue: Venue,
+        ): ResponseEntity<Response<Venue>> =
+            try {
+                val venue = service.updateVenue(id, updatedVenue)
+                ResponseEntity.ok(Response(success = true, result = venue, error = null))
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
+
         @Operation(summary = "Remove venue by id")
         @DeleteMapping("/{id}")
         fun removeVenueById(
