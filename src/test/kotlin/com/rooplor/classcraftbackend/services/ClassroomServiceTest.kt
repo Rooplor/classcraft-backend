@@ -11,9 +11,16 @@ import com.rooplor.classcraftbackend.services.mail.MailService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import org.springframework.boot.test.context.SpringBootTest
+import org.thymeleaf.context.Context
+import java.time.LocalDateTime
 import java.util.Optional
+import kotlin.test.assertFailsWith
 
 @SpringBootTest
 class ClassroomServiceTest {
@@ -510,5 +517,60 @@ class ClassroomServiceTest {
 
         val result = classService.findAllClassPublished()
         assertEquals(classrooms, result)
+    }
+
+    @Test
+    fun `should send reservation email successfully`() {
+        // Arrange
+        val venueIds = listOf("1", "2")
+        val staffUsername = "testUser"
+
+        val classroom =
+            Classroom(
+                owner = "1",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                date = listOf(LocalDateTime.of(2024, 10, 1, 10, 0), LocalDateTime.of(2024, 10, 2, 10, 0)),
+            )
+        val user = User(username = "testUser", profilePicture = "profile.jpg")
+        val venue = Venue(name = "LX10 - 4")
+
+        `when`(authService.getAuthenticatedUser()).thenReturn(staffUsername)
+        `when`(userService.findByUsername(staffUsername)).thenReturn(user)
+        `when`(userService.findUserById(classroom.owner)).thenReturn(User(username = "ownerUsername"))
+        `when`(venueService.findVenueById("1")).thenReturn(venue)
+        `when`(venueService.findVenueById("2")).thenReturn(venue)
+
+        // Act
+        classService.reservationVenue(classroom, venueIds)
+
+        // Assert
+        verify(authService).getAuthenticatedUser()
+        verify(userService).findByUsername(staffUsername)
+        verify(userService).findUserById(classroom.owner)
+        verify(venueService).findVenueById("1")
+        verify(venueService).findVenueById("2")
+        verify(mailService).sendEmail(
+            subject = eq("[ClassCraft] Reservation venue for ${classroom.title} request from ${user.username}"),
+            template = eq("reservation"),
+            context = any(Context::class.java),
+        )
+    }
+
+    @Test
+    fun `should throw exception when user is not authenticated`() {
+        `when`(authService.getAuthenticatedUser()).thenReturn(null)
+
+        val classroom =
+            Classroom(
+                owner = "1",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                date = listOf(LocalDateTime.of(2024, 10, 1, 10, 0), LocalDateTime.of(2024, 10, 2, 10, 0)),
+            )
+
+        assertFailsWith<Exception> {
+            classService.reservationVenue(classroom, listOf("1", "2"))
+        }
     }
 }

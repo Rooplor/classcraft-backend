@@ -11,6 +11,7 @@ import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.services.ClassService
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.Mockito.*
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -495,5 +496,31 @@ class ClassroomControllerTest {
         mockMvc
             .perform(patch("/api/class/$classId/stepper-status?status=5"))
             .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `should reserve venue successfully`() {
+        val classId = "1"
+        val classroom = Classroom()
+        val venueIds = listOf("1", "2")
+        val requestJson =
+            """
+            {
+               "venueId": ["1", "2"]
+            }
+            """.trimIndent()
+
+        `when`(classService.findClassById(classId)).thenReturn(classroom)
+        doNothing().`when`(classService).reservationVenue(classroom, venueIds)
+
+        // Act & Assert
+        mockMvc
+            .perform(
+                post("/api/class/$classId/reservation")
+                    .contentType("application/json")
+                    .content(requestJson),
+            ).andExpect(status().isOk)
+
+        verify(classService).reservationVenue(classroom, venueIds)
     }
 }
