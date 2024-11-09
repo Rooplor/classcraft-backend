@@ -2,6 +2,7 @@ package com.rooplor.classcraftbackend.services
 
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.enums.Status
+import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import com.rooplor.classcraftbackend.services.mail.MailService
@@ -71,10 +72,10 @@ class ClassService
 
         fun updateVenueClass(
             id: String,
-            venueId: String,
+            venueId: List<String>,
         ): Classroom {
             val classToUpdate = findClassById(id)
-            classToUpdate.venue = venueService.findVenueById(venueId)
+            classToUpdate.venue = venueId.map { venueService.findVenueById(it) }
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
@@ -111,6 +112,19 @@ class ClassService
         fun toggleRegistrationStatus(id: String): Classroom {
             val classToUpdate = findClassById(id)
             classToUpdate.registrationStatus = !classToUpdate.registrationStatus!!
+            return classRepository.save(updateUpdatedWhen(classToUpdate))
+        }
+
+        fun updateVenueStatus(
+            id: String,
+            venueStatus: Int,
+        ): Classroom {
+            val classToUpdate = findClassById(id)
+            if (VenueStatus.values().contains(VenueStatus.values().find { it.id == venueStatus })) {
+                classToUpdate.venueStatus = VenueStatus.values().find { it.id == venueStatus }?.id
+            } else {
+                throw IllegalArgumentException("Venue status is not valid")
+            }
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 

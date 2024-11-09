@@ -108,7 +108,7 @@ class ClassController
         @PatchMapping("/{id}/venue/{venueId}")
         fun updateVenueClass(
             @PathVariable id: String,
-            @PathVariable venueId: String,
+            @PathVariable venueId: List<String>,
         ): ResponseEntity<Response<Classroom>> =
             try {
                 ResponseEntity.ok(
@@ -264,5 +264,24 @@ class ClassController
                 ResponseEntity.ok(Response(success = true, result = true, error = null))
             } catch (e: Exception) {
                 ResponseEntity.badRequest().body(Response(success = false, result = false, error = e.message))
+            }
+
+        @Operation(summary = "Update venue status of a class")
+        @PatchMapping("/{id}/venue-status")
+        fun updateVenueStatus(
+            @PathVariable id: String,
+            @RequestParam(name = "status", required = false) venueStatus: Int,
+        ): ResponseEntity<Response<Classroom>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            service.updateVenueStatus(id, venueStatus),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
             }
     }
