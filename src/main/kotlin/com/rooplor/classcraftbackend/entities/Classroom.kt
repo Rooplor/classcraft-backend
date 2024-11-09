@@ -27,7 +27,7 @@ data class Classroom(
     var registrationUrl: String? = null,
     var registrationStatus: Boolean? = null,
     var isPublished: Boolean? = null,
-    var venueStatus: VenueStatus? = VenueStatus.PENDING,
+    var venueStatus: Int? = VenueStatus.PENDING.id,
     var instructorName: String = "",
     var instructorBio: String = "",
     var instructorAvatar: String = "",
@@ -36,7 +36,7 @@ data class Classroom(
     var createdWhen: LocalDateTime = LocalDateTime.now(),
     var updatedWhen: LocalDateTime = LocalDateTime.now(),
     @DBRef
-    var venue: Venue? = null,
+    var venue: List<Venue>? = null,
     var owner: String = "",
     var coOwners: List<String>? = emptyList(),
 )

@@ -5,7 +5,6 @@ import com.rooplor.classcraftbackend.entities.User
 import com.rooplor.classcraftbackend.entities.Venue
 import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
-import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import com.rooplor.classcraftbackend.services.mail.MailService
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -204,9 +203,11 @@ class ClassroomServiceTest {
     fun `should update venue of a class`() {
         val classId = "1"
         val venues =
-            Venue(
-                id = "1",
-                name = "TRAIN_3",
+            listOf(
+                Venue(
+                    id = "1",
+                    name = "TRAIN_3",
+                ),
             )
         val classroomObj =
             Classroom(
@@ -220,12 +221,12 @@ class ClassroomServiceTest {
                 capacity = 30,
                 date = listOf(),
                 venue = venues,
-                venueStatus = VenueStatus.PENDING,
+                venueStatus = 1,
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
 
-        val result = classService.updateVenueClass(classId, "1")
+        val result = classService.updateVenueClass(classId, listOf("1", "2"))
         assertEquals(classroomObj, result)
     }
 
@@ -571,6 +572,55 @@ class ClassroomServiceTest {
 
         assertFailsWith<Exception> {
             classService.reservationVenue(classroom, listOf("1", "2"))
+        }
+    }
+
+    @Test
+    fun `should update venue status of a class`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                date = listOf(),
+                venueStatus = 1,
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+
+        val fillCraftDetail = classService.updateVenueStatus(classId, 2)
+        assertEquals(fillCraftDetail.venueStatus, 2)
+        val reserveVenue = classService.updateVenueStatus(classId, 3)
+        assertEquals(reserveVenue.venueStatus, 3)
+    }
+
+    @Test
+    fun `should throw error when update venue status of a class with unsupport id`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                date = listOf(),
+                venueStatus = 1,
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+
+        assertThrows<Exception> {
+            classService.updateVenueStatus(classId, 4)
         }
     }
 }

@@ -232,9 +232,15 @@ class ClassroomControllerTest {
     fun `should update venue of a class`() {
         val classId = "1"
         val venues =
-            Venue(
-                id = "1",
-                name = "TRAIN_3",
+            listOf(
+                Venue(
+                    id = "1",
+                    name = "Venue 1",
+                ),
+                Venue(
+                    id = "2",
+                    name = "Venue 2",
+                ),
             )
         val classroomObj =
             Classroom(
@@ -248,13 +254,13 @@ class ClassroomControllerTest {
                 capacity = 30,
                 date = listOf(),
                 venue = venues,
-                venueStatus = VenueStatus.PENDING,
+                venueStatus = VenueStatus.PENDING.id,
             )
-        Mockito.`when`(classService.updateVenueClass(classId, "1")).thenReturn(classroomObj)
+        Mockito.`when`(classService.updateVenueClass(classId, listOf("1", "2"))).thenReturn(classroomObj)
 
         mockMvc
             .perform(
-                patch("/api/class/$classId/venue/1"),
+                patch("/api/class/$classId/venue/1,2"),
             ).andExpect(status().isOk)
     }
 
