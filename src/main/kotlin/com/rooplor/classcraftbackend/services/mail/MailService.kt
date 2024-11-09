@@ -32,7 +32,6 @@ class MailService
                 helper.setFrom(from!!)
                 helper.setTo(to!!)
                 helper.setSubject(subject!!)
-                helper.setText("Hello", false)
 
                 val htmlTemplate: String = templateEngine?.process(template, context) ?: ""
                 helper.setText(htmlTemplate, true)
