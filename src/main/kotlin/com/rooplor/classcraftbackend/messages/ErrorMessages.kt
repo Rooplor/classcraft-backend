@@ -16,4 +16,9 @@ object ErrorMessages {
     const val USER_WITH_USERNAME_ALREADY_EXISTS = "User with username $0 already exists"
     const val USER_CANNOT_DELETE_OWN_ACCOUNT = "User cannot delete own account"
     const val USER_WITH_ID_DOSE_NOT_EXIST = "User with id $0 does not exist"
+
+    // form error messages
+    const val FORM_NOT_FOUND = "Form not found"
+    const val MISSING_REQUIRED_FIELDS = "Missing required fields: $0"
+    const val ANSWER_NOT_FOUND = "Answer not found"
 }
