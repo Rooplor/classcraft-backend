@@ -7,6 +7,8 @@ import com.rooplor.classcraftbackend.helpers.FormHelper
 import com.rooplor.classcraftbackend.services.FormService
 import com.rooplor.classcraftbackend.services.FormSubmissionService
 import io.swagger.v3.oas.annotations.Operation
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -126,6 +128,23 @@ class FormController(
             return ResponseEntity.ok(Response(success = true, result = submissions, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+        }
+    }
+
+    @Operation(summary = "Generate CSV from form")
+    @GetMapping("/{id}/csv")
+    fun generateCsvFromForm(
+        @PathVariable id: String,
+    ): ResponseEntity<ByteArray> {
+        val csv = formSubmissionService.generateCsvFromForm(id)
+        return try {
+            ResponseEntity
+                .ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"form_$id.csv\"")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(csv.toByteArray())
+        } catch (e: Exception) {
+            ResponseEntity.badRequest().body(ByteArray(0))
         }
     }
 }

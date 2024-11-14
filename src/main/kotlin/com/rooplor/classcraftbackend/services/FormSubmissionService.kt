@@ -1,10 +1,12 @@
 package com.rooplor.classcraftbackend.services
 
+import com.opencsv.CSVWriter
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.FormRepository
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
 import org.springframework.stereotype.Service
+import java.io.StringWriter
 
 @Service
 class FormSubmissionService(
@@ -31,4 +33,24 @@ class FormSubmissionService(
         })
 
     fun getFormSubmissionsByClassroomId(classroomId: String): List<FormSubmission> = formSubmissionRepository.findByClassroomId(classroomId)
+
+    fun generateCsvFromForm(classroomId: String): String {
+        val submission = getFormSubmissionsByClassroomId(classroomId)
+        val writer = StringWriter()
+        val csvWriter = CSVWriter(writer)
+        // Add csv header
+        val header =
+            submission
+                .first()
+                .responses.keys
+                .toTypedArray()
+        csvWriter.writeNext(header)
+        // Add csv data
+        submission.forEach {
+            val data = it.responses.values.toTypedArray()
+            csvWriter.writeNext(data.map { it.toString() }.toTypedArray())
+        }
+        csvWriter.close()
+        return writer.toString()
+    }
 }
