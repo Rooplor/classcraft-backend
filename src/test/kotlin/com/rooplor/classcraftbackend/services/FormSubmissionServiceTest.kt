@@ -3,6 +3,7 @@ package com.rooplor.classcraftbackend.services
 import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.entities.FormField
 import com.rooplor.classcraftbackend.entities.FormSubmission
+import com.rooplor.classcraftbackend.entities.User
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -18,7 +19,8 @@ import java.util.Optional
 class FormSubmissionServiceTest {
     private val formSubmissionRepository = mock(FormSubmissionRepository::class.java)
     private val formService = mock(FormService::class.java)
-    private val formSubmissionService = FormSubmissionService(formSubmissionRepository, formService)
+    private val authService = mock(AuthService::class.java)
+    private val formSubmissionService = FormSubmissionService(formSubmissionRepository, formService, authService)
 
     @Test
     fun `submitForm should save and return form submission`() {
@@ -46,6 +48,9 @@ class FormSubmissionServiceTest {
 
         `when`(formService.findByClassroomId("class1")).thenReturn(form)
         `when`(formSubmissionRepository.save(formSubmission)).thenReturn(formSubmission)
+        `when`(
+            authService.getAuthenticatedUserDetails(),
+        ).thenReturn(User(id = "owner1", username = "owner1", email = "owner1@mail.com", profilePicture = null))
 
         val result = formSubmissionService.submitForm(formSubmission)
 
@@ -78,6 +83,9 @@ class FormSubmissionServiceTest {
             )
 
         `when`(formService.findByClassroomId("class1")).thenReturn(form)
+        `when`(
+            authService.getAuthenticatedUserDetails(),
+        ).thenReturn(User(id = "owner1", username = "owner1", email = "owner1@mail.com", profilePicture = null))
 
         val exception = assertThrows<Exception> { formSubmissionService.submitForm(formSubmission) }
 

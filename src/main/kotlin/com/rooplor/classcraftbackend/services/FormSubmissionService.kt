@@ -11,10 +11,16 @@ import java.io.StringWriter
 class FormSubmissionService(
     private val formSubmissionRepository: FormSubmissionRepository,
     private val formService: FormService,
+    private val authService: AuthService,
 ) {
     fun submitForm(formSubmission: FormSubmission): FormSubmission {
+        val userId = authService.getAuthenticatedUserDetails()?.id ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
+        val existingSubmission = formSubmissionRepository.findByFormIdAndSubmittedBy(formSubmission.formId, userId)
+        if (existingSubmission != null) {
+            throw Exception(ErrorMessages.ANSWER_ALREADY_SUBMITTED)
+        }
+        formSubmission.submittedBy = userId
         val form = formService.findByClassroomId(formSubmission.classroomId)
-
         val allQuestion = form.fields.toSet()
         val expectedQuestions = allQuestion.filter { it.required }.map { it.name }.toSet()
         val submissionForm = formSubmission.responses.map { it.key }.toSet()

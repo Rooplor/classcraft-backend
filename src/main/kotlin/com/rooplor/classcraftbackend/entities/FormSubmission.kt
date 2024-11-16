@@ -6,8 +6,9 @@ import org.springframework.data.mongodb.core.mapping.Document
 @Document(collection = "formSubmissions")
 data class FormSubmission(
     @Id
-    val id: String? = null,
-    val formId: String,
-    val classroomId: String,
-    val responses: Map<String, Any>,
+    var id: String? = null,
+    var formId: String,
+    var classroomId: String,
+    var responses: Map<String, Any>,
+    var submittedBy: String? = null,
 )

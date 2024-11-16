@@ -22,4 +22,5 @@ object ErrorMessages {
     const val MISSING_REQUIRED_FIELDS = "Missing required fields: $0"
     const val ANSWER_NOT_FOUND = "Answer not found"
     const val FIELD_VALIDATE_FAIL = "Field '$0' does not match the validation pattern."
+    const val ANSWER_ALREADY_SUBMITTED = "Answer already submitted"
 }

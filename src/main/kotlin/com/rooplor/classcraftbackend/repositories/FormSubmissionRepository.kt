@@ -7,4 +7,9 @@ import org.springframework.stereotype.Repository
 @Repository
 interface FormSubmissionRepository : MongoRepository<FormSubmission, String> {
     fun findByClassroomId(classroomId: String): List<FormSubmission>
+
+    fun findByFormIdAndSubmittedBy(
+        formId: String,
+        submittedBy: String,
+    ): FormSubmission?
 }
