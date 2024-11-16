@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 data class FormSubmission(
     @Id
     val id: String? = null,
-    val formId: String = "",
-    val classroomId: String = "",
-    val responses: Map<String, Any> = emptyMap(),
+    val formId: String,
+    val classroomId: String,
+    val responses: Map<String, Any>,
 )

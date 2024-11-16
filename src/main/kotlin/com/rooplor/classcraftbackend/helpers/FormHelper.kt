@@ -21,9 +21,6 @@ class FormHelper {
         if (field.type.isBlank()) {
             errors.add("Field type is mandatory")
         }
-        if (field.required == null) {
-            errors.add("Field required is mandatory")
-        }
 
         return errors
     }
@@ -39,12 +36,6 @@ class FormHelper {
         }
         if (form.description.isBlank()) {
             errors.add("Description is mandatory")
-        }
-        if (form.openDate.isBlank()) {
-            errors.add("Open date is mandatory")
-        }
-        if (form.closeDate.isBlank()) {
-            errors.add("Close date is mandatory")
         }
         if (form.fields.isEmpty()) {
             errors.add("Fields are mandatory")

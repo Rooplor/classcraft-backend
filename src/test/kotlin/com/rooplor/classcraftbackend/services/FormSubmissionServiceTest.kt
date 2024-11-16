@@ -1,0 +1,174 @@
+package com.rooplor.classcraftbackend.services
+
+import com.rooplor.classcraftbackend.entities.Form
+import com.rooplor.classcraftbackend.entities.FormField
+import com.rooplor.classcraftbackend.entities.FormSubmission
+import com.rooplor.classcraftbackend.messages.ErrorMessages
+import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
+import java.time.LocalDateTime
+import java.util.Optional
+
+class FormSubmissionServiceTest {
+    private val formSubmissionRepository = mock(FormSubmissionRepository::class.java)
+    private val formService = mock(FormService::class.java)
+    private val formSubmissionService = FormSubmissionService(formSubmissionRepository, formService)
+
+    @Test
+    fun `submitForm should save and return form submission`() {
+        val form =
+            Form(
+                id = "1",
+                classroomId = "class1",
+                title = "Test Form 1",
+                description = "Test form description",
+                openDate = LocalDateTime.of(2021, 9, 1, 0, 0),
+                closeDate = LocalDateTime.of(2021, 9, 30, 0, 0),
+                fields =
+                    listOf(
+                        FormField(name = "email", type = "text", required = true, validation = null, options = null),
+                        FormField(name = "phone", type = "text", required = false, validation = null, options = null),
+                    ),
+            )
+        val formSubmission =
+            FormSubmission(
+                id = "1",
+                formId = "form1",
+                classroomId = "class1",
+                responses = mapOf("email" to "test@example.com"),
+            )
+
+        `when`(formService.findByClassroomId("class1")).thenReturn(form)
+        `when`(formSubmissionRepository.save(formSubmission)).thenReturn(formSubmission)
+
+        val result = formSubmissionService.submitForm(formSubmission)
+
+        assertEquals(formSubmission, result)
+        verify(formSubmissionRepository, times(1)).save(formSubmission)
+    }
+
+    @Test
+    fun `submitForm should throw exception when required fields are missing`() {
+        val form =
+            Form(
+                id = "1",
+                classroomId = "class1",
+                title = "Test Form 1",
+                description = "Test form description",
+                openDate = LocalDateTime.of(2021, 9, 1, 0, 0),
+                closeDate = LocalDateTime.of(2021, 9, 30, 0, 0),
+                fields =
+                    listOf(
+                        FormField(name = "email", type = "text", required = true, validation = null, options = null),
+                        FormField(name = "phone", type = "text", required = true, validation = null, options = null),
+                    ),
+            )
+        val formSubmission =
+            FormSubmission(
+                id = "1",
+                formId = "form1",
+                classroomId = "class1",
+                responses = mapOf("email" to "test@example.com"),
+            )
+
+        `when`(formService.findByClassroomId("class1")).thenReturn(form)
+
+        val exception = assertThrows<Exception> { formSubmissionService.submitForm(formSubmission) }
+
+        assertEquals(ErrorMessages.MISSING_REQUIRED_FIELDS.replace("$0", "phone"), exception.message)
+    }
+
+    @Test
+    fun `getFormSubmissionsById should return form submission when found`() {
+        val formSubmission =
+            FormSubmission(
+                id = "1",
+                formId = "form1",
+                classroomId = "class1",
+                responses = mapOf("email" to "test@example.com"),
+            )
+
+        `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.of(formSubmission))
+
+        val result = formSubmissionService.getFormSubmissionsById("1")
+
+        assertEquals(formSubmission, result)
+        verify(formSubmissionRepository, times(1)).findById("1")
+    }
+
+    @Test
+    fun `getFormSubmissionsById should throw exception when not found`() {
+        `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.empty())
+
+        val exception = assertThrows<Exception> { formSubmissionService.getFormSubmissionsById("1") }
+
+        assertEquals(ErrorMessages.ANSWER_NOT_FOUND, exception.message)
+    }
+
+    @Test
+    fun `getFormSubmissionsByClassroomId should return list of form submissions`() {
+        val formSubmissions =
+            listOf(
+                FormSubmission(
+                    id = "1",
+                    formId = "form1",
+                    classroomId = "class1",
+                    responses = mapOf("email" to "test@example.com"),
+                ),
+                FormSubmission(
+                    id = "2",
+                    formId = "form2",
+                    classroomId = "class1",
+                    responses = mapOf("phone" to "1234567890"),
+                ),
+            )
+
+        `when`(formSubmissionRepository.findByClassroomId("class1")).thenReturn(formSubmissions)
+
+        val result = formSubmissionService.getFormSubmissionsByClassroomId("class1")
+
+        assertEquals(formSubmissions, result)
+        verify(formSubmissionRepository, times(1)).findByClassroomId("class1")
+    }
+
+    @Test
+    fun `generateCsvFromForm should return CSV string`() {
+        val form =
+            Form(
+                id = "1",
+                classroomId = "class1",
+                title = "Test Form 1",
+                description = "Test form description",
+                openDate = LocalDateTime.of(2021, 9, 1, 0, 0),
+                closeDate = LocalDateTime.of(2021, 9, 30, 0, 0),
+                fields =
+                    listOf(
+                        FormField(name = "email", type = "text", required = true, validation = null, options = null),
+                        FormField(name = "phone", type = "text", required = false, validation = null, options = null),
+                    ),
+            )
+        val formSubmissions =
+            listOf(
+                FormSubmission(
+                    id = "1",
+                    formId = "form1",
+                    classroomId = "class1",
+                    responses = mapOf("email" to "test@example.com", "phone" to "1234567890"),
+                ),
+            )
+
+        `when`(formService.findByClassroomId("class1")).thenReturn(form)
+        `when`(formSubmissionService.getFormSubmissionsByClassroomId("class1")).thenReturn(formSubmissions)
+
+        val result = formSubmissionService.generateCsvFromForm("class1")
+
+        val expectedCsv = "\"No.\",\"email\",\"phone\"\n\"1\",\"test@example.com\",\"1234567890\"\n"
+        assertEquals(expectedCsv, result)
+    }
+}
