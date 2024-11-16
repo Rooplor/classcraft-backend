@@ -81,8 +81,18 @@ class FormControllerTest {
                 post("/api/form")
                     .contentType("application/json")
                     .content(
-                        """{"classroomId":"class1","title":"Test Form","description":"Description","openDate":"2024-09-01T00:00:00.0000Z","closeDate":"2024-09-30T00:00:00.0000Z","fields":[]}"""
-                            .trimIndent(),
+                        """
+                        {
+                           "classroomId":"class1",
+                           "title":"Test Form",
+                           "description":"Description",
+                           "openDate":"2024-09-01T00:00:00.0000Z",
+                           "closeDate":"2024-09-30T00:00:00.0000Z",
+                           "fields":[
+                              
+                           ]
+                        }
+                        """.trimIndent(),
                     ),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
@@ -119,7 +129,18 @@ class FormControllerTest {
                 put("/api/form/1")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
-                        """{"classroomId":"class1","title":"Updated Form","description":"Updated Description","openDate":"2024-09-01T00:00:00.0000Z","closeDate":"2024-09-30T00:00:00.0000Z","fields":[]}""",
+                        """
+                        {
+                           "classroomId":"class1",
+                           "title":"Updated Form",
+                           "description":"Updated Description",
+                           "openDate":"2024-09-01T00:00:00.0000Z",
+                           "closeDate":"2024-09-30T00:00:00.0000Z",
+                           "fields":[
+                              
+                           ]
+                        }
+                        """,
                     ),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
