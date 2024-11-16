@@ -21,4 +21,5 @@ object ErrorMessages {
     const val FORM_NOT_FOUND = "Form not found"
     const val MISSING_REQUIRED_FIELDS = "Missing required fields: $0"
     const val ANSWER_NOT_FOUND = "Answer not found"
+    const val FIELD_VALIDATE_FAIL = "Field '$0' does not match the validation pattern."
 }

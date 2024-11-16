@@ -1,5 +1,7 @@
 package com.rooplor.classcraftbackend.controllers
 
+import com.rooplor.classcraftbackend.dtos.FormCreateDTO
+import com.rooplor.classcraftbackend.dtos.FormSubmissionDTO
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.entities.FormSubmission
@@ -7,6 +9,7 @@ import com.rooplor.classcraftbackend.helpers.FormHelper
 import com.rooplor.classcraftbackend.services.FormService
 import com.rooplor.classcraftbackend.services.FormSubmissionService
 import io.swagger.v3.oas.annotations.Operation
+import org.modelmapper.ModelMapper
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -24,14 +28,21 @@ class FormController(
     private val formService: FormService,
     private val formSubmissionService: FormSubmissionService,
     private val formHelper: FormHelper,
+    private val modelMapper: ModelMapper,
 ) {
     @Operation(summary = "Create a form")
     @PostMapping("")
     fun createForm(
-        @RequestBody form: Form,
+        @RequestBody form: FormCreateDTO,
     ): ResponseEntity<Response<Form>> {
         try {
-            val createdForm = formService.createForm(form)
+            val error = formHelper.validateForm(form)
+            if (error.isNotEmpty()) {
+                return ResponseEntity.badRequest().body(
+                    Response(success = false, result = null, error = error.joinToString(", ")),
+                )
+            }
+            val createdForm = formService.createForm(modelMapper.map(form, Form::class.java))
             return ResponseEntity.ok(Response(success = true, result = createdForm, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
@@ -39,13 +50,23 @@ class FormController(
     }
 
     @Operation(summary = "Update a form")
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     fun updateForm(
-        @RequestBody form: Form,
+        @RequestBody form: FormCreateDTO,
         @PathVariable id: String,
     ): ResponseEntity<Response<Form>> {
         try {
-            val updatedForm = formService.updateForm(id, form)
+            val error = formHelper.validateForm(form)
+            if (error.isNotEmpty()) {
+                return ResponseEntity.badRequest().body(
+                    Response(
+                        success = false,
+                        result = null,
+                        error = error.joinToString(", "),
+                    ),
+                )
+            }
+            val updatedForm = formService.updateForm(id, modelMapper.map(form, Form::class.java))
             return ResponseEntity.ok(Response(success = true, result = updatedForm, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
@@ -95,10 +116,10 @@ class FormController(
     @Operation(summary = "Submit a form")
     @PostMapping("/{id}/submit")
     fun submitForm(
-        @RequestBody formSubmission: FormSubmission,
+        @RequestBody formSubmission: FormSubmissionDTO,
     ): ResponseEntity<Response<FormSubmission>> {
         try {
-            val submittedForm = formSubmissionService.submitForm(formSubmission)
+            val submittedForm = formSubmissionService.submitForm(modelMapper.map(formSubmission, FormSubmission::class.java))
             return ResponseEntity.ok(Response(success = true, result = submittedForm, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))

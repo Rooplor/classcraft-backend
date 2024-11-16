@@ -3,7 +3,6 @@ package com.rooplor.classcraftbackend.services
 import com.opencsv.CSVWriter
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.messages.ErrorMessages
-import com.rooplor.classcraftbackend.repositories.FormRepository
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
 import org.springframework.stereotype.Service
 import java.io.StringWriter
@@ -11,10 +10,10 @@ import java.io.StringWriter
 @Service
 class FormSubmissionService(
     private val formSubmissionRepository: FormSubmissionRepository,
-    private val formRepository: FormRepository,
+    private val formService: FormService,
 ) {
     fun submitForm(formSubmission: FormSubmission): FormSubmission {
-        val form = formRepository.findByClassroomId(formSubmission.classroomId) ?: throw Exception("something went wrong")
+        val form = formService.findByClassroomId(formSubmission.classroomId)
 
         val allQuestion = form.fields.toSet()
         val expectedQuestions = allQuestion.filter { it.required }.map { it.name }.toSet()
@@ -22,6 +21,16 @@ class FormSubmissionService(
         val diff = expectedQuestions - submissionForm
         if (diff.isNotEmpty()) {
             throw Exception(ErrorMessages.MISSING_REQUIRED_FIELDS.replace("$0", diff.joinToString(", ")))
+        }
+
+        form.fields.forEach { field ->
+            val response = formSubmission.responses[field.name]
+            if (response != null && field.validation != null) {
+                val regex = field.validation!!.regex
+                if (!regex.matches(response.toString())) {
+                    throw Exception(ErrorMessages.FIELD_VALIDATE_FAIL.replace("$0", field.name))
+                }
+            }
         }
 
         return formSubmissionRepository.save(formSubmission)
@@ -35,20 +44,24 @@ class FormSubmissionService(
     fun getFormSubmissionsByClassroomId(classroomId: String): List<FormSubmission> = formSubmissionRepository.findByClassroomId(classroomId)
 
     fun generateCsvFromForm(classroomId: String): String {
+        val allAnswer = formService.findByClassroomId(classroomId)
         val submission = getFormSubmissionsByClassroomId(classroomId)
         val writer = StringWriter()
         val csvWriter = CSVWriter(writer)
         // Add csv header
         val header =
-            submission
-                .first()
-                .responses.keys
-                .toTypedArray()
+            arrayOf("No.") +
+                allAnswer.fields.map { it.name }.toTypedArray()
         csvWriter.writeNext(header)
         // Add csv data
-        submission.forEach {
-            val data = it.responses.values.toTypedArray()
-            csvWriter.writeNext(data.map { it.toString() }.toTypedArray())
+        submission.forEachIndexed { index, formSubmission ->
+            val data =
+                arrayOf((index + 1).toString()) +
+                    allAnswer.fields
+                        .map { field ->
+                            formSubmission.responses[field.name]?.toString() ?: ""
+                        }.toTypedArray()
+            csvWriter.writeNext(data)
         }
         csvWriter.close()
         return writer.toString()
