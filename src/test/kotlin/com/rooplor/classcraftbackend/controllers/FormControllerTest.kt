@@ -206,4 +206,24 @@ class FormControllerTest {
             .andExpect(content().contentType("text/csv"))
             .andExpect(content().string(csvContent))
     }
+
+    @Test
+    fun `getFormSubmissions should return form submissions`() {
+        val formSubmission = FormSubmission("1", "form1", "class1", mapOf("email" to "test@example.com"), "user1")
+        `when`(formSubmissionService.getFormSubmissionByFormIdAndSubmittedBy("form1", "user1")).thenReturn(formSubmission)
+
+        mockMvc
+            .perform(
+                get("/api/form/submissions")
+                    .param("userId", "user1")
+                    .param("formId", "form1")
+                    .contentType(MediaType.APPLICATION_JSON),
+            ).andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.result.id").value("1"))
+            .andExpect(jsonPath("$.result.formId").value("form1"))
+            .andExpect(jsonPath("$.result.classroomId").value("class1"))
+            .andExpect(jsonPath("$.result.responses.email").value("test@example.com"))
+            .andExpect(jsonPath("$.result.submittedBy").value("user1"))
+    }
 }

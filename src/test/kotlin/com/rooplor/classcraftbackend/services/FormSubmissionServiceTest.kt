@@ -14,7 +14,6 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import java.time.LocalDateTime
-import java.util.Optional
 
 class FormSubmissionServiceTest {
     private val formSubmissionRepository = mock(FormSubmissionRepository::class.java)
@@ -93,28 +92,23 @@ class FormSubmissionServiceTest {
     }
 
     @Test
-    fun `getFormSubmissionsById should return form submission when found`() {
-        val formSubmission =
-            FormSubmission(
-                id = "1",
-                formId = "form1",
-                classroomId = "class1",
-                responses = mapOf("email" to "test@example.com"),
-            )
+    fun `getFormSubmissionByFormIdAndSubmittedBy should return form submission`() {
+        val formSubmission = FormSubmission("1", "form1", "class1", mapOf("email" to "test@example.com"), "user1")
+        `when`(formSubmissionRepository.findByFormIdAndSubmittedBy("form1", "user1")).thenReturn(formSubmission)
 
-        `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.of(formSubmission))
-
-        val result = formSubmissionService.getFormSubmissionsById("1")
+        val result = formSubmissionService.getFormSubmissionByFormIdAndSubmittedBy("form1", "user1")
 
         assertEquals(formSubmission, result)
-        verify(formSubmissionRepository, times(1)).findById("1")
     }
 
     @Test
-    fun `getFormSubmissionsById should throw exception when not found`() {
-        `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.empty())
+    fun `getFormSubmissionByFormIdAndSubmittedBy should throw exception when submission not found`() {
+        `when`(formSubmissionRepository.findByFormIdAndSubmittedBy("form1", "user1")).thenReturn(null)
 
-        val exception = assertThrows<Exception> { formSubmissionService.getFormSubmissionsById("1") }
+        val exception =
+            assertThrows<Exception> {
+                formSubmissionService.getFormSubmissionByFormIdAndSubmittedBy("form1", "user1")
+            }
 
         assertEquals(ErrorMessages.ANSWER_NOT_FOUND, exception.message)
     }

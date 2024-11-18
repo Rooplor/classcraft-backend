@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -125,13 +126,14 @@ class FormController(
         }
     }
 
-    @Operation(summary = "Get form submissions by id")
-    @GetMapping("/{id}/submissions")
+    @Operation(summary = "Get form submissions by form id and user id")
+    @GetMapping("/submissions")
     fun getFormSubmissions(
-        @PathVariable id: String,
+        @RequestParam userId: String,
+        @RequestParam formId: String,
     ): ResponseEntity<Response<FormSubmission>> {
         try {
-            val submissions = formSubmissionService.getFormSubmissionsById(id)
+            val submissions = formSubmissionService.getFormSubmissionByFormIdAndSubmittedBy(formId, userId)
             return ResponseEntity.ok(Response(success = true, result = submissions, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
