@@ -192,10 +192,8 @@
             </div>
         </div>
         <div class="button-group">
-            <input type="hidden" th:name="id"/>
-            <button type="submit" class="button approve-button">Approve</button>
-            <input type="hidden" th:name="id"/>
-            <button type="submit" class="button reject-button">Reject</button>
+            <a style="cursor: pointer" th:href="${approveUrl}"><button type="submit" class="button approve-button">Approve</button></a>
+            <a style="cursor: pointer" th:href="${rejectUrl}"><button type="submit" class="button reject-button">Reject</button></a>
         </div>
     </div>
 </div>

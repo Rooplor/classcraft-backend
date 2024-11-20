@@ -33,6 +33,12 @@ class ClassService
         @Value("\${staff.username}")
         private val staffUsername: String? = null
 
+        @Value("\${staff.approve_url}")
+        private val approveUrl: String? = null
+
+        @Value("\${staff.reject_url}")
+        private val rejectUrl: String? = null
+
         fun findAllClassPublishedWithRegistrationCondition(registrationStatus: Boolean): List<Classroom> =
             classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(registrationStatus)
 
@@ -175,6 +181,8 @@ class ClassService
             context.setVariable("owners", owner)
             context.setVariable("description", classroom.details)
             context.setVariable("dateWithVenue", mapDateWithVenueToTemplate(dateWithVenue))
+            context.setVariable("approveUrl", approveUrl)
+            context.setVariable("rejectUrl", rejectUrl)
 
             mailService.sendEmail(
                 subject = "[ClassCraft] Reservation venue for ${classroom.title} request from ${user.username}",
