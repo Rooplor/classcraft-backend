@@ -13,7 +13,8 @@ import com.rooplor.classcraftbackend.types.DateDetail
 import com.rooplor.classcraftbackend.types.DateWithVenue
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.mockito.Mockito.*
+import org.mockito.Mockito.doNothing
+import org.mockito.Mockito.`when`
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest

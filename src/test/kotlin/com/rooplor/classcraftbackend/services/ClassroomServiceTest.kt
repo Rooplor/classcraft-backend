@@ -13,7 +13,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.ArgumentMatchers.*
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
@@ -588,10 +589,15 @@ class ClassroomServiceTest {
             )
 
         assertFailsWith<Exception> {
-            classService.reservationVenue(classroom, listOf(DateWithVenue(
-                date = DateDetail(),
-                venueId = listOf("1"),
-            )))
+            classService.reservationVenue(
+                classroom,
+                listOf(
+                    DateWithVenue(
+                        date = DateDetail(),
+                        venueId = listOf("1"),
+                    ),
+                ),
+            )
         }
     }
 
