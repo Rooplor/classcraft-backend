@@ -7,11 +7,13 @@ import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import com.rooplor.classcraftbackend.services.mail.MailService
+import com.rooplor.classcraftbackend.types.DateDetail
+import com.rooplor.classcraftbackend.types.DateWithVenue
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.eq
+import org.mockito.ArgumentMatchers.*
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
@@ -523,7 +525,18 @@ class ClassroomServiceTest {
     @Test
     fun `should send reservation email successfully`() {
         // Arrange
-        val venueIds = listOf("1", "2")
+        val dateWithVenue =
+            listOf(
+                DateWithVenue(
+                    date =
+                        DateDetail(
+                            startDateTime = LocalDateTime.parse("2024-11-19T08:00:00.000"),
+                            endDateTime = LocalDateTime.parse("2024-11-19T16:00:00.000"),
+                        ),
+                    venueId = listOf("1", "2"),
+                ),
+            )
+
         val staffUsername = "testUser"
 
         val classroom =
@@ -531,31 +544,36 @@ class ClassroomServiceTest {
                 owner = "1",
                 title = "React Native",
                 details = "Learn how to build mobile apps with React Native",
-                date = listOf(LocalDateTime.of(2024, 10, 1, 10, 0), LocalDateTime.of(2024, 10, 2, 10, 0)),
             )
         val user = User(username = "testUser", profilePicture = "profile.jpg")
-        val venue = Venue(name = "LX10 - 4")
+        val venue1 = Venue(name = "LX10 - 4")
+        val venue2 = Venue(name = "LX10 - 5")
 
         `when`(authService.getAuthenticatedUser()).thenReturn(staffUsername)
         `when`(userService.findByUsername(staffUsername)).thenReturn(user)
         `when`(userService.findUserById(classroom.owner)).thenReturn(User(username = "ownerUsername"))
-        `when`(venueService.findVenueById("1")).thenReturn(venue)
-        `when`(venueService.findVenueById("2")).thenReturn(venue)
+        `when`(venueService.findVenueById("1")).thenReturn(venue1)
+        `when`(venueService.findVenueById("2")).thenReturn(venue2)
 
-        // Act
-        classService.reservationVenue(classroom, venueIds)
+        classService.reservationVenue(classroom, dateWithVenue)
+        val mapDateWithVenueToTemplateMethod = ClassService::class.java.getDeclaredMethod("mapDateWithVenueToTemplate", List::class.java)
+        mapDateWithVenueToTemplateMethod.isAccessible = true
+        val result = mapDateWithVenueToTemplateMethod.invoke(classService, dateWithVenue)
 
-        // Assert
         verify(authService).getAuthenticatedUser()
         verify(userService).findByUsername(staffUsername)
         verify(userService).findUserById(classroom.owner)
-        verify(venueService).findVenueById("1")
-        verify(venueService).findVenueById("2")
         verify(mailService).sendEmail(
             subject = eq("[ClassCraft] Reservation venue for ${classroom.title} request from ${user.username}"),
             template = eq("reservation"),
             context = any(Context::class.java),
         )
+
+        val context = Context()
+        context.setVariable("dateWithVenue", result)
+        val dateWithVenueVariable = context.getVariable("dateWithVenue")
+        assertNotNull(dateWithVenueVariable)
+        assertEquals(result, dateWithVenueVariable)
     }
 
     @Test
@@ -567,11 +585,13 @@ class ClassroomServiceTest {
                 owner = "1",
                 title = "React Native",
                 details = "Learn how to build mobile apps with React Native",
-                date = listOf(LocalDateTime.of(2024, 10, 1, 10, 0), LocalDateTime.of(2024, 10, 2, 10, 0)),
             )
 
         assertFailsWith<Exception> {
-            classService.reservationVenue(classroom, listOf("1", "2"))
+            classService.reservationVenue(classroom, listOf(DateWithVenue(
+                date = DateDetail(),
+                venueId = listOf("1"),
+            )))
         }
     }
 

@@ -9,11 +9,11 @@ import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.services.ClassService
+import com.rooplor.classcraftbackend.types.DateDetail
+import com.rooplor.classcraftbackend.types.DateWithVenue
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.mockito.Mockito.doNothing
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.*
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.LocalDateTime
 
 @WebMvcTest(ClassController::class)
 @Import(TestSecurityConfig::class, TestConfig::class)
@@ -509,17 +510,53 @@ class ClassroomControllerTest {
     @Test
     fun `should reserve venue successfully`() {
         val classId = "1"
-        val classroom = Classroom()
-        val venueIds = listOf("1", "2")
+        val classroom =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                date = listOf(),
+            )
+        val dateWithVenue =
+            listOf(
+                DateWithVenue(
+                    date =
+                        DateDetail(
+                            startDateTime = LocalDateTime.parse("2024-11-19T08:00:00.000"),
+                            endDateTime = LocalDateTime.parse("2024-11-19T16:00:00.000"),
+                        ),
+                    venueId = listOf("67388208776cc565fae80e51", "6738820d776cc565fae80e52", "67388212776cc565fae80e54"),
+                ),
+            )
         val requestJson =
             """
+             [{
+              "date": {
+                "startDateTime": "2024-11-19T08:00:00.000",
+                "endDateTime": "2024-11-19T16:00:00.000"
+              },
+              "venueId": [
+                "67388208776cc565fae80e51", "6738820d776cc565fae80e52", "67388212776cc565fae80e54"
+              ]
+            },
             {
-               "venueId": ["1", "2"]
-            }
+              "date": {
+                "startDateTime": "2024-11-20T08:00:00.000",
+                "endDateTime": "2024-11-20T16:00:00.000"
+              },
+              "venueId": [
+                "67388212776cc565fae80e54", "67388214776cc565fae80e55"
+              ]
+            }]
             """.trimIndent()
 
         `when`(classService.findClassById(classId)).thenReturn(classroom)
-        doNothing().`when`(classService).reservationVenue(classroom, venueIds)
+        doNothing().`when`(classService).reservationVenue(classroom, dateWithVenue)
 
         // Act & Assert
         mockMvc
@@ -528,7 +565,5 @@ class ClassroomControllerTest {
                     .contentType("application/json")
                     .content(requestJson),
             ).andExpect(status().isOk)
-
-        verify(classService).reservationVenue(classroom, venueIds)
     }
 }

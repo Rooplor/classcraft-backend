@@ -1,11 +1,15 @@
 package com.rooplor.classcraftbackend.services
 
+import com.rooplor.classcraftbackend.dtos.DateDetail
+import com.rooplor.classcraftbackend.dtos.DateWithVenueDTO
+import com.rooplor.classcraftbackend.dtos.StartEndDetail
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.enums.Status
 import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import com.rooplor.classcraftbackend.services.mail.MailService
+import com.rooplor.classcraftbackend.types.DateWithVenue
 import com.rooplor.classcraftbackend.utils.JsonValid.isValidJson
 import lombok.AllArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.thymeleaf.context.Context
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @AllArgsConstructor
 @Service
@@ -155,28 +160,21 @@ class ClassService
 
         fun reservationVenue(
             classroom: Classroom,
-            venueId: List<String>,
+            dateWithVenue: List<DateWithVenue>,
         ) {
             val username = authService.getAuthenticatedUser() ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
             val user = userService.findByUsername(username)
             val owner = userService.findUserById(classroom.owner).username
+
             val context = Context()
+
             context.setVariable("username", staffUsername)
             context.setVariable("className", classroom.title)
             context.setVariable("profilePicture", user.profilePicture)
             context.setVariable("requester", user.username)
             context.setVariable("owners", owner)
             context.setVariable("description", classroom.details)
-            context.setVariable("date", classroom.date.map { it.toLocalDate().toString() })
-            context.setVariable("time", classroom.date.map { it.toLocalTime().toString() })
-            context.setVariable(
-                "venue",
-                removeBucketFromArray(
-                    venueId
-                        .map { venueService.findVenueById(it).name }
-                        .toString(),
-                ),
-            )
+            context.setVariable("dateWithVenue", mapDateWithVenueToTemplate(dateWithVenue))
 
             mailService.sendEmail(
                 subject = "[ClassCraft] Reservation venue for ${classroom.title} request from ${user.username}",
@@ -203,4 +201,33 @@ class ClassService
                 throw Exception(errorList.joinToString(", "))
             }
         }
+
+        private fun mapDateWithVenueToTemplate(dateWithVenue: List<DateWithVenue>): List<DateWithVenueDTO> =
+            dateWithVenue.map {
+                DateWithVenueDTO(
+                    date =
+                        DateDetail(
+                            startDateTime =
+                                StartEndDetail(
+                                    it.date.startDateTime
+                                        .toLocalDate()
+                                        .format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
+                                        .toString(),
+                                    it.date.startDateTime
+                                        .toLocalTime()
+                                        .toString(),
+                                ),
+                            endDateTime =
+                                StartEndDetail(
+                                    it.date.endDateTime
+                                        .toLocalDate()
+                                        .toString(),
+                                    it.date.endDateTime
+                                        .toLocalTime()
+                                        .toString(),
+                                ),
+                        ),
+                    venue = it.venueId.map { venueService.findVenueById(it) },
+                )
+            }
     }

@@ -1,10 +1,10 @@
 package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
-import com.rooplor.classcraftbackend.dtos.ReservationDTO
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.services.ClassService
+import com.rooplor.classcraftbackend.types.DateWithVenue
 import io.swagger.v3.oas.annotations.Operation
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -257,10 +257,10 @@ class ClassController
         @PostMapping("/{id}/reservation")
         fun reserveVenue(
             @PathVariable id: String,
-            @RequestBody reservation: ReservationDTO,
+            @RequestBody reservation: List<DateWithVenue>,
         ): ResponseEntity<Response<Boolean>> =
             try {
-                classService.reservationVenue(classService.findClassById(id), reservation.venueId)
+                classService.reservationVenue(classService.findClassById(id), reservation)
                 ResponseEntity.ok(Response(success = true, result = true, error = null))
             } catch (e: Exception) {
                 ResponseEntity.badRequest().body(Response(success = false, result = false, error = e.message))
