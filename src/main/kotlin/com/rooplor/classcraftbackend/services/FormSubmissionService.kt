@@ -14,7 +14,7 @@ class FormSubmissionService(
     private val authService: AuthService,
 ) {
     fun submitForm(formSubmission: FormSubmission): FormSubmission {
-        val userId = authService.getAuthenticatedUserDetails()?.id ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
+        val userId = authService.getUserId()
         val existingSubmission = formSubmissionRepository.findByFormIdAndSubmittedBy(formSubmission.formId, userId)
         if (existingSubmission != null) {
             throw Exception(ErrorMessages.ANSWER_ALREADY_SUBMITTED)
