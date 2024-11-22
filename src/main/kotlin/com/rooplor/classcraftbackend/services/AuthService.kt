@@ -45,9 +45,14 @@ class AuthService(
         return authentication?.name
     }
 
-    fun getAuthenticatedUserDetails(): User? {
-        val username = getAuthenticatedUser()
-        return username?.let { userService.findByUsername(it) }
+    fun getAuthenticatedUserDetails(): User {
+        val username = getAuthenticatedUser() ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
+        return userService.findByUsername(username)
+    }
+
+    fun getUserId(): String {
+        val username = getAuthenticatedUser() ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
+        return userService.findByUsername(username).id ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
     }
 
     private fun validateIdToken(idToken: String): FirebaseToken? =

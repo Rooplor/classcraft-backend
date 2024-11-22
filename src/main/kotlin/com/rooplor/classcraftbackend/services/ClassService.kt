@@ -28,8 +28,7 @@ class ClassService
         fun insertClass(addedClassroom: Classroom): Classroom {
             addedClassroom.registrationStatus = false
             addedClassroom.isPublished = false
-            addedClassroom.owner =
-                authService.getAuthenticatedUserDetails()?.id ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
+            addedClassroom.owner = authService.getUserId()
             addedClassroom.stepperStatus = 1
             return classRepository.insert(addedClassroom)
         }
