@@ -4,6 +4,7 @@ import com.rooplor.classcraftbackend.dtos.InitClassDTO
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.services.ClassService
+import com.rooplor.classcraftbackend.types.DateWithVenue
 import io.swagger.v3.oas.annotations.Operation
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,8 +25,8 @@ import org.springframework.web.bind.annotation.RestController
 class ClassController
     @Autowired
     constructor(
-        val service: ClassService,
         val modelMapper: ModelMapper,
+        private val classService: ClassService,
     ) {
         @Operation(summary = "Get all classes with registration status and published status, or by owners if provided")
         @GetMapping("")
@@ -36,11 +37,11 @@ class ClassController
             try {
                 val result =
                     if (userId != null && userId.isNotEmpty()) {
-                        service.findClassByOwners(userId)
+                        classService.findClassByOwners(userId)
                     } else if (registrationStatus != null) {
-                        service.findAllClassPublishedWithRegistrationCondition(registrationStatus)
+                        classService.findAllClassPublishedWithRegistrationCondition(registrationStatus)
                     } else {
-                        service.findAllClassPublished()
+                        classService.findAllClassPublished()
                     }
                 ResponseEntity.ok(Response(success = true, result = result, error = null))
             } catch (e: Exception) {
@@ -58,7 +59,7 @@ class ClassController
                     Response(
                         success = true,
                         result =
-                            service.updateClass(id, modelMapper.map(updatedClass, Classroom::class.java)),
+                            classService.updateClass(id, modelMapper.map(updatedClass, Classroom::class.java)),
                         error = null,
                     ),
                 )
@@ -76,7 +77,7 @@ class ClassController
                     Response(
                         success = true,
                         result =
-                            service.findClassById(id),
+                            classService.findClassById(id),
                         error = null,
                     ),
                 )
@@ -94,7 +95,7 @@ class ClassController
                     Response(
                         success = true,
                         result =
-                            service.insertClass(modelMapper.map(addedClass, Classroom::class.java)),
+                            classService.insertClass(modelMapper.map(addedClass, Classroom::class.java)),
                         error = null,
                     ),
                 )
@@ -106,14 +107,14 @@ class ClassController
         @PatchMapping("/{id}/venue/{venueId}")
         fun updateVenueClass(
             @PathVariable id: String,
-            @PathVariable venueId: String,
+            @PathVariable venueId: List<String>,
         ): ResponseEntity<Response<Classroom>> =
             try {
                 ResponseEntity.ok(
                     Response(
                         success = true,
                         result =
-                            service.updateVenueClass(id, venueId),
+                            classService.updateVenueClass(id, venueId),
                         error = null,
                     ),
                 )
@@ -132,7 +133,7 @@ class ClassController
                     Response(
                         success = true,
                         result =
-                            service.updateMeetingUrlClass(id, meetingUrl),
+                            classService.updateMeetingUrlClass(id, meetingUrl),
                         error = null,
                     ),
                 )
@@ -151,7 +152,7 @@ class ClassController
                     Response(
                         success = true,
                         result =
-                            service.updateContent(id, content),
+                            classService.updateContent(id, content),
                         error = null,
                     ),
                 )
@@ -170,7 +171,7 @@ class ClassController
                     Response(
                         success = true,
                         result =
-                            service.updateRegistrationUrl(id, registration),
+                            classService.updateRegistrationUrl(id, registration),
                         error = null,
                     ),
                 )
@@ -188,7 +189,7 @@ class ClassController
                     Response(
                         success = true,
                         result =
-                            service.toggleRegistrationStatus(id),
+                            classService.toggleRegistrationStatus(id),
                         error = null,
                     ),
                 )
@@ -206,7 +207,7 @@ class ClassController
                     Response(
                         success = true,
                         result =
-                            service.togglePublishStatus(id),
+                            classService.togglePublishStatus(id),
                         error = null,
                     ),
                 )
@@ -224,7 +225,7 @@ class ClassController
                     Response(
                         success = true,
                         result =
-                            service.deleteClass(id),
+                            classService.deleteClass(id),
                         error = null,
                     ),
                 )
@@ -243,7 +244,39 @@ class ClassController
                     Response(
                         success = true,
                         result =
-                            service.updateStepperStatus(id, stepperStatus),
+                            classService.updateStepperStatus(id, stepperStatus),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
+
+        @Operation(summary = "Reserve a venue for a class")
+        @PostMapping("/{id}/reservation")
+        fun reserveVenue(
+            @PathVariable id: String,
+            @RequestBody reservation: List<DateWithVenue>,
+        ): ResponseEntity<Response<Boolean>> =
+            try {
+                classService.reservationVenue(classService.findClassById(id), reservation)
+                ResponseEntity.ok(Response(success = true, result = true, error = null))
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = false, error = e.message))
+            }
+
+        @Operation(summary = "Update venue status of a class")
+        @PatchMapping("/{id}/venue-status")
+        fun updateVenueStatus(
+            @PathVariable id: String,
+            @RequestParam(name = "status", required = false) venueStatus: Int,
+        ): ResponseEntity<Response<Classroom>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            classService.updateVenueStatus(id, venueStatus),
                         error = null,
                     ),
                 )

@@ -2,7 +2,7 @@ package com.rooplor.classcraftbackend.dtos
 
 import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
-import java.time.LocalDateTime
+import com.rooplor.classcraftbackend.types.DateWithVenue
 
 data class InitClassDTO(
     var title: String,
@@ -12,11 +12,11 @@ data class InitClassDTO(
     var type: ClassType,
     var format: Format,
     var capacity: Int,
-    var date: List<LocalDateTime>,
+    var dates: List<DateWithVenue>,
     var instructorName: String = "",
     var instructorBio: String = "",
     var instructorAvatar: String = "",
     var instructorFamiliarity: String = "",
-    var coverImage: String = "",
+    var coverImage: String? = "",
     var coOwners: List<String>? = emptyList(),
 )

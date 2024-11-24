@@ -9,8 +9,12 @@ import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.services.ClassService
+import com.rooplor.classcraftbackend.types.DateDetail
+import com.rooplor.classcraftbackend.types.DateWithVenue
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.Mockito.doNothing
+import org.mockito.Mockito.`when`
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -23,6 +27,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.LocalDateTime
 
 @WebMvcTest(ClassController::class)
 @Import(TestSecurityConfig::class, TestConfig::class)
@@ -49,7 +54,7 @@ class ClassroomControllerTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
                 Classroom(
                     title = "Spring Boot 101",
@@ -59,7 +64,7 @@ class ClassroomControllerTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
 
@@ -82,7 +87,7 @@ class ClassroomControllerTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
                 Classroom(
                     title = "Spring Boot 101",
@@ -92,7 +97,7 @@ class ClassroomControllerTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
 
@@ -116,7 +121,7 @@ class ClassroomControllerTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
                 Classroom(
                     title = "Spring Boot 101",
@@ -126,7 +131,7 @@ class ClassroomControllerTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
 
@@ -150,7 +155,7 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classService.findClassById(classId)).thenReturn(classroomObj)
 
@@ -175,7 +180,7 @@ class ClassroomControllerTest {
                 instructorAvatar = "https://example.com/johndoe.jpg",
                 instructorFamiliarity = "John Doe has 5 years of experience",
                 coverImage = "https://example.com/cover.jpg",
-                date = listOf(),
+                dates = listOf(),
                 owner = "owner1",
             )
         val initClassDTO =
@@ -192,7 +197,7 @@ class ClassroomControllerTest {
                 instructorAvatar = "https://example.com/johndoe.jpg",
                 instructorFamiliarity = "John Doe has 5 years of experience",
                 coverImage = "https://example.com/cover.jpg",
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(modelMapper.map(initClassDTO, Classroom::class.java)).thenReturn(classroomObj)
         Mockito.`when`(classService.insertClass(classroomObj)).thenReturn(classroomObj)
@@ -216,7 +221,7 @@ class ClassroomControllerTest {
                             "instructorAvatar": "https://example.com/johndoe.jpg",
                             "instructorFamiliarity": "John Doe has 5 years of experience",
                             "coverImage": "https://example.com/cover.jpg",
-                            "date": [],
+                            "dates": [],
                             "owner": "owner1",
                             "coOwners": []
                         }
@@ -229,9 +234,15 @@ class ClassroomControllerTest {
     fun `should update venue of a class`() {
         val classId = "1"
         val venues =
-            Venue(
-                id = "1",
-                name = "TRAIN_3",
+            listOf(
+                Venue(
+                    id = "1",
+                    name = "Venue 1",
+                ),
+                Venue(
+                    id = "2",
+                    name = "Venue 2",
+                ),
             )
         val classroomObj =
             Classroom(
@@ -243,15 +254,15 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 venue = venues,
-                venueStatus = VenueStatus.PENDING,
+                venueStatus = VenueStatus.PENDING.id,
             )
-        Mockito.`when`(classService.updateVenueClass(classId, "1")).thenReturn(classroomObj)
+        Mockito.`when`(classService.updateVenueClass(classId, listOf("1", "2"))).thenReturn(classroomObj)
 
         mockMvc
             .perform(
-                patch("/api/class/$classId/venue/1"),
+                patch("/api/class/$classId/venue/1,2"),
             ).andExpect(status().isOk)
     }
 
@@ -269,7 +280,7 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classService.updateMeetingUrlClass(classId, meetingUrl)).thenReturn(classroomObj)
 
@@ -298,7 +309,7 @@ class ClassroomControllerTest {
                 "type": "LECTURE",
                 "format": "ONSITE",
                 "capacity": 30,
-                "date": []
+                "dates": []
             }
             """.trimIndent()
         val classroomObj =
@@ -311,7 +322,7 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classService.updateContent(classId, content)).thenReturn(classroomObj)
 
@@ -337,7 +348,7 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classService.updateRegistrationUrl(classId, registrationUrl)).thenReturn(classroomObj)
 
@@ -366,7 +377,7 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classService.toggleRegistrationStatus(classId)).thenReturn(classroomObj)
 
@@ -388,7 +399,7 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classService.togglePublishStatus(classId)).thenReturn(classroomObj)
 
@@ -415,7 +426,7 @@ class ClassroomControllerTest {
                 instructorAvatar = "https://example.com/johndoe.jpg",
                 instructorFamiliarity = "John Doe has 5 years of experience",
                 coverImage = "https://example.com/cover.jpg",
-                date = listOf(),
+                dates = listOf(),
                 owner = "owner1",
             )
         val initClassDTO =
@@ -432,7 +443,7 @@ class ClassroomControllerTest {
                 instructorAvatar = "https://example.com/johndoe.jpg",
                 instructorFamiliarity = "John Doe has 5 years of experience",
                 coverImage = "https://example.com/cover.jpg",
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(modelMapper.map(initClassDTO, Classroom::class.java)).thenReturn(classroomObj)
         Mockito.`when`(classService.updateClass(classId, classroomObj)).thenReturn(classroomObj)
@@ -456,7 +467,7 @@ class ClassroomControllerTest {
                             "instructorAvatar": "https://example.com/johndoe.jpg",
                             "instructorFamiliarity": "John Doe has 5 years of experience",
                             "coverImage": "https://example.com/cover.jpg",
-                            "date": [],
+                            "dates": [],
                             "owner": "owner1",
                             "coOwners": []
                         }
@@ -478,7 +489,7 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classService.updateStepperStatus(classId, 2)).thenReturn(classroomObj)
 
@@ -495,5 +506,65 @@ class ClassroomControllerTest {
         mockMvc
             .perform(patch("/api/class/$classId/stepper-status?status=5"))
             .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `should reserve venue successfully`() {
+        val classId = "1"
+        val classroom =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+            )
+        val dateWithVenue =
+            listOf(
+                DateWithVenue(
+                    dates =
+                        DateDetail(
+                            startDateTime = LocalDateTime.parse("2024-11-19T08:00:00.000"),
+                            endDateTime = LocalDateTime.parse("2024-11-19T16:00:00.000"),
+                        ),
+                    venueId = listOf("67388208776cc565fae80e51", "6738820d776cc565fae80e52", "67388212776cc565fae80e54"),
+                ),
+            )
+        val requestJson =
+            """
+             [{
+              "dates": {
+                "startDateTime": "2024-11-19T08:00:00.000",
+                "endDateTime": "2024-11-19T16:00:00.000"
+              },
+              "venueId": [
+                "67388208776cc565fae80e51", "6738820d776cc565fae80e52", "67388212776cc565fae80e54"
+              ]
+            },
+            {
+              "dates": {
+                "startDateTime": "2024-11-20T08:00:00.000",
+                "endDateTime": "2024-11-20T16:00:00.000"
+              },
+              "venueId": [
+                "67388212776cc565fae80e54", "67388214776cc565fae80e55"
+              ]
+            }]
+            """.trimIndent()
+
+        `when`(classService.findClassById(classId)).thenReturn(classroom)
+        doNothing().`when`(classService).reservationVenue(classroom, dateWithVenue)
+
+        // Act & Assert
+        mockMvc
+            .perform(
+                post("/api/class/$classId/reservation")
+                    .contentType("application/json")
+                    .content(requestJson),
+            ).andExpect(status().isOk)
     }
 }

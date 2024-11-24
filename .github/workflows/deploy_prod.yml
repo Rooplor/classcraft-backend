@@ -54,6 +54,8 @@ jobs:
       MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
       STAFF_EMAIL: ${{ secrets.STAFF_EMAIL }}
       STAFF_USERNAME: ${{ secrets.STAFF_USERNAME }}
+      STAFF_APPROVE_URL: ${{ secrets.STAFF_APPROVE_URL }}
+      STAFF_REJECT_URL: ${{ secrets.STAFF_REJECT_URL }}
 
     steps:
       - name: checkout-code

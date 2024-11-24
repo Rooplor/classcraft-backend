@@ -1,14 +1,23 @@
 package com.rooplor.classcraftbackend.services
 
+import com.rooplor.classcraftbackend.dtos.DateDetail
+import com.rooplor.classcraftbackend.dtos.DateWithVenueDTO
+import com.rooplor.classcraftbackend.dtos.StartEndDetail
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.enums.Status
+import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
+import com.rooplor.classcraftbackend.services.mail.MailService
+import com.rooplor.classcraftbackend.types.DateWithVenue
 import com.rooplor.classcraftbackend.utils.JsonValid.isValidJson
 import lombok.AllArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import org.thymeleaf.context.Context
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @AllArgsConstructor
 @Service
@@ -19,7 +28,17 @@ class ClassService
         private val venueService: VenueService,
         private val authService: AuthService,
         private val userService: UserService,
+        private val mailService: MailService,
     ) {
+        @Value("\${staff.username}")
+        private val staffUsername: String? = null
+
+        @Value("\${staff.approve_url}")
+        private val approveUrl: String? = null
+
+        @Value("\${staff.reject_url}")
+        private val rejectUrl: String? = null
+
         fun findAllClassPublishedWithRegistrationCondition(registrationStatus: Boolean): List<Classroom> =
             classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(registrationStatus)
 
@@ -45,7 +64,7 @@ class ClassService
             classToUpdate.type = updatedClassroom.type
             classToUpdate.format = updatedClassroom.format
             classToUpdate.capacity = updatedClassroom.capacity
-            classToUpdate.date = updatedClassroom.date
+            classToUpdate.dates = updatedClassroom.dates
             classToUpdate.instructorName = updatedClassroom.instructorName
             classToUpdate.instructorBio = updatedClassroom.instructorBio
             classToUpdate.instructorAvatar = updatedClassroom.instructorAvatar
@@ -63,10 +82,10 @@ class ClassService
 
         fun updateVenueClass(
             id: String,
-            venueId: String,
+            venueId: List<String>,
         ): Classroom {
             val classToUpdate = findClassById(id)
-            classToUpdate.venue = venueService.findVenueById(venueId)
+            classToUpdate.venue = venueId.map { venueService.findVenueById(it) }
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
@@ -106,6 +125,19 @@ class ClassService
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
+        fun updateVenueStatus(
+            id: String,
+            venueStatus: Int,
+        ): Classroom {
+            val classToUpdate = findClassById(id)
+            if (VenueStatus.values().contains(VenueStatus.values().find { it.id == venueStatus })) {
+                classToUpdate.venueStatus = VenueStatus.values().find { it.id == venueStatus }?.id
+            } else {
+                throw IllegalArgumentException("Venue status is not valid")
+            }
+            return classRepository.save(updateUpdatedWhen(classToUpdate))
+        }
+
         fun togglePublishStatus(id: String): Classroom {
             val classToUpdate = findClassById(id)
             classToUpdate.isPublished = !classToUpdate.isPublished!!
@@ -131,6 +163,33 @@ class ClassService
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
+        fun reservationVenue(
+            classroom: Classroom,
+            dateWithVenue: List<DateWithVenue>,
+        ) {
+            val username = authService.getAuthenticatedUser() ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
+            val user = userService.findByUsername(username)
+            val owner = userService.findUserById(classroom.owner).username
+
+            val context = Context()
+
+            context.setVariable("username", staffUsername)
+            context.setVariable("className", classroom.title)
+            context.setVariable("profilePicture", user.profilePicture)
+            context.setVariable("requester", user.username)
+            context.setVariable("owners", owner)
+            context.setVariable("description", classroom.details)
+            context.setVariable("dateWithVenue", mapDateWithVenueToTemplate(dateWithVenue))
+            context.setVariable("approveUrl", approveUrl)
+            context.setVariable("rejectUrl", rejectUrl)
+
+            mailService.sendEmail(
+                subject = "[ClassCraft] Reservation venue for ${classroom.title} request from ${user.username}",
+                template = "reservation", // reference to src/main/resources/templates/reservation.html
+                context = context,
+            )
+        }
+
         private fun updateUpdatedWhen(classroom: Classroom): Classroom {
             classroom.updatedWhen = LocalDateTime.now()
             return classroom
@@ -147,4 +206,33 @@ class ClassService
                 throw Exception(errorList.joinToString(", "))
             }
         }
+
+        private fun mapDateWithVenueToTemplate(dateWithVenue: List<DateWithVenue>): List<DateWithVenueDTO> =
+            dateWithVenue.map {
+                DateWithVenueDTO(
+                    dates =
+                        DateDetail(
+                            startDateTime =
+                                StartEndDetail(
+                                    it.dates.startDateTime
+                                        .toLocalDate()
+                                        .format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
+                                        .toString(),
+                                    it.dates.startDateTime
+                                        .toLocalTime()
+                                        .toString(),
+                                ),
+                            endDateTime =
+                                StartEndDetail(
+                                    it.dates.endDateTime
+                                        .toLocalDate()
+                                        .toString(),
+                                    it.dates.endDateTime
+                                        .toLocalTime()
+                                        .toString(),
+                                ),
+                        ),
+                    venue = it.venueId.map { venueService.findVenueById(it) },
+                )
+            }
     }

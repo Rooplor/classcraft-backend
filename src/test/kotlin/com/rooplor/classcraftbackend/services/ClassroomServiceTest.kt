@@ -1,17 +1,28 @@
 package com.rooplor.classcraftbackend.services
 
 import com.rooplor.classcraftbackend.entities.Classroom
+import com.rooplor.classcraftbackend.entities.User
 import com.rooplor.classcraftbackend.entities.Venue
 import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
-import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
+import com.rooplor.classcraftbackend.services.mail.MailService
+import com.rooplor.classcraftbackend.types.DateDetail
+import com.rooplor.classcraftbackend.types.DateWithVenue
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import org.springframework.boot.test.context.SpringBootTest
+import org.thymeleaf.context.Context
+import java.time.LocalDateTime
 import java.util.Optional
+import kotlin.test.assertFailsWith
 
 @SpringBootTest
 class ClassroomServiceTest {
@@ -19,7 +30,8 @@ class ClassroomServiceTest {
     private val venueService: VenueService = Mockito.mock(VenueService::class.java)
     private val authService: AuthService = Mockito.mock(AuthService::class.java)
     private val userService: UserService = Mockito.mock(UserService::class.java)
-    private val classService: ClassService = ClassService(classRepository, venueService, authService, userService)
+    private val mailService: MailService = Mockito.mock(MailService::class.java)
+    private val classService: ClassService = ClassService(classRepository, venueService, authService, userService, mailService)
 
     @Test
     fun `should return all classes is published`() {
@@ -35,7 +47,7 @@ class ClassroomServiceTest {
                     capacity = 30,
                     isPublished = true,
                     registrationStatus = true,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
                 Classroom(
                     title = "Spring Boot 101",
@@ -47,7 +59,7 @@ class ClassroomServiceTest {
                     capacity = 30,
                     isPublished = true,
                     registrationStatus = true,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
         Mockito
@@ -72,7 +84,7 @@ class ClassroomServiceTest {
                     capacity = 30,
                     isPublished = true,
                     registrationStatus = false,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
                 Classroom(
                     title = "Spring Boot 101",
@@ -84,7 +96,7 @@ class ClassroomServiceTest {
                     capacity = 30,
                     isPublished = true,
                     registrationStatus = false,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
         Mockito
@@ -109,7 +121,7 @@ class ClassroomServiceTest {
                     capacity = 30,
                     isPublished = false,
                     registrationStatus = false,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
         Mockito
@@ -134,7 +146,7 @@ class ClassroomServiceTest {
                     capacity = 30,
                     isPublished = false,
                     registrationStatus = true,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
         Mockito
@@ -158,7 +170,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
 
@@ -177,7 +189,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 owner = "owner1",
             )
         Mockito.`when`(classRepository.insert(classroomObj)).thenReturn(classroomObj)
@@ -194,9 +206,11 @@ class ClassroomServiceTest {
     fun `should update venue of a class`() {
         val classId = "1"
         val venues =
-            Venue(
-                id = "1",
-                name = "TRAIN_3",
+            listOf(
+                Venue(
+                    id = "1",
+                    name = "TRAIN_3",
+                ),
             )
         val classroomObj =
             Classroom(
@@ -208,14 +222,14 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 venue = venues,
-                venueStatus = VenueStatus.PENDING,
+                venueStatus = 1,
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
 
-        val result = classService.updateVenueClass(classId, "1")
+        val result = classService.updateVenueClass(classId, listOf("1", "2"))
         assertEquals(classroomObj, result)
     }
 
@@ -233,7 +247,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 meetingUrl = "https://meet.google.com/abc-xyz",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
@@ -257,7 +271,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 content = "{\"key\": \"value\"}",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
@@ -281,7 +295,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 registrationUrl = "https://example.com/register",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
@@ -304,7 +318,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 registrationStatus = false,
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
@@ -327,7 +341,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 isPublished = false,
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
@@ -350,7 +364,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
@@ -373,7 +387,7 @@ class ClassroomServiceTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                     owner = "owner1",
                 ),
                 Classroom(
@@ -385,7 +399,7 @@ class ClassroomServiceTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                     owner = "owner1",
                 ),
             )
@@ -400,7 +414,7 @@ class ClassroomServiceTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                     owner = "owner1",
                 ),
                 Classroom(
@@ -412,7 +426,7 @@ class ClassroomServiceTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                     owner = "owner1",
                 ),
             )
@@ -438,7 +452,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 stepperStatus = 1,
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
@@ -465,7 +479,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 stepperStatus = 1,
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
@@ -488,7 +502,7 @@ class ClassroomServiceTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
                 Classroom(
                     title = "Spring Boot 101",
@@ -498,7 +512,7 @@ class ClassroomServiceTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
         Mockito
@@ -507,5 +521,132 @@ class ClassroomServiceTest {
 
         val result = classService.findAllClassPublished()
         assertEquals(classrooms, result)
+    }
+
+    @Test
+    fun `should send reservation email successfully`() {
+        // Arrange
+        val dateWithVenue =
+            listOf(
+                DateWithVenue(
+                    dates =
+                        DateDetail(
+                            startDateTime = LocalDateTime.parse("2024-11-19T08:00:00.000"),
+                            endDateTime = LocalDateTime.parse("2024-11-19T16:00:00.000"),
+                        ),
+                    venueId = listOf("1", "2"),
+                ),
+            )
+
+        val staffUsername = "testUser"
+
+        val classroom =
+            Classroom(
+                owner = "1",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+            )
+        val user = User(username = "testUser", profilePicture = "profile.jpg")
+        val venue1 = Venue(name = "LX10 - 4")
+        val venue2 = Venue(name = "LX10 - 5")
+
+        `when`(authService.getAuthenticatedUser()).thenReturn(staffUsername)
+        `when`(userService.findByUsername(staffUsername)).thenReturn(user)
+        `when`(userService.findUserById(classroom.owner)).thenReturn(User(username = "ownerUsername"))
+        `when`(venueService.findVenueById("1")).thenReturn(venue1)
+        `when`(venueService.findVenueById("2")).thenReturn(venue2)
+
+        classService.reservationVenue(classroom, dateWithVenue)
+        val mapDateWithVenueToTemplateMethod = ClassService::class.java.getDeclaredMethod("mapDateWithVenueToTemplate", List::class.java)
+        mapDateWithVenueToTemplateMethod.isAccessible = true
+        val result = mapDateWithVenueToTemplateMethod.invoke(classService, dateWithVenue)
+
+        verify(authService).getAuthenticatedUser()
+        verify(userService).findByUsername(staffUsername)
+        verify(userService).findUserById(classroom.owner)
+        verify(mailService).sendEmail(
+            subject = eq("[ClassCraft] Reservation venue for ${classroom.title} request from ${user.username}"),
+            template = eq("reservation"),
+            context = any(Context::class.java),
+        )
+
+        val context = Context()
+        context.setVariable("dateWithVenue", result)
+        val dateWithVenueVariable = context.getVariable("dateWithVenue")
+        assertNotNull(dateWithVenueVariable)
+        assertEquals(result, dateWithVenueVariable)
+    }
+
+    @Test
+    fun `should throw exception when user is not authenticated`() {
+        `when`(authService.getAuthenticatedUser()).thenReturn(null)
+
+        val classroom =
+            Classroom(
+                owner = "1",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+            )
+
+        assertFailsWith<Exception> {
+            classService.reservationVenue(
+                classroom,
+                listOf(
+                    DateWithVenue(
+                        dates = DateDetail(),
+                        venueId = listOf("1"),
+                    ),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `should update venue status of a class`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                venueStatus = 1,
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+
+        val fillCraftDetail = classService.updateVenueStatus(classId, 2)
+        assertEquals(fillCraftDetail.venueStatus, 2)
+        val reserveVenue = classService.updateVenueStatus(classId, 3)
+        assertEquals(reserveVenue.venueStatus, 3)
+    }
+
+    @Test
+    fun `should throw error when update venue status of a class with unsupport id`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                venueStatus = 1,
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+
+        assertThrows<Exception> {
+            classService.updateVenueStatus(classId, 4)
+        }
     }
 }

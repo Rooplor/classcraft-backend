@@ -19,13 +19,13 @@ import org.springframework.web.bind.annotation.RestController
 class VenueController
     @Autowired
     constructor(
-        val service: VenueService,
+        val venueService: VenueService,
     ) {
         @Operation(summary = "Get all venues")
         @GetMapping("")
         fun findAll(): ResponseEntity<Response<List<Venue>>> =
             try {
-                val venues = service.findAllVenue()
+                val venues = venueService.findAllVenue()
                 ResponseEntity.ok(Response(success = true, result = venues, error = null))
             } catch (e: Exception) {
                 ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
@@ -37,7 +37,7 @@ class VenueController
             @RequestBody addedVenue: Venue,
         ): ResponseEntity<Response<Venue>> =
             try {
-                val venue = service.insertVenue(addedVenue)
+                val venue = venueService.insertVenue(addedVenue)
                 ResponseEntity.ok(Response(success = true, result = venue, error = null))
             } catch (e: Exception) {
                 ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
@@ -50,7 +50,7 @@ class VenueController
             @RequestBody updatedVenue: Venue,
         ): ResponseEntity<Response<Venue>> =
             try {
-                val venue = service.updateVenue(id, updatedVenue)
+                val venue = venueService.updateVenue(id, updatedVenue)
                 ResponseEntity.ok(Response(success = true, result = venue, error = null))
             } catch (e: Exception) {
                 ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
@@ -62,7 +62,7 @@ class VenueController
             @PathVariable id: String,
         ): ResponseEntity<Response<Boolean>> =
             try {
-                service.deleteClass(id)
+                venueService.deleteClass(id)
                 ResponseEntity.ok(Response(success = true, result = true, error = null))
             } catch (e: Exception) {
                 ResponseEntity.badRequest().body(Response(success = false, result = false, error = e.message))

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Request</title>
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            width: 100%;
+            height: 800px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #ffffff;
+            padding: 20px;
+            border: 1px solid #D9D9D9;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .container_header {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .header {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .class-info {
+            margin: 10px 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .reservation-details {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .user-info {
+            font-weight: bold;
+            color: #000000;
+            font-size: 13px;
+        }
+
+        .reservation-time {
+            color: #1a73e8;
+        }
+
+        .reservation-venue {
+            font-size: 13px;
+            color: #666;
+            margin: 15px 0;
+        }
+
+        .button-group {
+            margin-top: 20px;
+            align-items: center;
+            align-items: center;
+        }
+
+        .button {
+            font-size: 14px;
+            padding: 10px 20px;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .approve-button {
+            background-color: #007AFF;
+        }
+
+        .reject-button {
+            background-color: #F5F5F5;
+            color: #007AFF;
+            border: 1px solid #D9D9D9;
+        }
+
+        .date-info {
+            color: #007AFF;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        .profile-picture {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .icon-date {
+            width: 15px;
+            margin: 0px 1px;
+            height: 15px;
+            vertical-align: middle;
+            border-radius: 5px;
+            background: #D9D9D9;
+            padding: 5px;
+        }
+
+        .icon-time {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            background: #D9D9D9;
+            border-radius: 5px;
+            padding: 3px;
+        }
+
+        .card {
+            background: #E8E8E8;
+            border-radius: 10px;
+            text-align: start;
+            padding: 1px 10px 15px;
+        }
+
+        .venue-container {
+            display: block; /* Allow wrapping */
+        }
+
+        .venue-detail {
+            width: 100%;
+            background-color: #ececec;
+            padding: 30px 0px;
+            border-radius: 10px;
+            margin: 2px;
+            text-align: center;
+            border: 1px solid #D9D9D9;
+        }
+    </style>
+</head>
+
+<body>
+<div>
+    <div class="container_header">
+        <p class="header">Hi, <strong th:text="${username}">Anutra</strong></p>
+        <p>There's a new venue reservation request from <br> <strong th:text="${requester}">Naronkrach's</strong> "<span
+                th:text="${className}">Astro 101</span>" class</p>
+        <p>Link to SIT Booking System: https://webapp3.sit.kmutt.ac.th/booking/web/announce.htm</p>
+    </div>
+    <div class="container">
+        <div class="class-info" th:text="${className}">Astro 101</div>
+        <div>
+            <img th:src="${profilePicture}" alt="Profile Picture" class="profile-picture"/>
+            <span class="user-info" th:text="${owners}">Naronkrach Tanajarusawas</span>
+        </div>
+        <p class="reservation-details" th:text="${description}">
+            สอนใช้ framework Astro ขั้นพื้นฐาน สอนใช้ framework Astro ขั้นพื้นฐานสอนใช้ framework Astro
+            ขั้นพื้นฐานสอนใช้ framework Astro ขั้นพื้นฐานสอนใช้ framework Astro ขั้นพื้นฐานสอนใช้ framework Astro
+            ขั้นพื้นฐาน
+            <a href="#" target="_blank">View more detail</a>
+
+        </p>
+
+        <div class="card">
+            <div class="reservation-details" th:each="dateWithVenueDetail : ${dateWithVenue}">
+                <p>
+                    <img src="https://capstone24.sit.kmutt.ac.th/kp2/minio/classcraft/2/date.png" alt="data-icon"
+                         class="icon-date">
+                    <span class="date-info" th:text="${dateWithVenueDetail.dates.startDateTime.date}">23 August 2024</span>
+                </p>
+                <p><img src="https://capstone24.sit.kmutt.ac.th/kp2/minio/classcraft/2/prime_clock.png" alt="time-icon"
+                        class="icon-time">
+                    <span class="date-info" th:text="${dateWithVenueDetail.dates.startDateTime.time}">10:00</span> - <span class="date-info" th:text="${dateWithVenueDetail.dates.endDateTime.time}">16:00</span>
+                </p>
+                <p class="reservation-venue">Would like to reserve venues </p>
+                <div class="venue-container">
+                    <div class="venue-detail" th:each="venue : ${dateWithVenueDetail.venue}">
+                        <p th:text="${venue.name}">Venue 1</p>
+                        <span th:text="${venue.location.building}">LX Building, </span> <span>floor </span> <span th:text="${venue.location.floor}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="button-group">
+            <a style="cursor: pointer" th:href="${approveUrl}"><button type="submit" class="button approve-button">Approve</button></a>
+            <a style="cursor: pointer" th:href="${rejectUrl}"><button type="submit" class="button reject-button">Reject</button></a>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
