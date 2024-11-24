@@ -35,10 +35,10 @@ class FileUploadController(
         @Parameter(description = "File to be uploaded", required = true, content = [Content(mediaType = "multipart/form-data")])
         @RequestParam("file") file: MultipartFile,
         @Parameter(description = "Class ID", required = true)
-        @RequestParam("classId") classId: String,
+        @RequestParam("fileCategory") fileCategory: String,
     ): ResponseEntity<Response<FileResponse>> =
         try {
-            val url = fileUploadService.fileUpload(file, classId)
+            val url = fileUploadService.fileUpload(file, fileCategory)
             ResponseEntity.ok(Response(success = true, result = FileResponse(url), error = null))
         } catch (e: Exception) {
             ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
