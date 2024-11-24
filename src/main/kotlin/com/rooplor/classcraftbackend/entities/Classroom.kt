@@ -21,7 +21,7 @@ data class Classroom(
     var type: ClassType = ClassType.LECTURE,
     var format: Format = Format.ONSITE,
     var capacity: Int = 0,
-    var date: List<DateWithVenue> = emptyList(),
+    var dates: List<DateWithVenue> = emptyList(),
     var stepperStatus: Int? = Status.FILL_CLASS_DETAIL.id,
     var meetingUrl: String? = null,
     var content: String? = null,

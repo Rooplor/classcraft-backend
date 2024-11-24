@@ -54,7 +54,7 @@ class ClassroomControllerTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
                 Classroom(
                     title = "Spring Boot 101",
@@ -64,7 +64,7 @@ class ClassroomControllerTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
 
@@ -87,7 +87,7 @@ class ClassroomControllerTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
                 Classroom(
                     title = "Spring Boot 101",
@@ -97,7 +97,7 @@ class ClassroomControllerTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
 
@@ -121,7 +121,7 @@ class ClassroomControllerTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
                 Classroom(
                     title = "Spring Boot 101",
@@ -131,7 +131,7 @@ class ClassroomControllerTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
 
@@ -155,7 +155,7 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classService.findClassById(classId)).thenReturn(classroomObj)
 
@@ -180,7 +180,7 @@ class ClassroomControllerTest {
                 instructorAvatar = "https://example.com/johndoe.jpg",
                 instructorFamiliarity = "John Doe has 5 years of experience",
                 coverImage = "https://example.com/cover.jpg",
-                date = listOf(),
+                dates = listOf(),
                 owner = "owner1",
             )
         val initClassDTO =
@@ -197,7 +197,7 @@ class ClassroomControllerTest {
                 instructorAvatar = "https://example.com/johndoe.jpg",
                 instructorFamiliarity = "John Doe has 5 years of experience",
                 coverImage = "https://example.com/cover.jpg",
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(modelMapper.map(initClassDTO, Classroom::class.java)).thenReturn(classroomObj)
         Mockito.`when`(classService.insertClass(classroomObj)).thenReturn(classroomObj)
@@ -221,7 +221,7 @@ class ClassroomControllerTest {
                             "instructorAvatar": "https://example.com/johndoe.jpg",
                             "instructorFamiliarity": "John Doe has 5 years of experience",
                             "coverImage": "https://example.com/cover.jpg",
-                            "date": [],
+                            "dates": [],
                             "owner": "owner1",
                             "coOwners": []
                         }
@@ -254,7 +254,7 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 venue = venues,
                 venueStatus = VenueStatus.PENDING.id,
             )
@@ -280,7 +280,7 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classService.updateMeetingUrlClass(classId, meetingUrl)).thenReturn(classroomObj)
 
@@ -309,7 +309,7 @@ class ClassroomControllerTest {
                 "type": "LECTURE",
                 "format": "ONSITE",
                 "capacity": 30,
-                "date": []
+                "dates": []
             }
             """.trimIndent()
         val classroomObj =
@@ -322,7 +322,7 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classService.updateContent(classId, content)).thenReturn(classroomObj)
 
@@ -348,7 +348,7 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classService.updateRegistrationUrl(classId, registrationUrl)).thenReturn(classroomObj)
 
@@ -377,7 +377,7 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classService.toggleRegistrationStatus(classId)).thenReturn(classroomObj)
 
@@ -399,7 +399,7 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classService.togglePublishStatus(classId)).thenReturn(classroomObj)
 
@@ -426,7 +426,7 @@ class ClassroomControllerTest {
                 instructorAvatar = "https://example.com/johndoe.jpg",
                 instructorFamiliarity = "John Doe has 5 years of experience",
                 coverImage = "https://example.com/cover.jpg",
-                date = listOf(),
+                dates = listOf(),
                 owner = "owner1",
             )
         val initClassDTO =
@@ -443,7 +443,7 @@ class ClassroomControllerTest {
                 instructorAvatar = "https://example.com/johndoe.jpg",
                 instructorFamiliarity = "John Doe has 5 years of experience",
                 coverImage = "https://example.com/cover.jpg",
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(modelMapper.map(initClassDTO, Classroom::class.java)).thenReturn(classroomObj)
         Mockito.`when`(classService.updateClass(classId, classroomObj)).thenReturn(classroomObj)
@@ -467,7 +467,7 @@ class ClassroomControllerTest {
                             "instructorAvatar": "https://example.com/johndoe.jpg",
                             "instructorFamiliarity": "John Doe has 5 years of experience",
                             "coverImage": "https://example.com/cover.jpg",
-                            "date": [],
+                            "dates": [],
                             "owner": "owner1",
                             "coOwners": []
                         }
@@ -489,7 +489,7 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classService.updateStepperStatus(classId, 2)).thenReturn(classroomObj)
 
@@ -521,12 +521,12 @@ class ClassroomControllerTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         val dateWithVenue =
             listOf(
                 DateWithVenue(
-                    date =
+                    dates =
                         DateDetail(
                             startDateTime = LocalDateTime.parse("2024-11-19T08:00:00.000"),
                             endDateTime = LocalDateTime.parse("2024-11-19T16:00:00.000"),
@@ -537,7 +537,7 @@ class ClassroomControllerTest {
         val requestJson =
             """
              [{
-              "date": {
+              "dates": {
                 "startDateTime": "2024-11-19T08:00:00.000",
                 "endDateTime": "2024-11-19T16:00:00.000"
               },
@@ -546,7 +546,7 @@ class ClassroomControllerTest {
               ]
             },
             {
-              "date": {
+              "dates": {
                 "startDateTime": "2024-11-20T08:00:00.000",
                 "endDateTime": "2024-11-20T16:00:00.000"
               },

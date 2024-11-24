@@ -64,7 +64,7 @@ class ClassService
             classToUpdate.type = updatedClassroom.type
             classToUpdate.format = updatedClassroom.format
             classToUpdate.capacity = updatedClassroom.capacity
-            classToUpdate.date = updatedClassroom.date
+            classToUpdate.dates = updatedClassroom.dates
             classToUpdate.instructorName = updatedClassroom.instructorName
             classToUpdate.instructorBio = updatedClassroom.instructorBio
             classToUpdate.instructorAvatar = updatedClassroom.instructorAvatar
@@ -190,8 +190,6 @@ class ClassService
             )
         }
 
-        private fun removeBucketFromArray(str: String) = str.replace("[", "").replace("]", "")
-
         private fun updateUpdatedWhen(classroom: Classroom): Classroom {
             classroom.updatedWhen = LocalDateTime.now()
             return classroom
@@ -212,24 +210,24 @@ class ClassService
         private fun mapDateWithVenueToTemplate(dateWithVenue: List<DateWithVenue>): List<DateWithVenueDTO> =
             dateWithVenue.map {
                 DateWithVenueDTO(
-                    date =
+                    dates =
                         DateDetail(
                             startDateTime =
                                 StartEndDetail(
-                                    it.date.startDateTime
+                                    it.dates.startDateTime
                                         .toLocalDate()
                                         .format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
                                         .toString(),
-                                    it.date.startDateTime
+                                    it.dates.startDateTime
                                         .toLocalTime()
                                         .toString(),
                                 ),
                             endDateTime =
                                 StartEndDetail(
-                                    it.date.endDateTime
+                                    it.dates.endDateTime
                                         .toLocalDate()
                                         .toString(),
-                                    it.date.endDateTime
+                                    it.dates.endDateTime
                                         .toLocalTime()
                                         .toString(),
                                 ),

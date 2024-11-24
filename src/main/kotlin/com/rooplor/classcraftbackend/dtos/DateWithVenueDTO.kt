@@ -4,7 +4,7 @@ import com.rooplor.classcraftbackend.entities.Venue
 import java.time.LocalDateTime
 
 data class DateWithVenueDTO(
-    var date: DateDetail = DateDetail(),
+    var dates: DateDetail = DateDetail(),
     var venue: List<Venue>,
 )
 

@@ -47,7 +47,7 @@ class ClassroomServiceTest {
                     capacity = 30,
                     isPublished = true,
                     registrationStatus = true,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
                 Classroom(
                     title = "Spring Boot 101",
@@ -59,7 +59,7 @@ class ClassroomServiceTest {
                     capacity = 30,
                     isPublished = true,
                     registrationStatus = true,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
         Mockito
@@ -84,7 +84,7 @@ class ClassroomServiceTest {
                     capacity = 30,
                     isPublished = true,
                     registrationStatus = false,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
                 Classroom(
                     title = "Spring Boot 101",
@@ -96,7 +96,7 @@ class ClassroomServiceTest {
                     capacity = 30,
                     isPublished = true,
                     registrationStatus = false,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
         Mockito
@@ -121,7 +121,7 @@ class ClassroomServiceTest {
                     capacity = 30,
                     isPublished = false,
                     registrationStatus = false,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
         Mockito
@@ -146,7 +146,7 @@ class ClassroomServiceTest {
                     capacity = 30,
                     isPublished = false,
                     registrationStatus = true,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
         Mockito
@@ -170,7 +170,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
 
@@ -189,7 +189,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 owner = "owner1",
             )
         Mockito.`when`(classRepository.insert(classroomObj)).thenReturn(classroomObj)
@@ -222,7 +222,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 venue = venues,
                 venueStatus = 1,
             )
@@ -247,7 +247,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 meetingUrl = "https://meet.google.com/abc-xyz",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
@@ -271,7 +271,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 content = "{\"key\": \"value\"}",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
@@ -295,7 +295,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 registrationUrl = "https://example.com/register",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
@@ -318,7 +318,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 registrationStatus = false,
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
@@ -341,7 +341,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 isPublished = false,
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
@@ -364,7 +364,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
@@ -387,7 +387,7 @@ class ClassroomServiceTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                     owner = "owner1",
                 ),
                 Classroom(
@@ -399,7 +399,7 @@ class ClassroomServiceTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                     owner = "owner1",
                 ),
             )
@@ -414,7 +414,7 @@ class ClassroomServiceTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                     owner = "owner1",
                 ),
                 Classroom(
@@ -426,7 +426,7 @@ class ClassroomServiceTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                     owner = "owner1",
                 ),
             )
@@ -452,7 +452,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 stepperStatus = 1,
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
@@ -479,7 +479,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 stepperStatus = 1,
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
@@ -502,7 +502,7 @@ class ClassroomServiceTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
                 Classroom(
                     title = "Spring Boot 101",
@@ -512,7 +512,7 @@ class ClassroomServiceTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
         Mockito
@@ -529,7 +529,7 @@ class ClassroomServiceTest {
         val dateWithVenue =
             listOf(
                 DateWithVenue(
-                    date =
+                    dates =
                         DateDetail(
                             startDateTime = LocalDateTime.parse("2024-11-19T08:00:00.000"),
                             endDateTime = LocalDateTime.parse("2024-11-19T16:00:00.000"),
@@ -593,7 +593,7 @@ class ClassroomServiceTest {
                 classroom,
                 listOf(
                     DateWithVenue(
-                        date = DateDetail(),
+                        dates = DateDetail(),
                         venueId = listOf("1"),
                     ),
                 ),
@@ -614,7 +614,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 venueStatus = 1,
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
@@ -639,7 +639,7 @@ class ClassroomServiceTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
                 venueStatus = 1,
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))

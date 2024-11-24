@@ -12,7 +12,7 @@ data class InitClassDTO(
     var type: ClassType,
     var format: Format,
     var capacity: Int,
-    var date: List<DateWithVenue>,
+    var dates: List<DateWithVenue>,
     var instructorName: String = "",
     var instructorBio: String = "",
     var instructorAvatar: String = "",
