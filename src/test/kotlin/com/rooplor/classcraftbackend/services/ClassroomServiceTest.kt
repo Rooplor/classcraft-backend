@@ -195,8 +195,8 @@ class ClassroomServiceTest {
         Mockito.`when`(classRepository.insert(classroomObj)).thenReturn(classroomObj)
         Mockito
             .`when`(
-                authService.getAuthenticatedUserDetails(),
-            ).thenReturn(User(id = "owner1", username = "owner1", email = "owner1@mail.com", profilePicture = null))
+                authService.getUserId(),
+            ).thenReturn("owner1")
 
         val result = classService.insertClass(classroomObj)
         assertEquals(classroomObj, result)
