@@ -33,7 +33,7 @@ data class Classroom(
     var instructorBio: String = "",
     var instructorAvatar: String = "",
     var instructorFamiliarity: String = "",
-    var coverImage: String = "",
+    var coverImage: String? = "",
     var createdWhen: LocalDateTime = LocalDateTime.now(),
     var updatedWhen: LocalDateTime = LocalDateTime.now(),
     @DBRef
