@@ -14,10 +14,10 @@ class FileUploadService(
 ) {
     fun fileUpload(
         file: MultipartFile,
-        classId: String,
+        fileCategory: String,
     ): String {
         val objectName = "${System.currentTimeMillis()}-${file.originalFilename}"
-        val folder = "$classId/"
+        val folder = "$fileCategory/"
 
         val url = environment.getProperty("minio.reverse-url")
         val bucketName = environment.getProperty("minio.bucket-name")
