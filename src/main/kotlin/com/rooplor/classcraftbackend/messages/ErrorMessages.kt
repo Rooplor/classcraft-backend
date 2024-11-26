@@ -23,4 +23,8 @@ object ErrorMessages {
     const val ANSWER_NOT_FOUND = "Answer not found"
     const val FIELD_VALIDATE_FAIL = "Field '$0' does not match the validation pattern."
     const val ANSWER_ALREADY_SUBMITTED = "Answer already submitted"
+
+    // venue error messages
+    const val VENUE_REJECT_REASON_IS_BLANK_OR_NULL = "Reject reason is required when rejecting a venue"
+    const val VENUE_STATUS_INVALID = "Venue status is not valid"
 }

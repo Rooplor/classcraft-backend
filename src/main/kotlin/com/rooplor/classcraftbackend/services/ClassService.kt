@@ -132,14 +132,14 @@ class ClassService
             rejectReason: String = "",
         ): Classroom {
             if (venueStatus == VenueStatus.REJECTED.id && rejectReason.isNullOrEmpty()) {
-                throw IllegalArgumentException("Reject reason is required when reject")
+                throw IllegalArgumentException(ErrorMessages.VENUE_REJECT_REASON_IS_BLANK_OR_NULL)
             } else {
                 val classToUpdate = findClassById(id)
                 if (VenueStatus.values().contains(VenueStatus.values().find { it.id == venueStatus })) {
                     classToUpdate.venueStatus = VenueStatus.values().find { it.id == venueStatus }?.id
                     classToUpdate.rejectReason = rejectReason
                 } else {
-                    throw IllegalArgumentException("Venue status is not valid")
+                    throw IllegalArgumentException(ErrorMessages.VENUE_STATUS_INVALID)
                 }
                 return classRepository.save(updateUpdatedWhen(classToUpdate))
             }
