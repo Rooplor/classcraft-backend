@@ -104,17 +104,17 @@ class ClassController
             }
 
         @Operation(summary = "Update venue of a class")
-        @PatchMapping("/{id}/venue/{venueId}")
-        fun updateVenueClass(
+        @PatchMapping("/{id}/venue")
+        fun updateDateWithVenueClass(
             @PathVariable id: String,
-            @PathVariable venueId: List<String>,
+            @RequestBody venueId: List<DateWithVenue>,
         ): ResponseEntity<Response<Classroom>> =
             try {
                 ResponseEntity.ok(
                     Response(
                         success = true,
                         result =
-                            classService.updateVenueClass(id, venueId),
+                            classService.updateDateWithVenueClass(id, venueId),
                         error = null,
                     ),
                 )

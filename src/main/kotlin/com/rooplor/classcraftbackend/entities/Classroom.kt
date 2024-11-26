@@ -6,7 +6,6 @@ import com.rooplor.classcraftbackend.enums.Status
 import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.types.DateWithVenue
 import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.LocalDateTime
 
@@ -36,8 +35,6 @@ data class Classroom(
     var coverImage: String? = "",
     var createdWhen: LocalDateTime = LocalDateTime.now(),
     var updatedWhen: LocalDateTime = LocalDateTime.now(),
-    @DBRef
-    var venue: List<Venue>? = null,
     var owner: String = "",
     var coOwners: List<String>? = emptyList(),
 )
