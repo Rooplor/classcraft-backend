@@ -588,7 +588,7 @@ class ClassroomControllerTest {
     }
 
     @Test
-    fun `should return class when search`(){
+    fun `should return class when search`() {
         val classrooms =
             listOf(
                 Classroom(

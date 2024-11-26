@@ -679,11 +679,19 @@ class ClassroomServiceTest {
                 ),
             )
         Mockito
-            .`when`(classRepository.findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue(title, title))
-            .thenReturn(classrooms)
+            .`when`(
+                classRepository.findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue(
+                    title,
+                    title,
+                ),
+            ).thenReturn(classrooms)
         Mockito
-            .`when`(classRepository.findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue(detail, detail))
-            .thenReturn(classrooms)
+            .`when`(
+                classRepository.findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue(
+                    detail,
+                    detail,
+                ),
+            ).thenReturn(classrooms)
 
         val result = classService.searchClassByTitleOrDetails(title)
         assertEquals(classrooms, result)

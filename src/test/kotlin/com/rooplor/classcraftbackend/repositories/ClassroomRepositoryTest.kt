@@ -213,7 +213,7 @@ class ClassroomRepositoryTest {
     }
 
     @Test
-    fun `should return classes when search`(){
+    fun `should return classes when search`() {
         val classrooms =
             listOf(
                 Classroom(
@@ -242,9 +242,18 @@ class ClassroomRepositoryTest {
                 ),
             )
 
-        `when`(classRepository.findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue("React", "React")).thenReturn(classrooms)
+        `when`(
+            classRepository.findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue(
+                "React",
+                "React",
+            ),
+        ).thenReturn(classrooms)
 
-        val result = classRepository.findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue("React", "React")
+        val result =
+            classRepository.findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue(
+                "React",
+                "React",
+            )
         assertEquals(classrooms, result)
     }
 }

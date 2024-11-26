@@ -15,5 +15,8 @@ interface ClassroomRepository : MongoRepository<Classroom, String> {
 
     fun findByOwner(owners: String): List<Classroom>
 
-    fun findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue(title: String, details: String): List<Classroom>
+    fun findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue(
+        title: String,
+        details: String,
+    ): List<Classroom>
 }
