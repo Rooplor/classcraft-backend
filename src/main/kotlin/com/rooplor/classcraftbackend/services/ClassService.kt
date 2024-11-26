@@ -192,6 +192,12 @@ class ClassService
             )
         }
 
+        fun searchClassByTitleOrDetails(keyword: String): List<Classroom> =
+            classRepository.findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue(
+                keyword,
+                keyword,
+            )
+
         private fun updateUpdatedWhen(classroom: Classroom): Classroom {
             classroom.updatedWhen = LocalDateTime.now()
             return classroom

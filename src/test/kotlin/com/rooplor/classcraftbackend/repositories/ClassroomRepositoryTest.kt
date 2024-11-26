@@ -211,4 +211,49 @@ class ClassroomRepositoryTest {
         val result = classRepository.findByOwner("owner1")
         assertEquals(classrooms, result)
     }
+
+    @Test
+    fun `should return classes when search`() {
+        val classrooms =
+            listOf(
+                Classroom(
+                    id = "1",
+                    title = "React Native",
+                    details = "Learn how to build mobile apps using React Native",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    dates = listOf(),
+                    isPublished = true,
+                ),
+                Classroom(
+                    id = "2",
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps using Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    dates = listOf(),
+                    isPublished = true,
+                ),
+            )
+
+        `when`(
+            classRepository.findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue(
+                "React",
+                "React",
+            ),
+        ).thenReturn(classrooms)
+
+        val result =
+            classRepository.findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue(
+                "React",
+                "React",
+            )
+        assertEquals(classrooms, result)
+    }
 }
