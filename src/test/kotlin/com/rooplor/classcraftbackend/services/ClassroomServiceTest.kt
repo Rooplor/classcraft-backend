@@ -699,4 +699,76 @@ class ClassroomServiceTest {
         val result2 = classService.searchClassByTitleOrDetails(detail)
         assertEquals(classrooms, result2)
     }
+
+    @Test
+    fun `should update venue status to approved`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                venueStatus = 2,
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+
+        val result = classService.updateVenueStatus(classId, 3, "")
+        assertEquals(classroomObj, result)
+    }
+
+    @Test
+    fun `should update venue status to rejected`() {
+        val classId = "1"
+        val rejectReason = "Venue is not available"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                venueStatus = 2,
+                rejectReason = "Venue is not available",
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+
+        val result = classService.updateVenueStatus(classId, 4, rejectReason)
+        assertEquals(classroomObj, result)
+    }
+
+    @Test
+    fun `should throw error when update venue status to rejected without reason`() {
+        val classId = "1"
+        val rejectReason = ""
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                venueStatus = 2,
+                rejectReason = "Venue is not available",
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+
+        assertThrows<IllegalArgumentException> { classService.updateVenueStatus(classId, 4, rejectReason) }
+    }
 }
