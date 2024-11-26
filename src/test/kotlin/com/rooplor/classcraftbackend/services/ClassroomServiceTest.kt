@@ -11,6 +11,7 @@ import com.rooplor.classcraftbackend.types.DateDetail
 import com.rooplor.classcraftbackend.types.DateWithVenue
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.any
@@ -18,6 +19,7 @@ import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.mockito.MockitoAnnotations
 import org.springframework.boot.test.context.SpringBootTest
 import org.thymeleaf.context.Context
 import java.time.LocalDateTime
@@ -31,7 +33,13 @@ class ClassroomServiceTest {
     private val authService: AuthService = Mockito.mock(AuthService::class.java)
     private val userService: UserService = Mockito.mock(UserService::class.java)
     private val mailService: MailService = Mockito.mock(MailService::class.java)
-    private val classService: ClassService = ClassService(classRepository, venueService, authService, userService, mailService)
+    private var classService: ClassService = Mockito.mock(ClassService::class.java)
+
+    @BeforeEach
+    fun setUp() {
+        MockitoAnnotations.openMocks(this)
+        classService = ClassService(classRepository, venueService, authService, userService, mailService)
+    }
 
     @Test
     fun `should return all classes is published`() {
@@ -209,7 +217,7 @@ class ClassroomServiceTest {
             listOf(
                 Venue(
                     id = "1",
-                    name = "TRAIN_3",
+                    room = "TRAIN_3",
                 ),
             )
         val classroomObj =
@@ -223,13 +231,12 @@ class ClassroomServiceTest {
                 format = Format.ONSITE,
                 capacity = 30,
                 dates = listOf(),
-                venue = venues,
                 venueStatus = 1,
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
 
-        val result = classService.updateVenueClass(classId, listOf("1", "2"))
+        val result = classService.updateDateWithVenueClass(classId, listOf(DateWithVenue(DateDetail(), listOf("1"))))
         assertEquals(classroomObj, result)
     }
 
@@ -529,7 +536,7 @@ class ClassroomServiceTest {
         val dateWithVenue =
             listOf(
                 DateWithVenue(
-                    dates =
+                    date =
                         DateDetail(
                             startDateTime = LocalDateTime.parse("2024-11-19T08:00:00.000"),
                             endDateTime = LocalDateTime.parse("2024-11-19T16:00:00.000"),
@@ -542,21 +549,25 @@ class ClassroomServiceTest {
 
         val classroom =
             Classroom(
+                id = "1",
                 owner = "1",
                 title = "React Native",
                 details = "Learn how to build mobile apps with React Native",
             )
         val user = User(username = "testUser", profilePicture = "profile.jpg")
-        val venue1 = Venue(name = "LX10 - 4")
-        val venue2 = Venue(name = "LX10 - 5")
+        val venue1 = Venue(room = "LX10 - 4")
+        val venue2 = Venue(room = "LX10 - 5")
 
         `when`(authService.getAuthenticatedUser()).thenReturn(staffUsername)
         `when`(userService.findByUsername(staffUsername)).thenReturn(user)
         `when`(userService.findUserById(classroom.owner)).thenReturn(User(username = "ownerUsername"))
         `when`(venueService.findVenueById("1")).thenReturn(venue1)
         `when`(venueService.findVenueById("2")).thenReturn(venue2)
+        `when`(classRepository.findById("1")).thenReturn(Optional.of(classroom))
+        `when`(classRepository.save(classroom)).thenReturn(classroom)
 
         classService.reservationVenue(classroom, dateWithVenue)
+
         val mapDateWithVenueToTemplateMethod = ClassService::class.java.getDeclaredMethod("mapDateWithVenueToTemplate", List::class.java)
         mapDateWithVenueToTemplateMethod.isAccessible = true
         val result = mapDateWithVenueToTemplateMethod.invoke(classService, dateWithVenue)
@@ -593,7 +604,7 @@ class ClassroomServiceTest {
                 classroom,
                 listOf(
                     DateWithVenue(
-                        dates = DateDetail(),
+                        date = DateDetail(),
                         venueId = listOf("1"),
                     ),
                 ),

@@ -4,10 +4,10 @@ import com.rooplor.classcraftbackend.configs.TestConfig
 import com.rooplor.classcraftbackend.configs.TestSecurityConfig
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
 import com.rooplor.classcraftbackend.entities.Classroom
-import com.rooplor.classcraftbackend.entities.Venue
 import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.enums.VenueStatus
+import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import com.rooplor.classcraftbackend.services.ClassService
 import com.rooplor.classcraftbackend.types.DateDetail
 import com.rooplor.classcraftbackend.types.DateWithVenue
@@ -38,6 +38,9 @@ class ClassroomControllerTest {
 
     @MockBean
     private lateinit var classService: ClassService
+
+    @MockBean
+    private lateinit var classRepository: ClassroomRepository
 
     @MockBean
     private lateinit var modelMapper: ModelMapper
@@ -233,17 +236,6 @@ class ClassroomControllerTest {
     @Test
     fun `should update venue of a class`() {
         val classId = "1"
-        val venues =
-            listOf(
-                Venue(
-                    id = "1",
-                    name = "Venue 1",
-                ),
-                Venue(
-                    id = "2",
-                    name = "Venue 2",
-                ),
-            )
         val classroomObj =
             Classroom(
                 id = classId,
@@ -255,14 +247,41 @@ class ClassroomControllerTest {
                 format = Format.ONSITE,
                 capacity = 30,
                 dates = listOf(),
-                venue = venues,
                 venueStatus = VenueStatus.PENDING.id,
             )
-        Mockito.`when`(classService.updateVenueClass(classId, listOf("1", "2"))).thenReturn(classroomObj)
+        val classroomResult =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(DateWithVenue(date = DateDetail(), listOf("1"))),
+                venueStatus = VenueStatus.PENDING.id,
+            )
+        Mockito
+            .`when`(
+                classService.updateDateWithVenueClass(classId, listOf(DateWithVenue(date = DateDetail(), listOf("1")))),
+            ).thenReturn(classroomResult)
 
         mockMvc
             .perform(
-                patch("/api/class/$classId/venue/1,2"),
+                patch("/api/class/$classId/venue")
+                    .contentType("application/json")
+                    .content(
+                        """
+                        [{
+                            "date": {
+                                "startDateTime": "2024-11-19T08:00:00.000",
+                                "endDateTime": "2024-11-19T16:00:00.000"
+                            },
+                            "venueId": ["1"]
+                        }]
+                        """.trimIndent(),
+                    ),
             ).andExpect(status().isOk)
     }
 
@@ -526,7 +545,7 @@ class ClassroomControllerTest {
         val dateWithVenue =
             listOf(
                 DateWithVenue(
-                    dates =
+                    date =
                         DateDetail(
                             startDateTime = LocalDateTime.parse("2024-11-19T08:00:00.000"),
                             endDateTime = LocalDateTime.parse("2024-11-19T16:00:00.000"),
@@ -537,7 +556,7 @@ class ClassroomControllerTest {
         val requestJson =
             """
              [{
-              "dates": {
+              "date": {
                 "startDateTime": "2024-11-19T08:00:00.000",
                 "endDateTime": "2024-11-19T16:00:00.000"
               },
@@ -546,7 +565,7 @@ class ClassroomControllerTest {
               ]
             },
             {
-              "dates": {
+              "date": {
                 "startDateTime": "2024-11-20T08:00:00.000",
                 "endDateTime": "2024-11-20T16:00:00.000"
               },

@@ -3,7 +3,7 @@ package com.rooplor.classcraftbackend.types
 import java.time.LocalDateTime
 
 data class DateWithVenue(
-    var dates: DateDetail = DateDetail(),
+    var date: DateDetail = DateDetail(),
     var venueId: List<String>,
 )
 

@@ -80,12 +80,12 @@ class ClassService
 
         fun findClassById(id: String): Classroom = classRepository.findById(id).orElseThrow()
 
-        fun updateVenueClass(
+        fun updateDateWithVenueClass(
             id: String,
-            venueId: List<String>,
+            dateWithVenue: List<DateWithVenue>,
         ): Classroom {
             val classToUpdate = findClassById(id)
-            classToUpdate.venue = venueId.map { venueService.findVenueById(it) }
+            classToUpdate.dates = dateWithVenue
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
@@ -171,6 +171,8 @@ class ClassService
             val user = userService.findByUsername(username)
             val owner = userService.findUserById(classroom.owner).username
 
+            updateDateWithVenueClass(classroom.id!!, dateWithVenue)
+
             val context = Context()
 
             context.setVariable("username", staffUsername)
@@ -217,20 +219,20 @@ class ClassService
                         DateDetail(
                             startDateTime =
                                 StartEndDetail(
-                                    it.dates.startDateTime
+                                    it.date.startDateTime
                                         .toLocalDate()
                                         .format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
                                         .toString(),
-                                    it.dates.startDateTime
+                                    it.date.startDateTime
                                         .toLocalTime()
                                         .toString(),
                                 ),
                             endDateTime =
                                 StartEndDetail(
-                                    it.dates.endDateTime
+                                    it.date.endDateTime
                                         .toLocalDate()
                                         .toString(),
-                                    it.dates.endDateTime
+                                    it.date.endDateTime
                                         .toLocalTime()
                                         .toString(),
                                 ),

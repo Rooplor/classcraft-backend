@@ -185,7 +185,7 @@
                 <p class="reservation-venue">Would like to reserve venues </p>
                 <div class="venue-container">
                     <div class="venue-detail" th:each="venue : ${dateWithVenueDetail.venue}">
-                        <p th:text="${venue.name}">Venue 1</p>
+                        <p th:text="${venue.room}">Venue 1</p>
                         <span th:text="${venue.location.building}">LX Building, </span> <span>floor </span> <span th:text="${venue.location.floor}"></span>
                     </div>
                 </div>
