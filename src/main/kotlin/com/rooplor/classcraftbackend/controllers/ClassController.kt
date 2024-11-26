@@ -2,6 +2,7 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
 import com.rooplor.classcraftbackend.dtos.Response
+import com.rooplor.classcraftbackend.dtos.VenueStatusDTO
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.services.ClassService
 import com.rooplor.classcraftbackend.types.DateWithVenue
@@ -269,14 +270,14 @@ class ClassController
         @PatchMapping("/{id}/venue-status")
         fun updateVenueStatus(
             @PathVariable id: String,
-            @RequestParam(name = "status", required = false) venueStatus: Int,
+            @RequestBody(required = true) venueStatusDTO: VenueStatusDTO,
         ): ResponseEntity<Response<Classroom>> =
             try {
                 ResponseEntity.ok(
                     Response(
                         success = true,
                         result =
-                            classService.updateVenueStatus(id, venueStatus),
+                            classService.updateVenueStatus(id, venueStatusDTO.venueStatusId, venueStatusDTO.rejectReason ?: ""),
                         error = null,
                     ),
                 )
