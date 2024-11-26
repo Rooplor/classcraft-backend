@@ -26,17 +26,8 @@ jobs:
       - name: init mongodb
         run: docker compose up -d
 
-      - name: install-dependency
+      - name: build-test
         run: ./mvnw install
-
-      - name: build
-        run: ./mvnw package
-
-      - name: ktlint
-        run: ./mvnw ktlint:check
-
-      - name: unit-test
-        run:  ./mvnw test
 
       - name: upload-build-files
         uses: actions/upload-artifact@v3
