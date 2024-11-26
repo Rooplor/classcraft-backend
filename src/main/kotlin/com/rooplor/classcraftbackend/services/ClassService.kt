@@ -48,7 +48,7 @@ class ClassService
             addedClassroom.registrationStatus = false
             addedClassroom.isPublished = false
             addedClassroom.owner = authService.getUserId()
-            addedClassroom.stepperStatus = 1
+            addedClassroom.stepperStatus = 2
             return classRepository.insert(addedClassroom)
         }
 
