@@ -283,4 +283,16 @@ class ClassController
             } catch (e: Exception) {
                 ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
             }
+
+        @Operation(summary = "Search classes by title or details")
+        @GetMapping("/search")
+        fun searchClass(
+            @RequestParam(name = "keyword", required = false) keyword: String,
+        ): ResponseEntity<Response<List<Classroom>>> =
+            try {
+                val result = classService.searchClassByTitleOrDetails(keyword)
+                ResponseEntity.ok(Response(success = true, result = result, error = null))
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
     }
