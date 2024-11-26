@@ -649,4 +649,35 @@ class ClassroomServiceTest {
             classService.updateVenueStatus(classId, 4)
         }
     }
+
+    @Test
+    fun `should return class when search by title and details`() {
+        val title = "React Native"
+        val detail = "build mobile apps with react native"
+        val classrooms =
+            listOf(
+                Classroom(
+                    title = "React Native",
+                    details = "Learn how to build mobile apps with React Native",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    dates = listOf(),
+                ),
+            )
+        Mockito
+            .`when`(classRepository.findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue(title, title))
+            .thenReturn(classrooms)
+        Mockito
+            .`when`(classRepository.findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue(detail, detail))
+            .thenReturn(classrooms)
+
+        val result = classService.searchClassByTitleOrDetails(title)
+        assertEquals(classrooms, result)
+
+        val result2 = classService.searchClassByTitleOrDetails(detail)
+        assertEquals(classrooms, result2)
+    }
 }

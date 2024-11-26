@@ -567,4 +567,39 @@ class ClassroomControllerTest {
                     .content(requestJson),
             ).andExpect(status().isOk)
     }
+
+    @Test
+    fun `should return class when search`(){
+        val classrooms =
+            listOf(
+                Classroom(
+                    title = "React Native",
+                    details = "Learn how to build mobile apps using React Native",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    dates = listOf(),
+                    isPublished = true,
+                ),
+                Classroom(
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps using Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    dates = listOf(),
+                    isPublished = true,
+                ),
+            )
+
+        Mockito.`when`(classService.searchClassByTitleOrDetails("React Native")).thenReturn(classrooms)
+
+        mockMvc
+            .perform(get("/api/class/search?keyword=React Native"))
+            .andExpect(status().isOk)
+    }
 }
