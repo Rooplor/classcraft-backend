@@ -4,7 +4,8 @@ enum class VenueStatus(
     val id: Int,
     val value: String,
 ) {
-    PENDING(1, "Pending"),
-    APPROVED(2, "Approved"),
-    REJECTED(3, "Rejected"),
+    NO_REQUEST(1, "No Request"),
+    PENDING(2, "Pending"),
+    APPROVED(3, "Approved"),
+    REJECTED(4, "Rejected"),
 }

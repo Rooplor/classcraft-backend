@@ -48,7 +48,8 @@ class ClassService
             addedClassroom.registrationStatus = false
             addedClassroom.isPublished = false
             addedClassroom.owner = authService.getUserId()
-            addedClassroom.stepperStatus = 2
+            addedClassroom.stepperStatus = Status.RESERVE_VENUE.id
+            addedClassroom.venueStatus = VenueStatus.NO_REQUEST.id
             return classRepository.insert(addedClassroom)
         }
 
@@ -128,14 +129,20 @@ class ClassService
         fun updateVenueStatus(
             id: String,
             venueStatus: Int,
+            rejectReason: String = "",
         ): Classroom {
-            val classToUpdate = findClassById(id)
-            if (VenueStatus.values().contains(VenueStatus.values().find { it.id == venueStatus })) {
-                classToUpdate.venueStatus = VenueStatus.values().find { it.id == venueStatus }?.id
+            if (venueStatus == VenueStatus.REJECTED.id && rejectReason.isNullOrEmpty()) {
+                throw IllegalArgumentException("Reject reason is required when reject")
             } else {
-                throw IllegalArgumentException("Venue status is not valid")
+                val classToUpdate = findClassById(id)
+                if (VenueStatus.values().contains(VenueStatus.values().find { it.id == venueStatus })) {
+                    classToUpdate.venueStatus = VenueStatus.values().find { it.id == venueStatus }?.id
+                    classToUpdate.rejectReason = rejectReason
+                } else {
+                    throw IllegalArgumentException("Venue status is not valid")
+                }
+                return classRepository.save(updateUpdatedWhen(classToUpdate))
             }
-            return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
         fun togglePublishStatus(id: String): Classroom {
@@ -171,8 +178,6 @@ class ClassService
             val user = userService.findByUsername(username)
             val owner = userService.findUserById(classroom.owner).username
 
-            updateDateWithVenueClass(classroom.id!!, dateWithVenue)
-
             val context = Context()
 
             context.setVariable("username", staffUsername)
@@ -190,6 +195,9 @@ class ClassService
                 template = "reservation", // reference to src/main/resources/templates/reservation.html
                 context = context,
             )
+
+            updateDateWithVenueClass(classroom.id!!, dateWithVenue)
+            updateVenueStatus(classroom.id!!, VenueStatus.PENDING.id)
         }
 
         fun searchClassByTitleOrDetails(keyword: String): List<Classroom> =

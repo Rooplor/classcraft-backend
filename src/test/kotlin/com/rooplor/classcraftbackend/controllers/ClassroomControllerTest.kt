@@ -621,4 +621,142 @@ class ClassroomControllerTest {
             .perform(get("/api/class/search?keyword=React Native"))
             .andExpect(status().isOk)
     }
+
+    @Test
+    fun `should update venue status to approved`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                venueStatus = VenueStatus.PENDING.id,
+            )
+        val rejectReason = "Venue is not available"
+        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason)).thenReturn(classroomObj)
+
+        mockMvc
+            .perform(
+                patch("/api/class/$classId/venue-status")
+                    .contentType("application/json")
+                    .content(
+                        """
+                        {
+                            "venueStatusId": 2
+                        }
+                        """.trimIndent(),
+                    ),
+            ).andExpect(status().isOk)
+    }
+
+    @Test
+    fun `should update venue status to pending`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                venueStatus = VenueStatus.PENDING.id,
+            )
+        val rejectReason = "Venue is not available"
+        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason)).thenReturn(classroomObj)
+
+        mockMvc
+            .perform(
+                patch("/api/class/$classId/venue-status")
+                    .contentType("application/json")
+                    .content(
+                        """
+                        {
+                            "venueStatusId": 1
+                        }
+                        """.trimIndent(),
+                    ),
+            ).andExpect(status().isOk)
+    }
+
+    @Test
+    fun `should update venue status with reject reason`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                venueStatus = VenueStatus.PENDING.id,
+            )
+        val rejectReason = "Venue is not available"
+        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason)).thenReturn(classroomObj)
+
+        mockMvc
+            .perform(
+                patch("/api/class/$classId/venue-status")
+                    .contentType("application/json")
+                    .content(
+                        """
+                        {
+                            "venueStatusId": 4,
+                            "rejectReason": "Venue is not available"
+                        }
+                        """.trimIndent(),
+                    ),
+            ).andExpect(status().isOk)
+    }
+
+    @Test
+    fun `should return 400 when update venue status without reject reason`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps using React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                venueStatus = VenueStatus.PENDING.id,
+                rejectReason = "",
+            )
+        val rejectReason = ""
+        Mockito
+            .`when`(
+                classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason),
+            ).thenThrow(IllegalArgumentException("Reject reason is required"))
+
+        mockMvc
+            .perform(
+                patch("/api/class/$classId/venue-status")
+                    .contentType("application/json")
+                    .content(
+                        """
+                        {
+                            "venueStatusId": 4,
+                            "rejectReason": ""
+                        }
+                        """.trimIndent(),
+                    ),
+            ).andExpect(status().isBadRequest)
+    }
 }
