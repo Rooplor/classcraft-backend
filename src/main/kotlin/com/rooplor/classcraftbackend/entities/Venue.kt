@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 data class Venue(
     @Id
     var id: String? = null,
-    var name: String = "",
+    var room: String = "",
     var location: location = location(),
     var description: String = "",
     var capacity: Number = 0,

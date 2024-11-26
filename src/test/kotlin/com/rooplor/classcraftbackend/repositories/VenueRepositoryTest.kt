@@ -18,7 +18,7 @@ class VenueRepositoryTest {
         val venueToSave =
             Venue(
                 id = "1",
-                name = "TRAIN_3",
+                room = "TRAIN_3",
             )
         `when`(venueRepository.save(venueToSave)).thenReturn(venueToSave)
         `when`(venueRepository.findById(venueToSave.id!!)).thenReturn(Optional.of(venueToSave))
@@ -34,11 +34,11 @@ class VenueRepositoryTest {
             listOf(
                 Venue(
                     id = "1",
-                    name = "TRAIN_3",
+                    room = "TRAIN_3",
                 ),
                 Venue(
                     id = "2",
-                    name = "TRAIN_4",
+                    room = "TRAIN_4",
                 ),
             )
         `when`(venueRepository.findAll()).thenReturn(venues)

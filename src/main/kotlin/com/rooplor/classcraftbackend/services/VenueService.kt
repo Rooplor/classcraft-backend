@@ -22,7 +22,7 @@ class VenueService
             updatedVenue: Venue,
         ): Venue {
             val venueToUpdate = findVenueById(id)
-            venueToUpdate.name = updatedVenue.name
+            venueToUpdate.room = updatedVenue.room
             venueToUpdate.location = updatedVenue.location
             venueToUpdate.description = updatedVenue.description
             venueToUpdate.capacity = updatedVenue.capacity

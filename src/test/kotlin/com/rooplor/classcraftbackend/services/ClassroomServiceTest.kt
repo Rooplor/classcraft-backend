@@ -217,7 +217,7 @@ class ClassroomServiceTest {
             listOf(
                 Venue(
                     id = "1",
-                    name = "TRAIN_3",
+                    room = "TRAIN_3",
                 ),
             )
         val classroomObj =
@@ -555,8 +555,8 @@ class ClassroomServiceTest {
                 details = "Learn how to build mobile apps with React Native",
             )
         val user = User(username = "testUser", profilePicture = "profile.jpg")
-        val venue1 = Venue(name = "LX10 - 4")
-        val venue2 = Venue(name = "LX10 - 5")
+        val venue1 = Venue(room = "LX10 - 4")
+        val venue2 = Venue(room = "LX10 - 5")
 
         `when`(authService.getAuthenticatedUser()).thenReturn(staffUsername)
         `when`(userService.findByUsername(staffUsername)).thenReturn(user)
