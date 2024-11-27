@@ -643,7 +643,7 @@ class ClassroomControllerTest {
 
         mockMvc
             .perform(
-                patch("/api/class/$classId/venue-status?venueStatusId=2"),
+                get("/api/class/$classId/venue-status?venueStatusId=2"),
             ).andExpect(status().isOk)
     }
 
@@ -668,7 +668,7 @@ class ClassroomControllerTest {
 
         mockMvc
             .perform(
-                patch("/api/class/$classId/venue-status?venueStatusId=3"),
+                get("/api/class/$classId/venue-status?venueStatusId=3"),
             ).andExpect(status().isOk)
     }
 
@@ -693,7 +693,7 @@ class ClassroomControllerTest {
 
         mockMvc
             .perform(
-                patch("/api/class/$classId/venue-status?venueStatusId=4&rejectReason=Venue is not available"),
+                get("/api/class/$classId/venue-status?venueStatusId=4&rejectReason=Venue is not available"),
             ).andExpect(status().isOk)
     }
 
@@ -722,7 +722,7 @@ class ClassroomControllerTest {
 
         mockMvc
             .perform(
-                patch("/api/class/$classId/venue-status?venueStatusId=4"),
+                get("/api/class/$classId/venue-status?venueStatusId=4"),
             ).andExpect(status().isBadRequest)
     }
 }

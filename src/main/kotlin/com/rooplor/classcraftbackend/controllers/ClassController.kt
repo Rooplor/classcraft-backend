@@ -266,7 +266,7 @@ class ClassController
             }
 
         @Operation(summary = "Update venue status of a class")
-        @PatchMapping("/{id}/venue-status")
+        @GetMapping("/{id}/venue-status")
         fun updateVenueStatus(
             @PathVariable id: String,
             @RequestParam(required = true) venueStatusId: String,

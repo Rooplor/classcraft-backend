@@ -33,6 +33,7 @@ class SecurityConfig {
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
                         "/swagger-ui.html",
+                        "/api/class/*/venue-status",
                     ).permitAll()
                 it.anyRequest().authenticated()
             }.sessionManagement {
