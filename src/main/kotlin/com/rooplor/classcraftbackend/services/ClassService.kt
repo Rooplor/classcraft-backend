@@ -197,6 +197,7 @@ class ClassService
             )
 
             updateDateWithVenueClass(classroom.id!!, dateWithVenue)
+            updateStepperStatus(classroom.id!!, Status.CRAFT_CONTENT.id)
             updateVenueStatus(classroom.id!!, VenueStatus.PENDING.id)
         }
 

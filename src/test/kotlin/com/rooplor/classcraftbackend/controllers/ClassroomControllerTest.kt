@@ -643,15 +643,7 @@ class ClassroomControllerTest {
 
         mockMvc
             .perform(
-                patch("/api/class/$classId/venue-status")
-                    .contentType("application/json")
-                    .content(
-                        """
-                        {
-                            "venueStatusId": 2
-                        }
-                        """.trimIndent(),
-                    ),
+                get("/api/class/$classId/venue-status?venueStatusId=2"),
             ).andExpect(status().isOk)
     }
 
@@ -676,15 +668,7 @@ class ClassroomControllerTest {
 
         mockMvc
             .perform(
-                patch("/api/class/$classId/venue-status")
-                    .contentType("application/json")
-                    .content(
-                        """
-                        {
-                            "venueStatusId": 1
-                        }
-                        """.trimIndent(),
-                    ),
+                get("/api/class/$classId/venue-status?venueStatusId=3"),
             ).andExpect(status().isOk)
     }
 
@@ -709,16 +693,7 @@ class ClassroomControllerTest {
 
         mockMvc
             .perform(
-                patch("/api/class/$classId/venue-status")
-                    .contentType("application/json")
-                    .content(
-                        """
-                        {
-                            "venueStatusId": 4,
-                            "rejectReason": "Venue is not available"
-                        }
-                        """.trimIndent(),
-                    ),
+                get("/api/class/$classId/venue-status?venueStatusId=4&rejectReason=Venue is not available"),
             ).andExpect(status().isOk)
     }
 
@@ -747,16 +722,7 @@ class ClassroomControllerTest {
 
         mockMvc
             .perform(
-                patch("/api/class/$classId/venue-status")
-                    .contentType("application/json")
-                    .content(
-                        """
-                        {
-                            "venueStatusId": 4,
-                            "rejectReason": ""
-                        }
-                        """.trimIndent(),
-                    ),
+                get("/api/class/$classId/venue-status?venueStatusId=4"),
             ).andExpect(status().isBadRequest)
     }
 }

@@ -34,7 +34,7 @@ class FileUploadController(
     fun uploadFile(
         @Parameter(description = "File to be uploaded", required = true, content = [Content(mediaType = "multipart/form-data")])
         @RequestParam("file") file: MultipartFile,
-        @Parameter(description = "Class ID", required = true)
+        @Parameter(description = "File Category", required = true)
         @RequestParam("fileCategory") fileCategory: String,
     ): ResponseEntity<Response<FileResponse>> =
         try {
