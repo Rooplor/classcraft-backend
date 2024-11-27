@@ -638,12 +638,12 @@ class ClassroomControllerTest {
                 dates = listOf(),
                 venueStatus = VenueStatus.PENDING.id,
             )
-        val rejectReason = "Venue is not available"
-        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason)).thenReturn(classroomObj)
+        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.APPROVED.id)).thenReturn(classroomObj)
+        Mockito.`when`(classService.findClassById(classId)).thenReturn(classroomObj)
 
         mockMvc
             .perform(
-                get("/api/class/$classId/venue-status?venueStatusId=2"),
+                get("/api/class/$classId/venue-status?venueStatusId=${VenueStatus.APPROVED.id}"),
             ).andExpect(status().isOk)
     }
 
@@ -665,10 +665,11 @@ class ClassroomControllerTest {
             )
         val rejectReason = "Venue is not available"
         Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason)).thenReturn(classroomObj)
+        Mockito.`when`(classService.findClassById(classId)).thenReturn(classroomObj)
 
         mockMvc
             .perform(
-                get("/api/class/$classId/venue-status?venueStatusId=3"),
+                get("/api/class/$classId/venue-status?venueStatusId=${VenueStatus.PENDING.id}"),
             ).andExpect(status().isOk)
     }
 
@@ -690,10 +691,11 @@ class ClassroomControllerTest {
             )
         val rejectReason = "Venue is not available"
         Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason)).thenReturn(classroomObj)
+        Mockito.`when`(classService.findClassById(classId)).thenReturn(classroomObj)
 
         mockMvc
             .perform(
-                get("/api/class/$classId/venue-status?venueStatusId=4&rejectReason=Venue is not available"),
+                get("/api/class/$classId/venue-status?venueStatusId=${VenueStatus.REJECTED.id}&rejectReason=Venue is not available"),
             ).andExpect(status().isOk)
     }
 
@@ -719,10 +721,11 @@ class ClassroomControllerTest {
             .`when`(
                 classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason),
             ).thenThrow(IllegalArgumentException("Reject reason is required"))
+        Mockito.`when`(classService.findClassById(classId)).thenReturn(classroomObj)
 
         mockMvc
             .perform(
-                get("/api/class/$classId/venue-status?venueStatusId=4"),
+                get("/api/class/$classId/venue-status?venueStatusId=${VenueStatus.REJECTED.id}"),
             ).andExpect(status().isBadRequest)
     }
 }

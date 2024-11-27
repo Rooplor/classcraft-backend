@@ -3,6 +3,7 @@ package com.rooplor.classcraftbackend.controllers
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.entities.Classroom
+import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.services.ClassService
 import com.rooplor.classcraftbackend.types.DateWithVenue
 import io.swagger.v3.oas.annotations.Operation
@@ -271,13 +272,15 @@ class ClassController
             @PathVariable id: String,
             @RequestParam(required = true) venueStatusId: String,
             @RequestParam(required = false) rejectReason: String?,
-        ): ResponseEntity<Response<Classroom>> =
+        ): ResponseEntity<Response<String>> =
             try {
+                classService.updateVenueStatus(id, venueStatusId.toInt(), rejectReason ?: "")
                 ResponseEntity.ok(
                     Response(
                         success = true,
-                        result =
-                            classService.updateVenueStatus(id, venueStatusId.toInt(), rejectReason ?: ""),
+                        result = "venue status in ${classService.findClassById(
+                            id,
+                        ).title} has been updated to ${VenueStatus.values().find { venueStatusId.toInt() == it.id }?.name}",
                         error = null,
                     ),
                 )
