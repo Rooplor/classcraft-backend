@@ -245,6 +245,38 @@ class ClassroomServiceTest {
     }
 
     @Test
+    fun `should not update venue of a class with owner id doesn't match`() {
+        val classId = "1"
+        val venues =
+            listOf(
+                Venue(
+                    id = "1",
+                    room = "TRAIN_3",
+                ),
+            )
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                venueStatus = 1,
+                owner = "1",
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("user2")).thenReturn(User(id = "2", username = "user2"))
+
+        assertThrows<Exception> { classService.updateDateWithVenueClass(classId, listOf(DateWithVenue(DateDetail(), listOf("1")))) }
+    }
+
+    @Test
     fun `should update meeting url of a class`() {
         val classId = "1"
         val meetingUrl = "https://meet.google.com/abc-xyz"
@@ -269,6 +301,32 @@ class ClassroomServiceTest {
 
         val result = classService.updateMeetingUrlClass(classId, meetingUrl)
         assertEquals(classroomObj, result)
+    }
+
+    @Test
+    fun `should not update meeting url of a class with owner id doesn't match`() {
+        val classId = "1"
+        val meetingUrl = "https://meet.google.com/abc-xyz"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                meetingUrl = "https://meet.google.com/abc-xyz",
+                owner = "1",
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("user2")).thenReturn(User(id = "2", username = "user2"))
+
+        assertThrows<Exception> { classService.updateMeetingUrlClass(classId, meetingUrl) }
     }
 
     @Test
@@ -299,6 +357,32 @@ class ClassroomServiceTest {
     }
 
     @Test
+    fun `should not update content of a class with owner id doesn't match`() {
+        val classId = "1"
+        val classContent = "{\"key\": \"value\"}"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                content = "{\"key\": \"value\"}",
+                owner = "1",
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("user2")).thenReturn(User(id = "2", username = "user2"))
+
+        assertThrows<Exception> { classService.updateContent(classId, classContent) }
+    }
+
+    @Test
     fun `should update registration url of a class`() {
         val classId = "1"
         val registrationUrl = "https://example.com/register"
@@ -323,6 +407,32 @@ class ClassroomServiceTest {
 
         val result = classService.updateRegistrationUrl(classId, registrationUrl)
         assertEquals(classroomObj, result)
+    }
+
+    @Test
+    fun `should not update registration url of a class with owner id doesn't match`() {
+        val classId = "1"
+        val registrationUrl = "https://example.com/register"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                registrationUrl = "https://example.com/register",
+                owner = "1",
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("user2")).thenReturn(User(id = "2", username = "user2"))
+
+        assertThrows<Exception> { classService.updateRegistrationUrl(classId, registrationUrl) }
     }
 
     @Test
@@ -352,6 +462,31 @@ class ClassroomServiceTest {
     }
 
     @Test
+    fun `should not toggle registration status of a class with owner id doesn't match`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                registrationStatus = false,
+                owner = "1",
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("user2")).thenReturn(User(id = "2", username = "user2"))
+
+        assertThrows<Exception> { classService.toggleRegistrationStatus(classId) }
+    }
+
+    @Test
     fun `should toggle publish status of a class`() {
         val classId = "1"
         val classroomObj =
@@ -378,6 +513,31 @@ class ClassroomServiceTest {
     }
 
     @Test
+    fun `should not toggle publish status of a class with owner id doesn't match`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                isPublished = false,
+                owner = "1",
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("user2")).thenReturn(User(id = "2", username = "user2"))
+
+        assertThrows<Exception> { classService.togglePublishStatus(classId) }
+    }
+
+    @Test
     fun `should update class by id`() {
         val classId = "1"
         val classroomObj =
@@ -400,6 +560,30 @@ class ClassroomServiceTest {
 
         val result = classService.updateClass(classId, classroomObj)
         assertEquals(classroomObj, result)
+    }
+
+    @Test
+    fun `should not update class by id with owner id doesn't match`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                owner = "1",
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("user2")).thenReturn(User(id = "2", username = "user2"))
+
+        assertThrows<Exception> { classService.updateClass(classId, classroomObj) }
     }
 
     @Test
