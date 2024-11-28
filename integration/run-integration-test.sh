@@ -9,7 +9,7 @@ cp ../target/*jar ./app.jar
 docker compose -f compose.yaml up -d
 
 echo "Waiting for the application to start...."
-sleep 5
+sleep 10
 
 pnpm test integration/src/devAuthControllerIntegration.test.js
 pnpm test
