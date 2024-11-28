@@ -27,4 +27,8 @@ object ErrorMessages {
     // change venue status error messages
     const val VENUE_REJECT_REASON_IS_BLANK_OR_NULL = "Reject reason is required when rejecting a venue"
     const val VENUE_STATUS_INVALID = "Venue status is not valid"
+
+    // authorization error messages
+    const val UNAUTHORIZED = "Unauthorized"
+    const val FORBIDDEN = "Forbidden"
 }
