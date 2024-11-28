@@ -181,6 +181,7 @@ class ClassService
             classroom: Classroom,
             dateWithVenue: List<DateWithVenue>,
         ) {
+            isOwnerOfClass(classroom)
             val username = authService.getAuthenticatedUser() ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
             val user = userService.findByUsername(username)
             val owner = userService.findUserById(classroom.owner).username

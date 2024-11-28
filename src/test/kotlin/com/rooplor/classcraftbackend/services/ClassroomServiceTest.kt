@@ -29,6 +29,7 @@ import kotlin.test.assertFailsWith
 @SpringBootTest
 class ClassroomServiceTest {
     private val classRepository: ClassroomRepository = Mockito.mock(ClassroomRepository::class.java)
+    private val userRepository: UserService = Mockito.mock(UserService::class.java)
     private val venueService: VenueService = Mockito.mock(VenueService::class.java)
     private val authService: AuthService = Mockito.mock(AuthService::class.java)
     private val userService: UserService = Mockito.mock(UserService::class.java)
@@ -232,9 +233,12 @@ class ClassroomServiceTest {
                 capacity = 30,
                 dates = listOf(),
                 venueStatus = 1,
+                owner = "1",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "1", username = "admin"))
 
         val result = classService.updateDateWithVenueClass(classId, listOf(DateWithVenue(DateDetail(), listOf("1"))))
         assertEquals(classroomObj, result)
@@ -256,9 +260,12 @@ class ClassroomServiceTest {
                 capacity = 30,
                 dates = listOf(),
                 meetingUrl = "https://meet.google.com/abc-xyz",
+                owner = "1",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "1", username = "admin"))
 
         val result = classService.updateMeetingUrlClass(classId, meetingUrl)
         assertEquals(classroomObj, result)
@@ -280,9 +287,12 @@ class ClassroomServiceTest {
                 capacity = 30,
                 dates = listOf(),
                 content = "{\"key\": \"value\"}",
+                owner = "1",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "1", username = "admin"))
 
         val result = classService.updateContent(classId, classContent)
         assertEquals(classroomObj, result)
@@ -304,9 +314,12 @@ class ClassroomServiceTest {
                 capacity = 30,
                 dates = listOf(),
                 registrationUrl = "https://example.com/register",
+                owner = "1",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "1", username = "admin"))
 
         val result = classService.updateRegistrationUrl(classId, registrationUrl)
         assertEquals(classroomObj, result)
@@ -327,9 +340,12 @@ class ClassroomServiceTest {
                 capacity = 30,
                 dates = listOf(),
                 registrationStatus = false,
+                owner = "1",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "1", username = "admin"))
 
         val result = classService.toggleRegistrationStatus(classId)
         assertEquals(classroomObj, result)
@@ -350,9 +366,12 @@ class ClassroomServiceTest {
                 capacity = 30,
                 dates = listOf(),
                 isPublished = false,
+                owner = "1",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "1", username = "admin"))
 
         val result = classService.togglePublishStatus(classId)
         assertEquals(classroomObj, result)
@@ -372,9 +391,12 @@ class ClassroomServiceTest {
                 format = Format.ONSITE,
                 capacity = 30,
                 dates = listOf(),
+                owner = "1",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "1", username = "admin"))
 
         val result = classService.updateClass(classId, classroomObj)
         assertEquals(classroomObj, result)
@@ -545,7 +567,7 @@ class ClassroomServiceTest {
                 ),
             )
 
-        val staffUsername = "testUser"
+        val staffUsername = "admin"
 
         val classroom =
             Classroom(
@@ -554,7 +576,7 @@ class ClassroomServiceTest {
                 title = "React Native",
                 details = "Learn how to build mobile apps with React Native",
             )
-        val user = User(username = "testUser", profilePicture = "profile.jpg")
+        val user = User(id = "1", username = "admin", profilePicture = "profile.jpg")
         val venue1 = Venue(room = "LX10 - 4")
         val venue2 = Venue(room = "LX10 - 5")
 
@@ -565,6 +587,7 @@ class ClassroomServiceTest {
         `when`(venueService.findVenueById("2")).thenReturn(venue2)
         `when`(classRepository.findById("1")).thenReturn(Optional.of(classroom))
         `when`(classRepository.save(classroom)).thenReturn(classroom)
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn(staffUsername)
 
         classService.reservationVenue(classroom, dateWithVenue)
 
@@ -572,9 +595,6 @@ class ClassroomServiceTest {
         mapDateWithVenueToTemplateMethod.isAccessible = true
         val result = mapDateWithVenueToTemplateMethod.invoke(classService, dateWithVenue)
 
-        verify(authService).getAuthenticatedUser()
-        verify(userService).findByUsername(staffUsername)
-        verify(userService).findUserById(classroom.owner)
         verify(mailService).sendEmail(
             subject = eq("[ClassCraft] Reservation venue for ${classroom.title} request from ${user.username}"),
             template = eq("reservation"),
