@@ -29,6 +29,5 @@ object ErrorMessages {
     const val VENUE_STATUS_INVALID = "Venue status is not valid"
 
     // authorization error messages
-    const val UNAUTHORIZED = "Unauthorized"
     const val FORBIDDEN = "Forbidden"
 }
