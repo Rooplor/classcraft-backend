@@ -6,8 +6,8 @@ describe('User Controller Integration Tests', () => {
 
     test('Insert a new user', async () => {
         const user = {
-            username: 'Test User',
-            email: 'test@mail.com',
+            username: 'Test User1',
+            email: 'test1@mail.com',
         }
         const expectedResult = {
             id: expect.any(String),
@@ -69,8 +69,8 @@ describe('User Controller Integration Tests', () => {
 
     test('Insert a new user with existing username and email should fail with conflict error', async () => {
         const user = {
-            username: 'Test User',
-            email: 'test@mail.com',
+            username: 'Test User1',
+            email: 'test1@mail.com',
         };
         try {
             await axios.post(`${baseUrl}/api/user`, user);
@@ -139,6 +139,19 @@ describe('User Controller Integration Tests', () => {
         expect(response.data?.success).toBe(true);
         expect(response.data?.result).toMatchObject(expectedResult);
     });
+
+    test('Get User Profile', async () => {
+        const response = await axios.get(`${baseUrl}/api/user/profile`);
+        const expectedResult = {
+            id: expect.any(String),
+            username: 'dev',
+            email: 'test@mail.com',
+            profilePicture: 'https://media.stickerswiki.app/oneesanstickers117/6747778.512.webp'
+        }
+        expect(response.status).toBe(200);
+        expect(response.data?.success).toBe(true);
+        expect(response.data?.result).toMatchObject(expectedResult);
+    })
 
     test('Delete User', async () => {
         const response = await axios.delete(`${baseUrl}/api/user/${userDetail.id}`);
