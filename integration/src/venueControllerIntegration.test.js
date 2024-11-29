@@ -1,7 +1,7 @@
 const axios = require('axios');
+const {baseUrl} = require("./constants/baseUrl");
 
 describe('Venue Controller Integration Tests', () => {
-    const baseUrl = 'http://127.0.0.1:8080';
     let venueDetail = null;
 
     test('Insert a new venue', async () => {

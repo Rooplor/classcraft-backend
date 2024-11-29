@@ -1,7 +1,7 @@
 const axios = require('axios');
+const {baseUrl} = require("./constants/baseUrl");
 
 describe('User Controller Integration Tests', () => {
-    const baseUrl = 'http://127.0.0.1:8080';
     let userDetail = null;
 
     test('Insert a new user', async () => {

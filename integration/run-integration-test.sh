@@ -1,5 +1,15 @@
 #!/bin/bash
 
+if ! command -v pnpm &> /dev/null; then
+  echo "pnpm not found. Installing pnpm..."
+  npm install -g pnpm
+fi
+
+if [ ! -d "node_modules" ]; then
+  echo "node_modules directory not found. Running pnpm install..."
+  pnpm install
+fi
+
 if ! ls ../target/*.jar 1> /dev/null 2>&1; then
   echo "JAR file not found. Please build the project first."
   exit 1
