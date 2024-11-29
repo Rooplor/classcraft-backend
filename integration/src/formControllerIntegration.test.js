@@ -54,6 +54,10 @@ describe('Form Controller Integration Tests', () => {
         }
     }
 
+    beforeAll(async () => {
+        await axios.get(`${baseUrl}/api/dev/auth/login`);
+    });
+
     test('Create form should success', async () => {
         const expectedResult = {
             id: expect.any(String),

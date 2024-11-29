@@ -4,6 +4,10 @@ const {baseUrl} = require("./constants/baseUrl");
 describe('User Controller Integration Tests', () => {
     let userDetail = null;
 
+    beforeAll(async () => {
+        await axios.get(`${baseUrl}/api/dev/auth/login`);
+    });
+
     test('Insert a new user', async () => {
         const user = {
             username: 'Test User1',

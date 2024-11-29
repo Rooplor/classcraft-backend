@@ -21,7 +21,10 @@ docker compose -f compose.yaml up -d
 echo "Waiting for the application to start...."
 sleep 10
 
-pnpm test integration/src/devAuthControllerIntegration.test.js
-pnpm test
+pnpm test devAuthControllerIntegration.test.js
+pnpm test classControllerIntegration.test.js
+pnpm test formControllerIntegration.test.js
+pnpm test userControllerIntegration.test.js
+pnpm test venueControllerIntegration.test.js
 
 docker compose down
