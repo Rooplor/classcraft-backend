@@ -58,6 +58,7 @@ class ClassService
             updatedClassroom: Classroom,
         ): Classroom {
             val classToUpdate = findClassById(id)
+            isOwnerOfClass(classToUpdate)
             classToUpdate.title = updatedClassroom.title
             classToUpdate.details = updatedClassroom.details
             classToUpdate.target = updatedClassroom.target
@@ -86,6 +87,7 @@ class ClassService
             dateWithVenue: List<DateWithVenue>,
         ): Classroom {
             val classToUpdate = findClassById(id)
+            isOwnerOfClass(classToUpdate)
             classToUpdate.dates = dateWithVenue
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
@@ -95,6 +97,7 @@ class ClassService
             meetingUrl: String,
         ): Classroom {
             val classToUpdate = findClassById(id)
+            isOwnerOfClass(classToUpdate)
             classToUpdate.meetingUrl = meetingUrl
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
@@ -107,6 +110,7 @@ class ClassService
                 throw IllegalArgumentException("Content is not a valid JSON")
             }
             val classToUpdate = findClassById(id)
+            isOwnerOfClass(classToUpdate)
             classToUpdate.content = classContent
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
@@ -116,12 +120,14 @@ class ClassService
             registrationUrl: String,
         ): Classroom {
             val classToUpdate = findClassById(id)
+            isOwnerOfClass(classToUpdate)
             classToUpdate.registrationUrl = registrationUrl
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
         fun toggleRegistrationStatus(id: String): Classroom {
             val classToUpdate = findClassById(id)
+            isOwnerOfClass(classToUpdate)
             classToUpdate.registrationStatus = !classToUpdate.registrationStatus!!
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
@@ -147,6 +153,7 @@ class ClassService
 
         fun togglePublishStatus(id: String): Classroom {
             val classToUpdate = findClassById(id)
+            isOwnerOfClass(classToUpdate)
             classToUpdate.isPublished = !classToUpdate.isPublished!!
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
@@ -174,6 +181,7 @@ class ClassService
             classroom: Classroom,
             dateWithVenue: List<DateWithVenue>,
         ) {
+            isOwnerOfClass(classroom)
             val username = authService.getAuthenticatedUser() ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
             val user = userService.findByUsername(username)
             val owner = userService.findUserById(classroom.owner).username
@@ -221,6 +229,14 @@ class ClassService
             }
             if (errorList.isNotEmpty()) {
                 throw Exception(errorList.joinToString(", "))
+            }
+        }
+
+        private fun isOwnerOfClass(classroom: Classroom) {
+            val username = authService.getAuthenticatedUser() ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
+            val user = userService.findByUsername(username)
+            if (classroom.owner != user.id) {
+                throw Exception(ErrorMessages.FORBIDDEN)
             }
         }
 
