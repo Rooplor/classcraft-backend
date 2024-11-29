@@ -294,7 +294,6 @@ describe('Form Controller Integration Tests', () => {
     });
 
     test('Submit form with already submitted answer should throw error', async () => {
-        await axios.post(`${baseUrl}/api/form/submit`, formSubmission);
         try {
             await axios.post(`${baseUrl}/api/form/submit`, formSubmission);
         } catch (error) {
