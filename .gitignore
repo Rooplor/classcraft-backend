@@ -154,3 +154,6 @@ replay_pid*
 
 ## Firebase Key
 /src/main/resources/serviceAccountKey.json
+
+## integration test
+/integration/node_modules
