@@ -248,20 +248,27 @@ class ClassService
                             startDateTime =
                                 StartEndDetail(
                                     it.date.startDateTime
+                                        .plusHours(7) // need to support another timezone in the future
                                         .toLocalDate()
                                         .format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
                                         .toString(),
                                     it.date.startDateTime
+                                        .plusHours(7) // need to support another timezone in the future
                                         .toLocalTime()
+                                        .format(DateTimeFormatter.ofPattern("HH:mm"))
                                         .toString(),
                                 ),
                             endDateTime =
                                 StartEndDetail(
                                     it.date.endDateTime
+                                        .plusHours(7) // need to support another timezone in the future
                                         .toLocalDate()
+                                        .format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
                                         .toString(),
                                     it.date.endDateTime
+                                        .plusHours(7) // need to support another timezone in the future
                                         .toLocalTime()
+                                        .format(DateTimeFormatter.ofPattern("HH:mm"))
                                         .toString(),
                                 ),
                         ),
