@@ -3,6 +3,7 @@ package com.rooplor.classcraftbackend.controllers
 import com.rooplor.classcraftbackend.configs.TestConfig
 import com.rooplor.classcraftbackend.configs.TestSecurityConfig
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
+import com.rooplor.classcraftbackend.dtos.UpdateVenueStatusDTO
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
@@ -638,12 +639,23 @@ class ClassroomControllerTest {
                 dates = listOf(),
                 venueStatus = VenueStatus.PENDING.id,
             )
-        val rejectReason = "Venue is not available"
-        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason)).thenReturn(classroomObj)
+        val venueStatusDTO = UpdateVenueStatusDTO(VenueStatus.APPROVED.id, "")
+        Mockito
+            .`when`(
+                classService.updateVenueStatus(classId, venueStatusDTO.venueStatusId, venueStatusDTO.rejectReason ?: ""),
+            ).thenReturn(classroomObj)
 
         mockMvc
             .perform(
-                get("/api/class/$classId/venue-status?venueStatusId=2"),
+                put("/api/class/$classId/venue-status")
+                    .contentType("application/json")
+                    .content(
+                        """
+                        {
+                            "venueStatusId": 3
+                        }
+                        """.trimIndent(),
+                    ),
             ).andExpect(status().isOk)
     }
 
@@ -663,12 +675,23 @@ class ClassroomControllerTest {
                 dates = listOf(),
                 venueStatus = VenueStatus.PENDING.id,
             )
-        val rejectReason = "Venue is not available"
-        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason)).thenReturn(classroomObj)
+        val venueStatusDTO = UpdateVenueStatusDTO(VenueStatus.PENDING.id, "")
+        Mockito
+            .`when`(
+                classService.updateVenueStatus(classId, venueStatusDTO.venueStatusId, venueStatusDTO.rejectReason ?: ""),
+            ).thenReturn(classroomObj)
 
         mockMvc
             .perform(
-                get("/api/class/$classId/venue-status?venueStatusId=3"),
+                put("/api/class/$classId/venue-status")
+                    .contentType("application/json")
+                    .content(
+                        """
+                        {
+                            "venueStatusId": 2
+                        }
+                        """.trimIndent(),
+                    ),
             ).andExpect(status().isOk)
     }
 
@@ -688,12 +711,24 @@ class ClassroomControllerTest {
                 dates = listOf(),
                 venueStatus = VenueStatus.PENDING.id,
             )
-        val rejectReason = "Venue is not available"
-        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason)).thenReturn(classroomObj)
+        val venueStatusDTO = UpdateVenueStatusDTO(VenueStatus.REJECTED.id, "Venue is not available")
+        Mockito
+            .`when`(
+                classService.updateVenueStatus(classId, venueStatusDTO.venueStatusId, venueStatusDTO.rejectReason ?: ""),
+            ).thenReturn(classroomObj)
 
         mockMvc
             .perform(
-                get("/api/class/$classId/venue-status?venueStatusId=4&rejectReason=Venue is not available"),
+                put("/api/class/$classId/venue-status")
+                    .contentType("application/json")
+                    .content(
+                        """
+                        {
+                            "venueStatusId": 4,
+                            "rejectReason": "Venue is not available"
+                        }
+                        """.trimIndent(),
+                    ),
             ).andExpect(status().isOk)
     }
 
@@ -722,7 +757,15 @@ class ClassroomControllerTest {
 
         mockMvc
             .perform(
-                get("/api/class/$classId/venue-status?venueStatusId=4"),
+                put("/api/class/$classId/venue-status")
+                    .contentType("application/json")
+                    .content(
+                        """
+                        {
+                            "venueStatusId": 4
+                        }
+                        """.trimIndent(),
+                    ),
             ).andExpect(status().isBadRequest)
     }
 }

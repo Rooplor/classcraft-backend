@@ -2,6 +2,7 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
 import com.rooplor.classcraftbackend.dtos.Response
+import com.rooplor.classcraftbackend.dtos.UpdateVenueStatusDTO
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.services.ClassService
 import com.rooplor.classcraftbackend.types.DateWithVenue
@@ -266,18 +267,21 @@ class ClassController
             }
 
         @Operation(summary = "Update venue status of a class")
-        @GetMapping("/{id}/venue-status")
+        @PutMapping("/{id}/venue-status")
         fun updateVenueStatus(
             @PathVariable id: String,
-            @RequestParam(required = true) venueStatusId: String,
-            @RequestParam(required = false) rejectReason: String?,
+            @RequestBody(required = true) updateVenueStatusDTO: UpdateVenueStatusDTO,
         ): ResponseEntity<Response<Classroom>> =
             try {
                 ResponseEntity.ok(
                     Response(
                         success = true,
                         result =
-                            classService.updateVenueStatus(id, venueStatusId.toInt(), rejectReason ?: ""),
+                            classService.updateVenueStatus(
+                                id,
+                                updateVenueStatusDTO.venueStatusId,
+                                updateVenueStatusDTO.rejectReason ?: "",
+                            ),
                         error = null,
                     ),
                 )
