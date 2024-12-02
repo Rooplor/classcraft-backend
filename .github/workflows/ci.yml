@@ -17,7 +17,7 @@ jobs:
       MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
       STAFF_EMAIL: ${{ secrets.STAFF_EMAIL_QA }}
       STAFF_USERNAME: ${{ secrets.STAFF_USERNAME }}
-      STAFF_DOMAIN: ${{ secrets.STAFF_DOMAIN }}
+      STAFF_DOMAIN: ${{ secrets.STAFF_DOMAIN_QA }}
 
     steps:
       - name: checkout-code
