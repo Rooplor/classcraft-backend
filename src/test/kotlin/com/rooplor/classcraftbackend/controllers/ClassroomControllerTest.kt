@@ -647,7 +647,7 @@ class ClassroomControllerTest {
 
         mockMvc
             .perform(
-                put("/api/class/$classId/venue-status")
+                patch("/api/class/$classId/venue-status")
                     .contentType("application/json")
                     .content(
                         """
@@ -683,7 +683,7 @@ class ClassroomControllerTest {
 
         mockMvc
             .perform(
-                put("/api/class/$classId/venue-status")
+                patch("/api/class/$classId/venue-status")
                     .contentType("application/json")
                     .content(
                         """
@@ -719,7 +719,7 @@ class ClassroomControllerTest {
 
         mockMvc
             .perform(
-                put("/api/class/$classId/venue-status")
+                patch("/api/class/$classId/venue-status")
                     .contentType("application/json")
                     .content(
                         """
@@ -749,15 +749,15 @@ class ClassroomControllerTest {
                 venueStatus = VenueStatus.PENDING.id,
                 rejectReason = "",
             )
-        val rejectReason = ""
+        val venueStatusDTO = UpdateVenueStatusDTO(VenueStatus.REJECTED.id, "")
         Mockito
             .`when`(
-                classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason),
+                classService.updateVenueStatus(classId, venueStatusDTO.venueStatusId, ""),
             ).thenThrow(IllegalArgumentException("Reject reason is required"))
 
         mockMvc
             .perform(
-                put("/api/class/$classId/venue-status")
+                patch("/api/class/$classId/venue-status")
                     .contentType("application/json")
                     .content(
                         """
