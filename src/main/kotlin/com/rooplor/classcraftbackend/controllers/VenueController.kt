@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -66,5 +67,29 @@ class VenueController
                 ResponseEntity.ok(Response(success = true, result = true, error = null))
             } catch (e: Exception) {
                 ResponseEntity.badRequest().body(Response(success = false, result = false, error = e.message))
+            }
+
+        @Operation(summary = "Get venue by id")
+        @GetMapping("/{id}")
+        fun findVenueById(
+            @PathVariable id: String,
+        ): ResponseEntity<Response<Venue>> =
+            try {
+                val venue = venueService.findVenueById(id)
+                ResponseEntity.ok(Response(success = true, result = venue, error = null))
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
+
+        @Operation(summary = "Get venues by ids")
+        @GetMapping("/ids")
+        fun findVenuesByIds(
+            @RequestParam ids: List<String>,
+        ): ResponseEntity<Response<List<Venue>>> =
+            try {
+                val venues = ids.map { venueService.findVenueById(it) }
+                ResponseEntity.ok(Response(success = true, result = venues, error = null))
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
             }
     }

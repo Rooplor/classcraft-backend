@@ -80,4 +80,42 @@ class VenueControllerTest {
             .perform(get("/api/venue"))
             .andExpect(status().isOk)
     }
+
+    @Test
+    fun `should return venue by id`() {
+        val venue =
+            Venue(
+                "1",
+                "TRAIN_3",
+                location = location("building", 1),
+                description = "description",
+                capacity = 100,
+                imageUrl = "imageUrl",
+            )
+        Mockito.`when`(venueService.findVenueById("1")).thenReturn(venue)
+
+        mockMvc
+            .perform(get("/api/venue/1"))
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `should return venues by ids`() {
+        val venue1 =
+            Venue(
+                "1",
+                "TRAIN_3",
+                location = location("building", 1),
+                description = "description",
+                capacity = 100,
+                imageUrl = "imageUrl",
+            )
+        val venue2 = venue1.copy(id = "2")
+        Mockito.`when`(venueService.findVenueById("1")).thenReturn(venue1)
+        Mockito.`when`(venueService.findVenueById("2")).thenReturn(venue2)
+
+        mockMvc
+            .perform(get("/api/venue/ids").param("ids", "1,2"))
+            .andExpect(status().isOk)
+    }
 }
