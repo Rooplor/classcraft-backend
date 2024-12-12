@@ -5,6 +5,7 @@ import com.rooplor.classcraftbackend.entities.User
 import com.rooplor.classcraftbackend.entities.Venue
 import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
+import com.rooplor.classcraftbackend.helpers.ClassroomHelper
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import com.rooplor.classcraftbackend.services.mail.MailService
 import com.rooplor.classcraftbackend.types.DateDetail
@@ -29,17 +30,17 @@ import kotlin.test.assertFailsWith
 @SpringBootTest
 class ClassroomServiceTest {
     private val classRepository: ClassroomRepository = Mockito.mock(ClassroomRepository::class.java)
-    private val userRepository: UserService = Mockito.mock(UserService::class.java)
     private val venueService: VenueService = Mockito.mock(VenueService::class.java)
     private val authService: AuthService = Mockito.mock(AuthService::class.java)
     private val userService: UserService = Mockito.mock(UserService::class.java)
     private val mailService: MailService = Mockito.mock(MailService::class.java)
     private var classService: ClassService = Mockito.mock(ClassService::class.java)
+    private val classroomHelper: ClassroomHelper = Mockito.mock(ClassroomHelper::class.java)
 
     @BeforeEach
     fun setUp() {
         MockitoAnnotations.openMocks(this)
-        classService = ClassService(classRepository, venueService, authService, userService, mailService)
+        classService = ClassService(classRepository, venueService, authService, userService, mailService, classroomHelper)
     }
 
     @Test
@@ -974,5 +975,71 @@ class ClassroomServiceTest {
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
 
         assertThrows<IllegalArgumentException> { classService.updateVenueStatus(classId, 4, rejectReason) }
+    }
+
+    @Test
+    fun `should throw error when insert with invalid input`() {
+        val classroomObj =
+            Classroom(
+                title = "",
+                details = "",
+                target = "",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 0,
+                dates = listOf(),
+                owner = "owner1",
+                instructorAvatar = "",
+                instructorFamiliarity = "",
+                instructorName = "",
+                instructorBio = "",
+            )
+        val expectationErrorMessage =
+            "Title is required, Details is required, " +
+                "Target is required, Capacity must be greater than 0, " +
+                "Instructor name is required, Instructor bio is required, " +
+                "Instructor familiarity is required, Instructor avatar is required"
+        Mockito.`when`(classroomHelper.validateClassroom(classroomObj)).thenThrow(IllegalArgumentException(expectationErrorMessage))
+
+        try {
+            classService.insertClass(classroomObj)
+        } catch (e: IllegalArgumentException) {
+            assertEquals(expectationErrorMessage, e.message)
+        }
+    }
+
+    @Test
+    fun `should throw error when update with invalid input`() {
+        val classId = "1"
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "",
+                details = "",
+                target = "",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 0,
+                dates = listOf(),
+                owner = "owner1",
+                instructorAvatar = "",
+                instructorFamiliarity = "",
+                instructorName = "",
+                instructorBio = "",
+            )
+        val expectationErrorMessage =
+            "Title is required, Details is required, " +
+                "Target is required, Capacity must be greater than 0, " +
+                "Instructor name is required, Instructor bio is required, " +
+                "Instructor familiarity is required, Instructor avatar is required"
+        Mockito.`when`(classroomHelper.validateClassroom(classroomObj)).thenThrow(IllegalArgumentException(expectationErrorMessage))
+
+        try {
+            classService.updateClass(classId, classroomObj)
+        } catch (e: IllegalArgumentException) {
+            assertEquals(expectationErrorMessage, e.message)
+        }
     }
 }
