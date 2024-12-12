@@ -1,6 +1,8 @@
 package com.rooplor.classcraftbackend.services
 
 import com.rooplor.classcraftbackend.entities.Form
+import com.rooplor.classcraftbackend.entities.FormField
+import com.rooplor.classcraftbackend.helpers.FormHelper
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.FormRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -16,7 +18,8 @@ import java.util.Optional
 
 class FormServiceTest {
     private val formRepository = mock(FormRepository::class.java)
-    private val formService = FormService(formRepository)
+    private val formHelper = mock(FormHelper::class.java)
+    private val formService = FormService(formRepository, formHelper)
 
     private val form =
         Form(
@@ -26,7 +29,15 @@ class FormServiceTest {
             description = "Test form description",
             openDate = LocalDateTime.of(2021, 9, 1, 0, 0),
             closeDate = LocalDateTime.of(2021, 9, 30, 0, 0),
-            fields = emptyList(),
+            fields =
+                listOf(
+                    FormField(
+                        name = "field1",
+                        type = "text",
+                        required = true,
+                        validation = null,
+                    ),
+                ),
         )
 
     @Test

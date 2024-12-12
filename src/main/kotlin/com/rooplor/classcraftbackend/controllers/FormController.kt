@@ -36,12 +36,6 @@ class FormController(
         @RequestBody form: FormCreateDTO,
     ): ResponseEntity<Response<Form>> {
         try {
-            val error = formHelper.validateForm(form)
-            if (error.isNotEmpty()) {
-                return ResponseEntity.badRequest().body(
-                    Response(success = false, result = null, error = error.joinToString(", ")),
-                )
-            }
             val createdForm = formService.createForm(modelMapper.map(form, Form::class.java))
             return ResponseEntity.ok(Response(success = true, result = createdForm, error = null))
         } catch (e: Exception) {
@@ -56,16 +50,6 @@ class FormController(
         @PathVariable id: String,
     ): ResponseEntity<Response<Form>> {
         try {
-            val error = formHelper.validateForm(form)
-            if (error.isNotEmpty()) {
-                return ResponseEntity.badRequest().body(
-                    Response(
-                        success = false,
-                        result = null,
-                        error = error.joinToString(", "),
-                    ),
-                )
-            }
             val updatedForm = formService.updateForm(id, modelMapper.map(form, Form::class.java))
             return ResponseEntity.ok(Response(success = true, result = updatedForm, error = null))
         } catch (e: Exception) {

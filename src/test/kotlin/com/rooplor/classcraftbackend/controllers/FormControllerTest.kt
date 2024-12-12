@@ -72,7 +72,6 @@ class FormControllerTest {
                 LocalDateTime.of(2024, 9, 30, 0, 0),
                 emptyList(),
             )
-        `when`(formHelper.validateForm(formCreateDTO)).thenReturn(emptyList())
         `when`(modelMapper.map(formCreateDTO, Form::class.java)).thenReturn(form)
         `when`(formService.createForm(form)).thenReturn(form)
 
@@ -120,7 +119,6 @@ class FormControllerTest {
                 LocalDateTime.of(2024, 9, 30, 0, 0),
                 emptyList(),
             )
-        `when`(formHelper.validateForm(formCreateDTO)).thenReturn(emptyList())
         `when`(modelMapper.map(formCreateDTO, Form::class.java)).thenReturn(form)
         `when`(formService.updateForm("1", form)).thenReturn(form)
 

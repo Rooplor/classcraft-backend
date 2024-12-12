@@ -1,6 +1,6 @@
 package com.rooplor.classcraftbackend.helpers
 
-import com.rooplor.classcraftbackend.dtos.FormCreateDTO
+import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.entities.FormField
 import org.springframework.stereotype.Component
 
@@ -12,31 +12,30 @@ class FormHelper {
             acc
         }
 
-    fun validateFormField(field: FormField): List<String> {
+    fun validateFormField(field: FormField): List<String> =
+        listOf(
+            field.name to "Field name is mandatory",
+            field.type to "Field type is mandatory",
+        ).mapNotNull { (value, errorMessage) ->
+            if (value.isBlank()) errorMessage else null
+        }
+
+    fun validateForm(form: Form) {
         val errors = mutableListOf<String>()
 
-        if (field.name.isBlank()) {
-            errors.add("Field name is mandatory")
-        }
-        if (field.type.isBlank()) {
-            errors.add("Field type is mandatory")
+        val formValidations =
+            listOf(
+                form.classroomId to "Classroom ID is mandatory",
+                form.title to "Title is mandatory",
+                form.description to "Description is mandatory",
+            )
+
+        formValidations.forEach { (value, errorMessage) ->
+            if (value.isBlank()) {
+                errors.add(errorMessage)
+            }
         }
 
-        return errors
-    }
-
-    fun validateForm(form: FormCreateDTO): List<String> {
-        val errors = mutableListOf<String>()
-
-        if (form.classroomId.isBlank()) {
-            errors.add("Classroom ID is mandatory")
-        }
-        if (form.title.isBlank()) {
-            errors.add("Title is mandatory")
-        }
-        if (form.description.isBlank()) {
-            errors.add("Description is mandatory")
-        }
         if (form.fields.isEmpty()) {
             errors.add("Fields are mandatory")
         } else {
@@ -48,6 +47,8 @@ class FormHelper {
             }
         }
 
-        return errors
+        if (errors.isNotEmpty()) {
+            throw Exception(errors.joinToString(", "))
+        }
     }
 }
