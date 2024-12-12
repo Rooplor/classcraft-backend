@@ -7,7 +7,7 @@ data class FormCreateDTO(
     var classroomId: String = "",
     var title: String = "",
     var description: String = "",
-    var openDate: LocalDateTime = LocalDateTime.now(),
-    var closeDate: LocalDateTime = LocalDateTime.now(),
+    var openDate: LocalDateTime? = null,
+    var closeDate: LocalDateTime? = null,
     var fields: List<FormField> = emptyList(),
 )
