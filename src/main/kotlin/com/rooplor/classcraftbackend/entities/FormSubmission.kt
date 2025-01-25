@@ -11,4 +11,5 @@ data class FormSubmission(
     var classroomId: String,
     var responses: Map<String, Any>,
     var submittedBy: String? = null,
+    var isApprovedByOwner: Boolean = false,
 )

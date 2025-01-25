@@ -39,6 +39,8 @@ class FormSubmissionService(
             }
         }
 
+        formSubmission.isApprovedByOwner = !form.isOwnerApprovalRequired
+
         return formSubmissionRepository.save(formSubmission)
     }
 

@@ -30,6 +30,7 @@ class FormService(
         formToUpdate.openDate = updatedForm.openDate
         formToUpdate.closeDate = updatedForm.closeDate
         formToUpdate.fields = updatedForm.fields
+        formToUpdate.isOwnerApprovalRequired = updatedForm.isOwnerApprovalRequired
         return formRepository.save(formToUpdate)
     }
 

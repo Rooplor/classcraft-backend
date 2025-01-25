@@ -15,6 +15,7 @@ data class Form(
     var openDate: LocalDateTime? = null,
     var closeDate: LocalDateTime? = null,
     var fields: List<FormField> = emptyList(),
+    var isOwnerApprovalRequired: Boolean = false,
 )
 
 data class FormField(
