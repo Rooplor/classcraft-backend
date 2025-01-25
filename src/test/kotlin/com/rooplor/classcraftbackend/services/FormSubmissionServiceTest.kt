@@ -14,6 +14,7 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import java.time.LocalDateTime
+import java.util.Optional
 
 class FormSubmissionServiceTest {
     private val formSubmissionRepository = mock(FormSubmissionRepository::class.java)
@@ -172,5 +173,42 @@ class FormSubmissionServiceTest {
 
         val expectedCsv = "\"No.\",\"email\",\"phone\"\n\"1\",\"test@example.com\",\"1234567890\"\n"
         assertEquals(expectedCsv, result)
+    }
+
+    @Test
+    fun `setFormSubmissionApprovalStatus should update form submission approval status`() {
+        val formSubmission = FormSubmission("1", "form1", "class1", mapOf("email" to "test@mail.com"), "user1", false)
+        val expectation = formSubmission.copy(isApprovedByOwner = true)
+        `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.of(formSubmission))
+        `when`(formSubmissionRepository.save(formSubmission)).thenReturn(expectation)
+
+        val result = formSubmissionService.setFormSubmissionApprovalStatus("1", true)
+
+        assertEquals(expectation, result)
+        verify(formSubmissionRepository, times(1)).findById("1")
+        verify(formSubmissionRepository, times(1)).save(formSubmission)
+    }
+
+    @Test
+    fun `setFormSubmissionApprovalStatus should throw exception when form submission not found`() {
+        `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.empty())
+
+        val exception = assertThrows<Exception> { formSubmissionService.setFormSubmissionApprovalStatus("1", true) }
+
+        assertEquals(ErrorMessages.ANSWER_NOT_FOUND, exception.message)
+    }
+
+    @Test
+    fun `setFormSubmissionApprovalStatus should update form submission approval status to false`() {
+        val formSubmission = FormSubmission("1", "form1", "class1", mapOf("email" to "test@mail.com"), "user1", true)
+        val expectation = formSubmission.copy(isApprovedByOwner = false)
+        `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.of(formSubmission))
+        `when`(formSubmissionRepository.save(formSubmission)).thenReturn(expectation)
+
+        val result = formSubmissionService.setFormSubmissionApprovalStatus("1", false)
+
+        assertEquals(expectation, result)
+        verify(formSubmissionRepository, times(1)).findById("1")
+        verify(formSubmissionRepository, times(1)).save(formSubmission)
     }
 }
