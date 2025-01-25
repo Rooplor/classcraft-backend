@@ -224,4 +224,48 @@ class FormControllerTest {
             .andExpect(jsonPath("$.result.responses.email").value("test@example.com"))
             .andExpect(jsonPath("$.result.submittedBy").value("user1"))
     }
+
+    @Test
+    fun `setFormApproval to true should return updated form`() {
+        val formSubmission =
+            FormSubmission(
+                "1",
+                "form1",
+                "class1",
+                mapOf("email" to "test@mail.com"),
+                "user1",
+                isApprovedByOwner = false,
+            )
+        `when`(formSubmissionService.setFormSubmissionApprovalStatus("1", true)).thenReturn(formSubmission)
+
+        mockMvc
+            .perform(
+                put("/api/form/approve/1")
+                    .contentType(MediaType.APPLICATION_JSON),
+            ).andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.result.id").value("1"))
+    }
+
+    @Test
+    fun `setFormApproval to false should return updated form`() {
+        val formSubmission =
+            FormSubmission(
+                "1",
+                "form1",
+                "class1",
+                mapOf("email" to "test@mail.com"),
+                "user1",
+                isApprovedByOwner = true,
+            )
+        `when`(formSubmissionService.setFormSubmissionApprovalStatus("1", false)).thenReturn(formSubmission)
+
+        mockMvc
+            .perform(
+                put("/api/form/reject/1")
+                    .contentType(MediaType.APPLICATION_JSON),
+            ).andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.result.id").value("1"))
+    }
 }
