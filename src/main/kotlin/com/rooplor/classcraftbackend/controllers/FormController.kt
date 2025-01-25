@@ -153,4 +153,30 @@ class FormController(
             ResponseEntity.badRequest().body(ByteArray(0))
         }
     }
+
+    @Operation(summary = "Set form approval status to true")
+    @PutMapping("/approve/{id}")
+    fun approveFormSubmission(
+        @PathVariable id: String,
+    ): ResponseEntity<Response<FormSubmission>> {
+        try {
+            val submission = formSubmissionService.setFormSubmissionApprovalStatus(id, true)
+            return ResponseEntity.ok(Response(success = true, result = submission, error = null))
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+        }
+    }
+
+    @Operation(summary = "Set form approval status to false")
+    @PutMapping("/reject/{id}")
+    fun rejectFormSubmission(
+        @PathVariable id: String,
+    ): ResponseEntity<Response<FormSubmission>> {
+        try {
+            val submission = formSubmissionService.setFormSubmissionApprovalStatus(id, false)
+            return ResponseEntity.ok(Response(success = true, result = submission, error = null))
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+        }
+    }
 }
