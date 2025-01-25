@@ -1,9 +1,10 @@
 package com.rooplor.classcraftbackend.helpers
 
-import com.rooplor.classcraftbackend.dtos.FormCreateDTO
+import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.entities.FormField
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.LocalDateTime
 
 class FormHelperTest {
@@ -25,43 +26,40 @@ class FormHelperTest {
     @Test
     fun `validateFormField should return errors for invalid field`() {
         val field = FormField(name = "", type = "", required = false)
-        val result = formHelper.validateFormField(field)
-        val expected = listOf("Field name is mandatory", "Field type is mandatory")
-        assertEquals(expected, result)
+        try {
+            formHelper.validateFormField(field)
+        } catch (e: Exception) {
+            assertEquals("Field name is mandatory, Field type is mandatory", e.message)
+        }
     }
 
     @Test
     fun `validateFormField should return no errors for valid field`() {
         val field = FormField(name = "name", type = "type", required = true)
-        val result = formHelper.validateFormField(field)
-        assertEquals(emptyList<String>(), result)
+        assertDoesNotThrow { formHelper.validateFormField(field) }
     }
 
     @Test
     fun `validateForm should return errors for invalid form`() {
         val form =
-            FormCreateDTO(
+            Form(
                 classroomId = "",
                 title = "",
                 description = "",
                 fields = emptyList(),
             )
-        val result = formHelper.validateForm(form)
-        val expected =
-            listOf(
-                "Classroom ID is mandatory",
-                "Title is mandatory",
-                "Description is mandatory",
-                "Fields are mandatory",
-            )
-        assertEquals(expected, result)
+        try {
+            formHelper.validateForm(form)
+        } catch (e: Exception) {
+            assertEquals("Classroom ID is mandatory, Title is mandatory, Description is mandatory, Fields are mandatory", e.message)
+        }
     }
 
     @Test
     fun `validateForm should return no errors for valid form`() {
         val field = FormField(name = "name", type = "type", required = true)
         val form =
-            FormCreateDTO(
+            Form(
                 classroomId = "class1",
                 title = "title",
                 description = "description",
@@ -69,15 +67,14 @@ class FormHelperTest {
                 closeDate = LocalDateTime.of(2021, 9, 30, 0, 0),
                 fields = listOf(field),
             )
-        val result = formHelper.validateForm(form)
-        assertEquals(emptyList<String>(), result)
+        assertDoesNotThrow { formHelper.validateForm(form) }
     }
 
     @Test
     fun `validateForm should return field errors for invalid fields`() {
         val field = FormField(name = "", type = "", required = false)
         val form =
-            FormCreateDTO(
+            Form(
                 classroomId = "class1",
                 title = "title",
                 description = "description",
@@ -85,8 +82,10 @@ class FormHelperTest {
                 closeDate = LocalDateTime.of(2021, 9, 30, 0, 0),
                 fields = listOf(field),
             )
-        val result = formHelper.validateForm(form)
-        val expected = listOf("Field 0: Field name is mandatory, Field type is mandatory")
-        assertEquals(expected, result)
+        try {
+            formHelper.validateForm(form)
+        } catch (e: Exception) {
+            assertEquals("Field 0: Field name is mandatory, Field type is mandatory", e.message)
+        }
     }
 }

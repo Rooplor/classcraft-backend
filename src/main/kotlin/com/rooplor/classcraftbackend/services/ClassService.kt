@@ -6,6 +6,7 @@ import com.rooplor.classcraftbackend.dtos.StartEndDetail
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.enums.Status
 import com.rooplor.classcraftbackend.enums.VenueStatus
+import com.rooplor.classcraftbackend.helpers.ClassroomHelper
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import com.rooplor.classcraftbackend.services.mail.MailService
@@ -29,6 +30,7 @@ class ClassService
         private val authService: AuthService,
         private val userService: UserService,
         private val mailService: MailService,
+        private val classroomHelper: ClassroomHelper,
     ) {
         @Value("\${staff.username}")
         private val staffUsername: String? = null
@@ -42,6 +44,7 @@ class ClassService
         fun findAllClassPublished(): List<Classroom> = classRepository.findByIsPublishedTrueOrderByCreatedWhen()
 
         fun insertClass(addedClassroom: Classroom): Classroom {
+            classroomHelper.validateClassroom(addedClassroom)
             addedClassroom.registrationStatus = false
             addedClassroom.isPublished = false
             addedClassroom.owner = authService.getUserId()
@@ -54,6 +57,7 @@ class ClassService
             id: String,
             updatedClassroom: Classroom,
         ): Classroom {
+            classroomHelper.validateClassroom(updatedClassroom)
             val classToUpdate = findClassById(id)
             isOwnerOfClass(classToUpdate)
             classToUpdate.title = updatedClassroom.title
