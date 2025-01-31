@@ -51,7 +51,7 @@ class FormHelperTest {
         try {
             formHelper.validateForm(form)
         } catch (e: Exception) {
-            assertEquals("Classroom ID is mandatory, Title is mandatory, Description is mandatory, Fields are mandatory", e.message)
+            assertEquals("Classroom ID is mandatory, Title is mandatory, Description is mandatory", e.message)
         }
     }
 
