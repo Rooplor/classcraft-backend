@@ -21,10 +21,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -240,7 +237,8 @@ class FormControllerTest {
 
         mockMvc
             .perform(
-                put("/api/form/approve/1")
+                patch("/api/form/isApprovedByOwner/1")
+                    .param("isApproved", "true")
                     .contentType(MediaType.APPLICATION_JSON),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
@@ -262,7 +260,8 @@ class FormControllerTest {
 
         mockMvc
             .perform(
-                put("/api/form/reject/1")
+                patch("/api/form/isApprovedByOwner/1")
+                    .param("isApproved", "false")
                     .contentType(MediaType.APPLICATION_JSON),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
