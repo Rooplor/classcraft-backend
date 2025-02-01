@@ -1,6 +1,7 @@
 package com.rooplor.classcraftbackend.services
 
 import com.rooplor.classcraftbackend.entities.Classroom
+import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.entities.User
 import com.rooplor.classcraftbackend.entities.Venue
 import com.rooplor.classcraftbackend.enums.ClassType
@@ -35,12 +36,13 @@ class ClassroomServiceTest {
     private val userService: UserService = Mockito.mock(UserService::class.java)
     private val mailService: MailService = Mockito.mock(MailService::class.java)
     private var classService: ClassService = Mockito.mock(ClassService::class.java)
+    private val formService: FormService = Mockito.mock(FormService::class.java)
     private val classroomHelper: ClassroomHelper = Mockito.mock(ClassroomHelper::class.java)
 
     @BeforeEach
     fun setUp() {
         MockitoAnnotations.openMocks(this)
-        classService = ClassService(classRepository, venueService, authService, userService, mailService, classroomHelper)
+        classService = ClassService(classRepository, venueService, authService, userService, mailService, formService, classroomHelper)
     }
 
     @Test
@@ -202,14 +204,26 @@ class ClassroomServiceTest {
                 dates = listOf(),
                 owner = "owner1",
             )
-        Mockito.`when`(classRepository.insert(classroomObj)).thenReturn(classroomObj)
+        val form =
+            Form(
+                classroomId = "1",
+                title = "Form title",
+                description = "Form description",
+                openDate = LocalDateTime.now(),
+                closeDate = LocalDateTime.now(),
+                fields = listOf(),
+                isOwnerApprovalRequired = false,
+            )
+        val classroomResult = classroomObj.copy(id = "1")
+        Mockito.`when`(classRepository.insert(classroomObj)).thenReturn(classroomResult)
         Mockito
             .`when`(
                 authService.getUserId(),
             ).thenReturn("owner1")
+        Mockito.`when`(formService.createForm(form)).thenReturn(form)
 
         val result = classService.insertClass(classroomObj)
-        assertEquals(classroomObj, result)
+        assertEquals(classroomResult, result)
     }
 
     @Test
