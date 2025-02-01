@@ -271,4 +271,21 @@ class FormControllerTest {
             .andExpect(jsonPath("$.success").value(true))
             .andExpect(jsonPath("$.result.id").value("1"))
     }
+
+    @Test
+    fun `getFormSubmissionsByUserId should return form submissions`() {
+        val formSubmission = FormSubmission("1", "form1", "class1", mapOf("email" to "test@mail.com"), "user1")
+        `when`(formSubmissionService.getFormSubmissionByUserId("user1")).thenReturn(listOf(formSubmission))
+
+        mockMvc
+            .perform(
+                get("/api/form/submissions/user/user1")
+                    .contentType(MediaType.APPLICATION_JSON),
+            ).andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.result[0].id").value("1"))
+            .andExpect(jsonPath("$.result[0].formId").value("form1"))
+            .andExpect(jsonPath("$.result[0].classroomId").value("class1"))
+            .andExpect(jsonPath("$.result[0].responses.email").value("test@mail.com"))
+    }
 }

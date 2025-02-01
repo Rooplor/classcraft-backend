@@ -211,4 +211,31 @@ class FormSubmissionServiceTest {
         verify(formSubmissionRepository, times(1)).findById("1")
         verify(formSubmissionRepository, times(1)).save(formSubmission)
     }
+
+    @Test
+    fun `getFormSubmissionByUserId should return list of form submissions`() {
+        val formSubmissions =
+            listOf(
+                FormSubmission(
+                    id = "1",
+                    formId = "form1",
+                    classroomId = "class1",
+                    responses = mapOf("email" to "test@mail.com"),
+                    submittedBy = "user1",
+                ),
+                FormSubmission(
+                    id = "2",
+                    formId = "form2",
+                    classroomId = "class1",
+                    responses = mapOf("phone" to "1234567890"),
+                    submittedBy = "user1",
+                ),
+            )
+
+        `when`(formSubmissionRepository.findBySubmittedBy("user1")).thenReturn(formSubmissions)
+
+        val result = formSubmissionService.getFormSubmissionByUserId("user1")
+
+        assertEquals(formSubmissions, result)
+    }
 }
