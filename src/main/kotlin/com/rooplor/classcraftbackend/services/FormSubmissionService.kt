@@ -84,4 +84,6 @@ class FormSubmissionService(
         formSubmission.isApprovedByOwner = isApproved
         return formSubmissionRepository.save(formSubmission)
     }
+
+    fun getFormSubmissionByUserId(userId: String): List<FormSubmission> = formSubmissionRepository.findBySubmittedBy(userId)
 }

@@ -168,4 +168,17 @@ class FormController(
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
         }
     }
+
+    @Operation(summary = "Get form submissions by user id")
+    @GetMapping("/submissions/user/{userId}")
+    fun getFormSubmissionsByUserId(
+        @PathVariable userId: String,
+    ): ResponseEntity<Response<List<FormSubmission>>> {
+        try {
+            val submissions = formSubmissionService.getFormSubmissionByUserId(userId)
+            return ResponseEntity.ok(Response(success = true, result = submissions, error = null))
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+        }
+    }
 }
