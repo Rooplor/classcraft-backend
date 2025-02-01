@@ -286,6 +286,6 @@ class FormControllerTest {
             .andExpect(jsonPath("$.result[0].id").value("1"))
             .andExpect(jsonPath("$.result[0].formId").value("form1"))
             .andExpect(jsonPath("$.result[0].classroomId").value("class1"))
-            .andExpect(jsonPath("$.result[0].responses.email").value("test@mail.com"))
+            .andExpect(jsonPath("$.result[0].responses.email").value("test@maddil.com"))
     }
 }
