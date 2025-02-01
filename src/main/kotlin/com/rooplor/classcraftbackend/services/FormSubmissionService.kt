@@ -39,6 +39,8 @@ class FormSubmissionService(
             }
         }
 
+        formSubmission.isApprovedByOwner = !form.isOwnerApprovalRequired
+
         return formSubmissionRepository.save(formSubmission)
     }
 
@@ -72,5 +74,14 @@ class FormSubmissionService(
         }
         csvWriter.close()
         return writer.toString()
+    }
+
+    fun setFormSubmissionApprovalStatus(
+        formSubmissionId: String,
+        isApproved: Boolean,
+    ): FormSubmission {
+        val formSubmission = formSubmissionRepository.findById(formSubmissionId).orElseThrow { Exception(ErrorMessages.ANSWER_NOT_FOUND) }
+        formSubmission.isApprovedByOwner = isApproved
+        return formSubmissionRepository.save(formSubmission)
     }
 }

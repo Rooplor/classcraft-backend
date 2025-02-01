@@ -37,7 +37,7 @@ class FormHelper {
         }
 
         if (form.fields.isEmpty()) {
-            errors.add("Fields are mandatory")
+            // can add some log or analytic for this to analyze user behavior
         } else {
             form.fields.forEachIndexed { index, field ->
                 val fieldErrors = validateFormField(field)

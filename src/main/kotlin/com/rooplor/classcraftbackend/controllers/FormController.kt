@@ -14,6 +14,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -151,6 +152,20 @@ class FormController(
                 .body(csv.toByteArray())
         } catch (e: Exception) {
             ResponseEntity.badRequest().body(ByteArray(0))
+        }
+    }
+
+    @Operation(summary = "Change isApprovedByOwner status")
+    @PatchMapping("/isApprovedByOwner/{id}")
+    fun changeIsApprovedByOwner(
+        @PathVariable id: String,
+        @RequestParam isApproved: Boolean,
+    ): ResponseEntity<Response<FormSubmission>> {
+        try {
+            val submission = formSubmissionService.setFormSubmissionApprovalStatus(id, isApproved)
+            return ResponseEntity.ok(Response(success = true, result = submission, error = null))
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
         }
     }
 }
