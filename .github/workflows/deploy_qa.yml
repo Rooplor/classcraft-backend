@@ -98,4 +98,7 @@ jobs:
           sshpass -p "$REMOTE_PASSWORD" ssh -t -o StrictHostKeyChecking=no -p 22 $REMOTE_USER@$REMOTE_HOST << 'EOF'          
             docker compose -p classcraft-qa -f compose.qa.yaml stop backend-qa || true
             docker compose -p classcraft-qa -f compose.qa.yaml up -d --build backend-qa
+#           Dev
+            docker compose -p classcraft-dev -f compose.dev.yaml stop backend-dev || true
+            docker compose -p classcraft-dev -f compose.dev.yaml up -d --build backend-dev
           EOF
