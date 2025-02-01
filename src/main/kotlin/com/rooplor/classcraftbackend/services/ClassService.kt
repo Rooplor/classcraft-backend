@@ -4,6 +4,7 @@ import com.rooplor.classcraftbackend.dtos.DateDetail
 import com.rooplor.classcraftbackend.dtos.DateWithVenueDTO
 import com.rooplor.classcraftbackend.dtos.StartEndDetail
 import com.rooplor.classcraftbackend.entities.Classroom
+import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.enums.Status
 import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.helpers.ClassroomHelper
@@ -30,6 +31,7 @@ class ClassService
         private val authService: AuthService,
         private val userService: UserService,
         private val mailService: MailService,
+        private val formService: FormService,
         private val classroomHelper: ClassroomHelper,
     ) {
         @Value("\${staff.username}")
@@ -50,7 +52,19 @@ class ClassService
             addedClassroom.owner = authService.getUserId()
             addedClassroom.stepperStatus = Status.RESERVE_VENUE.id
             addedClassroom.venueStatus = VenueStatus.NO_REQUEST.id
-            return classRepository.insert(addedClassroom)
+            val classroom = classRepository.insert(addedClassroom)
+            val form =
+                Form(
+                    classroomId = classroom.id!!,
+                    title = "Registration Form for ${classroom.title}",
+                    description = classroom.details,
+                    openDate = null,
+                    closeDate = null,
+                    fields = emptyList(),
+                    isOwnerApprovalRequired = false,
+                )
+            formService.createForm(form)
+            return classroom
         }
 
         fun updateClass(
