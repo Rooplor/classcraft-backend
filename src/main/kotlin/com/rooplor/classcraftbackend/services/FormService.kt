@@ -15,6 +15,7 @@ class FormService(
 ) {
     fun createForm(form: Form): Form {
         formHelper.validateForm(form)
+        form.id = form.classroomId
         initDefaultFormQuestions(form)
         return formRepository.insert(form)
     }
