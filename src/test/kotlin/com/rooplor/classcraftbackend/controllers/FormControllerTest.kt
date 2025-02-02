@@ -182,7 +182,13 @@ class FormControllerTest {
     @Test
     fun `submitForm should return submitted form`() {
         val formSubmission =
-            FormSubmission("1", "form1", "class1", mapOf("email" to "test@example.com"), attendeesStatus = AttendeesStatus.PRESENT)
+            FormSubmission(
+                "1",
+                "form1",
+                "class1",
+                mapOf("email" to "test@example.com"),
+                attendeesStatus = AttendeesStatus.PRESENT,
+            )
         `when`(formSubmissionService.submitForm(formSubmission)).thenReturn(formSubmission)
 
         mockMvc
@@ -190,7 +196,13 @@ class FormControllerTest {
                 post("/api/form/submit")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
-                        """{"id":"1","formId":"form1","classroomId":"class1","responses":{"email":"test@example.com"}, "attendeesStatus":"PRESENT"}""",
+                        """
+                        {"id":"1",
+                        "formId":"form1",
+                        "classroomId":"class1",
+                        "responses":{"email":"test@example.com"},
+                        "attendeesStatus":"PRESENT"}
+                        """.trimIndent(),
                     ),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
