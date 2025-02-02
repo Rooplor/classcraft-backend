@@ -107,6 +107,7 @@ class FormSubmissionServiceTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@example.com"),
+                "user1",
                 UserDetailDTO("user1", "user1"),
             )
         `when`(formSubmissionRepository.findByFormIdAndSubmittedBy("form1", "user1")).thenReturn(formSubmission)
@@ -185,6 +186,7 @@ class FormSubmissionServiceTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                "user1",
                 UserDetailDTO("user1", "user1"),
                 false,
             )
@@ -216,6 +218,7 @@ class FormSubmissionServiceTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                "user1",
                 UserDetailDTO("user1", "user1"),
                 true,
             )
@@ -239,14 +242,16 @@ class FormSubmissionServiceTest {
                     formId = "form1",
                     classroomId = "class1",
                     responses = mapOf("email" to "test@mail.com"),
-                    submittedBy = UserDetailDTO("user1", "user1"),
+                    submittedBy = "user1",
+                    userDetail = UserDetailDTO("user1", "user1"),
                 ),
                 FormSubmission(
                     id = "2",
                     formId = "form2",
                     classroomId = "class1",
                     responses = mapOf("phone" to "1234567890"),
-                    submittedBy = UserDetailDTO("user1", "user1"),
+                    submittedBy = "user1",
+                    userDetail = UserDetailDTO("user1", "user1"),
                 ),
             )
 
@@ -265,6 +270,7 @@ class FormSubmissionServiceTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                "user1",
                 UserDetailDTO("user1", "user1"),
                 false,
             )

@@ -23,7 +23,8 @@ class FormSubmissionService(
             throw Exception(ErrorMessages.ANSWER_ALREADY_SUBMITTED)
         }
         val userDetail = userService.findUserById(userId)
-        formSubmission.submittedBy =
+        formSubmission.submittedBy = userId
+        formSubmission.userDetail =
             UserDetailDTO(
                 id = userDetail.id!!,
                 username = userDetail.username,

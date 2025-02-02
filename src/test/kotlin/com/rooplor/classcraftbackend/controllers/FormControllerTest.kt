@@ -231,6 +231,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@example.com"),
+                "user1",
                 UserDetailDTO("user1", "user1"),
             )
         `when`(formSubmissionService.getFormSubmissionByFormIdAndSubmittedBy("form1", "user1")).thenReturn(formSubmission)
@@ -247,7 +248,7 @@ class FormControllerTest {
             .andExpect(jsonPath("$.result.formId").value("form1"))
             .andExpect(jsonPath("$.result.classroomId").value("class1"))
             .andExpect(jsonPath("$.result.responses.email").value("test@example.com"))
-            .andExpect(jsonPath("$.result.submittedBy.id").value("user1"))
+            .andExpect(jsonPath("$.result.submittedBy").value("user1"))
     }
 
     @Test
@@ -258,6 +259,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                "user1",
                 UserDetailDTO("user1", "user1"),
                 isApprovedByOwner = false,
             )
@@ -281,6 +283,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                "user1",
                 UserDetailDTO("user1", "user1"),
                 isApprovedByOwner = true,
             )
@@ -304,6 +307,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                "user1",
                 UserDetailDTO("user1", "user1"),
             )
         `when`(formSubmissionService.getFormSubmissionByUserId("user1")).thenReturn(listOf(formSubmission))
@@ -328,6 +332,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                "user1",
                 UserDetailDTO("user1", "user1"),
                 isApprovedByOwner = true,
                 attendeesStatus = AttendeesStatus.PRESENT,
