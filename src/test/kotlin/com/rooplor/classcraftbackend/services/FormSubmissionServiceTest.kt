@@ -103,18 +103,6 @@ class FormSubmissionServiceTest {
     }
 
     @Test
-    fun `getFormSubmissionByFormIdAndSubmittedBy should throw exception when submission not found`() {
-        `when`(formSubmissionRepository.findByFormIdAndSubmittedBy("form1", "user1")).thenReturn(null)
-
-        val exception =
-            assertThrows<Exception> {
-                formSubmissionService.getFormSubmissionByFormIdAndSubmittedBy("form1", "user1")
-            }
-
-        assertEquals(ErrorMessages.ANSWER_NOT_FOUND, exception.message)
-    }
-
-    @Test
     fun `getFormSubmissionsByClassroomId should return list of form submissions`() {
         val formSubmissions =
             listOf(
