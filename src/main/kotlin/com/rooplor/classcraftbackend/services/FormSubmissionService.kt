@@ -1,6 +1,7 @@
 package com.rooplor.classcraftbackend.services
 
 import com.opencsv.CSVWriter
+import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.messages.ErrorMessages
@@ -13,6 +14,7 @@ class FormSubmissionService(
     private val formSubmissionRepository: FormSubmissionRepository,
     private val formService: FormService,
     private val authService: AuthService,
+    private val userService: UserService,
 ) {
     fun submitForm(formSubmission: FormSubmission): FormSubmission {
         val userId = authService.getUserId()
@@ -20,7 +22,14 @@ class FormSubmissionService(
         if (existingSubmission != null) {
             throw Exception(ErrorMessages.ANSWER_ALREADY_SUBMITTED)
         }
+        val userDetail = userService.findUserById(userId)
         formSubmission.submittedBy = userId
+        formSubmission.userDetail =
+            UserDetailDTO(
+                id = userDetail.id!!,
+                username = userDetail.username,
+                profilePicture = userDetail.profilePicture,
+            )
         val form = formService.findByClassroomId(formSubmission.classroomId)
         val allQuestion = form.fields.toSet()
         val expectedQuestions = allQuestion.filter { it.required }.map { it.name }.toSet()
@@ -52,6 +61,12 @@ class FormSubmissionService(
     ): FormSubmission? = formSubmissionRepository.findByFormIdAndSubmittedBy(formId, submittedBy)
 
     fun getFormSubmissionsByClassroomId(classroomId: String): List<FormSubmission> = formSubmissionRepository.findByClassroomId(classroomId)
+
+    fun getUserInClassroom(classroomId: String): List<UserDetailDTO?> {
+        val submissions = getFormSubmissionsByClassroomId(classroomId)
+        val approvedByOwner = submissions.filter { it.isApprovedByOwner }
+        return approvedByOwner.map { it.userDetail }
+    }
 
     fun generateCsvFromForm(classroomId: String): String {
         val allAnswer = formService.findByClassroomId(classroomId)

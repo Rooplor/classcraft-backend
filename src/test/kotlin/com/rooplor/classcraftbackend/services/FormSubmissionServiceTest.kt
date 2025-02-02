@@ -1,5 +1,6 @@
 package com.rooplor.classcraftbackend.services
 
+import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.entities.FormField
 import com.rooplor.classcraftbackend.entities.FormSubmission
@@ -21,7 +22,8 @@ class FormSubmissionServiceTest {
     private val formSubmissionRepository = mock(FormSubmissionRepository::class.java)
     private val formService = mock(FormService::class.java)
     private val authService = mock(AuthService::class.java)
-    private val formSubmissionService = FormSubmissionService(formSubmissionRepository, formService, authService)
+    private val userService = mock(UserService::class.java)
+    private val formSubmissionService = FormSubmissionService(formSubmissionRepository, formService, authService, userService)
 
     @Test
     fun `submitForm should save and return form submission`() {
@@ -52,6 +54,8 @@ class FormSubmissionServiceTest {
         `when`(
             authService.getAuthenticatedUserDetails(),
         ).thenReturn(User(id = "owner1", username = "owner1", email = "owner1@mail.com", profilePicture = null))
+        `when`(authService.getUserId()).thenReturn("owner1")
+        `when`(userService.findUserById("owner1")).thenReturn(User(id = "owner1", username = "owner1", email = "owner1@mail.com"))
 
         val result = formSubmissionService.submitForm(formSubmission)
 
@@ -87,6 +91,8 @@ class FormSubmissionServiceTest {
         `when`(
             authService.getAuthenticatedUserDetails(),
         ).thenReturn(User(id = "owner1", username = "owner1", email = "owner1@mail.com", profilePicture = null))
+        `when`(authService.getUserId()).thenReturn("owner1")
+        `when`(userService.findUserById("owner1")).thenReturn(User(id = "owner1", username = "owner1", email = "owner1@mail.com"))
 
         val exception = assertThrows<Exception> { formSubmissionService.submitForm(formSubmission) }
 
@@ -95,7 +101,15 @@ class FormSubmissionServiceTest {
 
     @Test
     fun `getFormSubmissionByFormIdAndSubmittedBy should return form submission`() {
-        val formSubmission = FormSubmission("1", "form1", "class1", mapOf("email" to "test@example.com"), "user1")
+        val formSubmission =
+            FormSubmission(
+                "1",
+                "form1",
+                "class1",
+                mapOf("email" to "test@example.com"),
+                "user1",
+                UserDetailDTO("user1", "user1"),
+            )
         `when`(formSubmissionRepository.findByFormIdAndSubmittedBy("form1", "user1")).thenReturn(formSubmission)
 
         val result = formSubmissionService.getFormSubmissionByFormIdAndSubmittedBy("form1", "user1")
@@ -166,7 +180,16 @@ class FormSubmissionServiceTest {
 
     @Test
     fun `setFormSubmissionApprovalStatus should update form submission approval status`() {
-        val formSubmission = FormSubmission("1", "form1", "class1", mapOf("email" to "test@mail.com"), "user1", false)
+        val formSubmission =
+            FormSubmission(
+                "1",
+                "form1",
+                "class1",
+                mapOf("email" to "test@mail.com"),
+                "user1",
+                UserDetailDTO("user1", "user1"),
+                false,
+            )
         val expectation = formSubmission.copy(isApprovedByOwner = true)
         `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.of(formSubmission))
         `when`(formSubmissionRepository.save(formSubmission)).thenReturn(expectation)
@@ -189,7 +212,16 @@ class FormSubmissionServiceTest {
 
     @Test
     fun `setFormSubmissionApprovalStatus should update form submission approval status to false`() {
-        val formSubmission = FormSubmission("1", "form1", "class1", mapOf("email" to "test@mail.com"), "user1", true)
+        val formSubmission =
+            FormSubmission(
+                "1",
+                "form1",
+                "class1",
+                mapOf("email" to "test@mail.com"),
+                "user1",
+                UserDetailDTO("user1", "user1"),
+                true,
+            )
         val expectation = formSubmission.copy(isApprovedByOwner = false)
         `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.of(formSubmission))
         `when`(formSubmissionRepository.save(formSubmission)).thenReturn(expectation)
@@ -211,6 +243,7 @@ class FormSubmissionServiceTest {
                     classroomId = "class1",
                     responses = mapOf("email" to "test@mail.com"),
                     submittedBy = "user1",
+                    userDetail = UserDetailDTO("user1", "user1"),
                 ),
                 FormSubmission(
                     id = "2",
@@ -218,6 +251,7 @@ class FormSubmissionServiceTest {
                     classroomId = "class1",
                     responses = mapOf("phone" to "1234567890"),
                     submittedBy = "user1",
+                    userDetail = UserDetailDTO("user1", "user1"),
                 ),
             )
 
@@ -230,7 +264,16 @@ class FormSubmissionServiceTest {
 
     @Test
     fun `setAttendeesStatus should update form submission attendees status`() {
-        val formSubmission = FormSubmission("1", "form1", "class1", mapOf("email" to "test@mail.com"), "user1", false)
+        val formSubmission =
+            FormSubmission(
+                "1",
+                "form1",
+                "class1",
+                mapOf("email" to "test@mail.com"),
+                "user1",
+                UserDetailDTO("user1", "user1"),
+                false,
+            )
         val expectation = formSubmission.copy(attendeesStatus = AttendeesStatus.PRESENT)
         `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.of(formSubmission))
         `when`(formSubmissionRepository.save(formSubmission)).thenReturn(expectation)
@@ -240,5 +283,67 @@ class FormSubmissionServiceTest {
         assertEquals(expectation, result)
         verify(formSubmissionRepository, times(1)).findById("1")
         verify(formSubmissionRepository, times(1)).save(formSubmission)
+    }
+
+    @Test
+    fun `getUserInClassroom should return list of user detail DTO if isApprovedByOwner is true`() {
+        val formSubmissions =
+            listOf(
+                FormSubmission(
+                    id = "1",
+                    formId = "form1",
+                    classroomId = "class1",
+                    responses = mapOf("email" to "test@mail.com"),
+                    submittedBy = "user1",
+                    userDetail = UserDetailDTO("user1", "user1"),
+                    isApprovedByOwner = true,
+                ),
+                FormSubmission(
+                    id = "2",
+                    formId = "form2",
+                    classroomId = "class1",
+                    responses = mapOf("phone" to "1234567890"),
+                    submittedBy = "user1",
+                    userDetail = UserDetailDTO("user1", "user1"),
+                    isApprovedByOwner = true,
+                ),
+            )
+
+        `when`(formSubmissionService.getFormSubmissionsByClassroomId("class1")).thenReturn(formSubmissions)
+
+        val result = formSubmissionService.getUserInClassroom("class1")
+
+        assertEquals(formSubmissions.map { it.userDetail }, result)
+    }
+
+    @Test
+    fun `getUserInClassroom should return empty list if isApprovedByOwner is false`() {
+        val formSubmissions =
+            listOf(
+                FormSubmission(
+                    id = "1",
+                    formId = "form1",
+                    classroomId = "class1",
+                    responses = mapOf("email" to "test@mail.com"),
+                    submittedBy = "user1",
+                    userDetail = UserDetailDTO("user1", "user1"),
+                    isApprovedByOwner = false,
+                ),
+                FormSubmission(
+                    id = "2",
+                    formId = "form2",
+                    classroomId = "class1",
+                    responses = mapOf("phone" to "1234567890"),
+                    submittedBy = "user1",
+                    userDetail = UserDetailDTO("user1", "user1"),
+                    isApprovedByOwner = false,
+                ),
+            )
+
+        `when`(formSubmissionService.getFormSubmissionsByClassroomId("class1")).thenReturn(formSubmissions)
+
+        val result = formSubmissionService.getUserInClassroom("class1")
+
+        assertEquals(emptyList<UserDetailDTO>(), result)
     }
 }
