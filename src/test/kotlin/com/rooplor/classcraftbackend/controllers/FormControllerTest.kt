@@ -7,7 +7,6 @@ import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
-import com.rooplor.classcraftbackend.helpers.FormHelper
 import com.rooplor.classcraftbackend.services.FormService
 import com.rooplor.classcraftbackend.services.FormSubmissionService
 import org.junit.jupiter.api.Test
@@ -47,9 +46,6 @@ class FormControllerTest {
 
     @MockBean
     private lateinit var formSubmissionService: FormSubmissionService
-
-    @MockBean
-    private lateinit var formHelper: FormHelper
 
     @MockBean
     private lateinit var modelMapper: ModelMapper
@@ -348,5 +344,28 @@ class FormControllerTest {
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
             .andExpect(jsonPath("$.result.id").value("1"))
+    }
+
+    @Test
+    fun `getUserInClassroom should return users in classroom`() {
+        val formSubmission =
+            FormSubmission(
+                "1",
+                "form1",
+                "class1",
+                mapOf("email" to "test@mail.com"),
+                "user1",
+                UserDetailDTO("user1", "user1"),
+            )
+        `when`(formSubmissionService.getUserInClassroom("class1")).thenReturn(listOf(UserDetailDTO("user1", "user1")))
+
+        mockMvc
+            .perform(
+                get("/api/form/user/class1")
+                    .contentType(MediaType.APPLICATION_JSON),
+            ).andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.result[0].id").value("user1"))
+            .andExpect(jsonPath("$.result[0].username").value("user1"))
     }
 }

@@ -284,4 +284,66 @@ class FormSubmissionServiceTest {
         verify(formSubmissionRepository, times(1)).findById("1")
         verify(formSubmissionRepository, times(1)).save(formSubmission)
     }
+
+    @Test
+    fun `getUserInClassroom should return list of user detail DTO if isApprovedByOwner is true`() {
+        val formSubmissions =
+            listOf(
+                FormSubmission(
+                    id = "1",
+                    formId = "form1",
+                    classroomId = "class1",
+                    responses = mapOf("email" to "test@mail.com"),
+                    submittedBy = "user1",
+                    userDetail = UserDetailDTO("user1", "user1"),
+                    isApprovedByOwner = true,
+                ),
+                FormSubmission(
+                    id = "2",
+                    formId = "form2",
+                    classroomId = "class1",
+                    responses = mapOf("phone" to "1234567890"),
+                    submittedBy = "user1",
+                    userDetail = UserDetailDTO("user1", "user1"),
+                    isApprovedByOwner = true,
+                ),
+            )
+
+        `when`(formSubmissionService.getFormSubmissionsByClassroomId("class1")).thenReturn(formSubmissions)
+
+        val result = formSubmissionService.getUserInClassroom("class1")
+
+        assertEquals(formSubmissions.map { it.userDetail }, result)
+    }
+
+    @Test
+    fun `getUserInClassroom should return empty list if isApprovedByOwner is false`() {
+        val formSubmissions =
+            listOf(
+                FormSubmission(
+                    id = "1",
+                    formId = "form1",
+                    classroomId = "class1",
+                    responses = mapOf("email" to "test@mail.com"),
+                    submittedBy = "user1",
+                    userDetail = UserDetailDTO("user1", "user1"),
+                    isApprovedByOwner = false,
+                ),
+                FormSubmission(
+                    id = "2",
+                    formId = "form2",
+                    classroomId = "class1",
+                    responses = mapOf("phone" to "1234567890"),
+                    submittedBy = "user1",
+                    userDetail = UserDetailDTO("user1", "user1"),
+                    isApprovedByOwner = false,
+                ),
+            )
+
+        `when`(formSubmissionService.getFormSubmissionsByClassroomId("class1")).thenReturn(formSubmissions)
+
+        val result = formSubmissionService.getUserInClassroom("class1")
+
+        assertEquals(emptyList<UserDetailDTO>(), result)
+    }
 }

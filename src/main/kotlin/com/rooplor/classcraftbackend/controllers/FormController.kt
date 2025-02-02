@@ -2,6 +2,7 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.FormCreateDTO
 import com.rooplor.classcraftbackend.dtos.Response
+import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
@@ -192,6 +193,19 @@ class FormController(
         try {
             val submission = formSubmissionService.setAttendeesStatus(id, status)
             return ResponseEntity.ok(Response(success = true, result = submission, error = null))
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+        }
+    }
+
+    @Operation(summary = "Get user in classroom")
+    @GetMapping("/user/{classroomId}")
+    fun getUserInClassroom(
+        @PathVariable classroomId: String,
+    ): ResponseEntity<Response<List<UserDetailDTO?>>> {
+        try {
+            val users = formSubmissionService.getUserInClassroom(classroomId)
+            return ResponseEntity.ok(Response(success = true, result = users, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
         }

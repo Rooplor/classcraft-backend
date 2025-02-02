@@ -62,6 +62,12 @@ class FormSubmissionService(
 
     fun getFormSubmissionsByClassroomId(classroomId: String): List<FormSubmission> = formSubmissionRepository.findByClassroomId(classroomId)
 
+    fun getUserInClassroom(classroomId: String): List<UserDetailDTO?> {
+        val submissions = getFormSubmissionsByClassroomId(classroomId)
+        val approvedByOwner = submissions.filter { it.isApprovedByOwner }
+        return approvedByOwner.map { it.userDetail }
+    }
+
     fun generateCsvFromForm(classroomId: String): String {
         val allAnswer = formService.findByClassroomId(classroomId)
         val submission = getFormSubmissionsByClassroomId(classroomId)
