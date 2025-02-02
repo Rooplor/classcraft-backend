@@ -5,6 +5,7 @@ import com.rooplor.classcraftbackend.configs.TestSecurityConfig
 import com.rooplor.classcraftbackend.dtos.FormCreateDTO
 import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.entities.FormSubmission
+import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.helpers.FormHelper
 import com.rooplor.classcraftbackend.services.FormService
 import com.rooplor.classcraftbackend.services.FormSubmissionService
@@ -180,14 +181,29 @@ class FormControllerTest {
 
     @Test
     fun `submitForm should return submitted form`() {
-        val formSubmission = FormSubmission("1", "form1", "class1", mapOf("email" to "test@example.com"))
+        val formSubmission =
+            FormSubmission(
+                "1",
+                "form1",
+                "class1",
+                mapOf("email" to "test@example.com"),
+                attendeesStatus = AttendeesStatus.PRESENT,
+            )
         `when`(formSubmissionService.submitForm(formSubmission)).thenReturn(formSubmission)
 
         mockMvc
             .perform(
                 post("/api/form/submit")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"id":"1","formId":"form1","classroomId":"class1","responses":{"email":"test@example.com"}}"""),
+                    .content(
+                        """
+                        {"id":"1",
+                        "formId":"form1",
+                        "classroomId":"class1",
+                        "responses":{"email":"test@example.com"},
+                        "attendeesStatus":"PRESENT"}
+                        """.trimIndent(),
+                    ),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
             .andExpect(jsonPath("$.result.id").value("1"))
@@ -287,5 +303,30 @@ class FormControllerTest {
             .andExpect(jsonPath("$.result[0].formId").value("form1"))
             .andExpect(jsonPath("$.result[0].classroomId").value("class1"))
             .andExpect(jsonPath("$.result[0].responses.email").value("test@mail.com"))
+    }
+
+    @Test
+    fun `set attendees status should return updated form`() {
+        val formSubmission =
+            FormSubmission(
+                "1",
+                "form1",
+                "class1",
+                mapOf("email" to "test@mail.com"),
+                "user1",
+                isApprovedByOwner = true,
+                attendeesStatus = AttendeesStatus.PRESENT,
+            )
+
+        `when`(formSubmissionService.setAttendeesStatus("1", AttendeesStatus.PRESENT)).thenReturn(formSubmission)
+
+        mockMvc
+            .perform(
+                patch("/api/form/attendees/1")
+                    .param("status", "PRESENT")
+                    .contentType(MediaType.APPLICATION_JSON),
+            ).andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.result.id").value("1"))
     }
 }
