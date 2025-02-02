@@ -1,5 +1,6 @@
 package com.rooplor.classcraftbackend.entities
 
+import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
@@ -11,7 +12,7 @@ data class FormSubmission(
     var formId: String,
     var classroomId: String,
     var responses: Map<String, Any>,
-    var submittedBy: String? = null,
+    var submittedBy: UserDetailDTO? = null,
     var isApprovedByOwner: Boolean = false,
-    var attendeesStatus: AttendeesStatus = AttendeesStatus.PENDING,
+    var attendeesStatus: AttendeesStatus? = null,
 )

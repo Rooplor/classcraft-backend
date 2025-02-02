@@ -3,6 +3,7 @@ package com.rooplor.classcraftbackend.controllers
 import com.rooplor.classcraftbackend.configs.TestConfig
 import com.rooplor.classcraftbackend.configs.TestSecurityConfig
 import com.rooplor.classcraftbackend.dtos.FormCreateDTO
+import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
@@ -224,7 +225,14 @@ class FormControllerTest {
 
     @Test
     fun `getFormSubmissions should return form submissions`() {
-        val formSubmission = FormSubmission("1", "form1", "class1", mapOf("email" to "test@example.com"), "user1")
+        val formSubmission =
+            FormSubmission(
+                "1",
+                "form1",
+                "class1",
+                mapOf("email" to "test@example.com"),
+                UserDetailDTO("user1", "user1"),
+            )
         `when`(formSubmissionService.getFormSubmissionByFormIdAndSubmittedBy("form1", "user1")).thenReturn(formSubmission)
 
         mockMvc
@@ -239,7 +247,7 @@ class FormControllerTest {
             .andExpect(jsonPath("$.result.formId").value("form1"))
             .andExpect(jsonPath("$.result.classroomId").value("class1"))
             .andExpect(jsonPath("$.result.responses.email").value("test@example.com"))
-            .andExpect(jsonPath("$.result.submittedBy").value("user1"))
+            .andExpect(jsonPath("$.result.submittedBy.id").value("user1"))
     }
 
     @Test
@@ -250,7 +258,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
-                "user1",
+                UserDetailDTO("user1", "user1"),
                 isApprovedByOwner = false,
             )
         `when`(formSubmissionService.setFormSubmissionApprovalStatus("1", true)).thenReturn(formSubmission)
@@ -273,7 +281,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
-                "user1",
+                UserDetailDTO("user1", "user1"),
                 isApprovedByOwner = true,
             )
         `when`(formSubmissionService.setFormSubmissionApprovalStatus("1", false)).thenReturn(formSubmission)
@@ -290,7 +298,14 @@ class FormControllerTest {
 
     @Test
     fun `getFormSubmissionsByUserId should return form submissions`() {
-        val formSubmission = FormSubmission("1", "form1", "class1", mapOf("email" to "test@mail.com"), "user1")
+        val formSubmission =
+            FormSubmission(
+                "1",
+                "form1",
+                "class1",
+                mapOf("email" to "test@mail.com"),
+                UserDetailDTO("user1", "user1"),
+            )
         `when`(formSubmissionService.getFormSubmissionByUserId("user1")).thenReturn(listOf(formSubmission))
 
         mockMvc
@@ -313,7 +328,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
-                "user1",
+                UserDetailDTO("user1", "user1"),
                 isApprovedByOwner = true,
                 attendeesStatus = AttendeesStatus.PRESENT,
             )
