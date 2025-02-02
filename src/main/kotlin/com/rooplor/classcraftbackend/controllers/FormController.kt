@@ -4,6 +4,7 @@ import com.rooplor.classcraftbackend.dtos.FormCreateDTO
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.entities.FormSubmission
+import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.helpers.FormHelper
 import com.rooplor.classcraftbackend.services.FormService
 import com.rooplor.classcraftbackend.services.FormSubmissionService
@@ -155,7 +156,7 @@ class FormController(
         }
     }
 
-    @Operation(summary = "Change isApprovedByOwner status")
+    @Operation(summary = "Set isApprovedByOwner status")
     @PatchMapping("/isApprovedByOwner/{id}")
     fun changeIsApprovedByOwner(
         @PathVariable id: String,
@@ -177,6 +178,20 @@ class FormController(
         try {
             val submissions = formSubmissionService.getFormSubmissionByUserId(userId)
             return ResponseEntity.ok(Response(success = true, result = submissions, error = null))
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+        }
+    }
+
+    @Operation(summary = "Set attendees status")
+    @PatchMapping("/attendees/{id}")
+    fun changeAttendeesStatus(
+        @PathVariable id: String,
+        @RequestParam status: AttendeesStatus,
+    ): ResponseEntity<Response<FormSubmission>> {
+        try {
+            val submission = formSubmissionService.setAttendeesStatus(id, status)
+            return ResponseEntity.ok(Response(success = true, result = submission, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
         }

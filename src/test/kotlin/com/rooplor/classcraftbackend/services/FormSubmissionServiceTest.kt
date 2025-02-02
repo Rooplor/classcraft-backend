@@ -4,6 +4,7 @@ import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.entities.FormField
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.entities.User
+import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -237,5 +238,19 @@ class FormSubmissionServiceTest {
         val result = formSubmissionService.getFormSubmissionByUserId("user1")
 
         assertEquals(formSubmissions, result)
+    }
+
+    @Test
+    fun `setAttendeesStatus should update form submission attendees status`() {
+        val formSubmission = FormSubmission("1", "form1", "class1", mapOf("email" to "test@mail.com"), "user1", false)
+        val expectation = formSubmission.copy(attendeesStatus = AttendeesStatus.PRESENT)
+        `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.of(formSubmission))
+        `when`(formSubmissionRepository.save(formSubmission)).thenReturn(expectation)
+
+        val result = formSubmissionService.setAttendeesStatus("1", AttendeesStatus.PRESENT)
+
+        assertEquals(expectation, result)
+        verify(formSubmissionRepository, times(1)).findById("1")
+        verify(formSubmissionRepository, times(1)).save(formSubmission)
     }
 }

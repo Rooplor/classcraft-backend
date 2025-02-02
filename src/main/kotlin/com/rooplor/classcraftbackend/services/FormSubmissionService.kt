@@ -2,6 +2,7 @@ package com.rooplor.classcraftbackend.services
 
 import com.opencsv.CSVWriter
 import com.rooplor.classcraftbackend.entities.FormSubmission
+import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
 import org.springframework.stereotype.Service
@@ -40,6 +41,7 @@ class FormSubmissionService(
         }
 
         formSubmission.isApprovedByOwner = !form.isOwnerApprovalRequired
+        formSubmission.attendeesStatus = AttendeesStatus.PENDING
 
         return formSubmissionRepository.save(formSubmission)
     }
@@ -86,4 +88,13 @@ class FormSubmissionService(
     }
 
     fun getFormSubmissionByUserId(userId: String): List<FormSubmission> = formSubmissionRepository.findBySubmittedBy(userId)
+
+    fun setAttendeesStatus(
+        formSubmissionId: String,
+        attendeesStatus: AttendeesStatus,
+    ): FormSubmission {
+        val formSubmission = formSubmissionRepository.findById(formSubmissionId).orElseThrow { Exception(ErrorMessages.ANSWER_NOT_FOUND) }
+        formSubmission.attendeesStatus = attendeesStatus
+        return formSubmissionRepository.save(formSubmission)
+    }
 }
