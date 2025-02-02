@@ -47,8 +47,7 @@ class FormSubmissionService(
     fun getFormSubmissionByFormIdAndSubmittedBy(
         formId: String,
         submittedBy: String,
-    ): FormSubmission =
-        formSubmissionRepository.findByFormIdAndSubmittedBy(formId, submittedBy) ?: throw Exception(ErrorMessages.ANSWER_NOT_FOUND)
+    ): FormSubmission? = formSubmissionRepository.findByFormIdAndSubmittedBy(formId, submittedBy)
 
     fun getFormSubmissionsByClassroomId(classroomId: String): List<FormSubmission> = formSubmissionRepository.findByClassroomId(classroomId)
 
