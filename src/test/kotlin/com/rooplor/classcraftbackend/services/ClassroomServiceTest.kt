@@ -472,7 +472,7 @@ class ClassroomServiceTest {
         Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
         Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "1", username = "admin"))
 
-        val result = classService.toggleRegistrationStatus(classId)
+        val result = classService.setRegistrationStatus(classId)
         assertEquals(classroomObj, result)
     }
 
@@ -498,11 +498,11 @@ class ClassroomServiceTest {
         Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
         Mockito.`when`(userService.findByUsername("user2")).thenReturn(User(id = "2", username = "user2"))
 
-        assertThrows<Exception> { classService.toggleRegistrationStatus(classId) }
+        assertThrows<Exception> { classService.setRegistrationStatus(classId) }
     }
 
     @Test
-    fun `should toggle publish status of a class`() {
+    fun `should set publish status of a class`() {
         val classId = "1"
         val classroomObj =
             Classroom(
@@ -523,12 +523,12 @@ class ClassroomServiceTest {
         Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
         Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "1", username = "admin"))
 
-        val result = classService.togglePublishStatus(classId)
+        val result = classService.setPublishStatus(classId)
         assertEquals(classroomObj, result)
     }
 
     @Test
-    fun `should not toggle publish status of a class with owner id doesn't match`() {
+    fun `should not set publish status of a class with owner id doesn't match`() {
         val classId = "1"
         val classroomObj =
             Classroom(
@@ -549,7 +549,7 @@ class ClassroomServiceTest {
         Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
         Mockito.`when`(userService.findByUsername("user2")).thenReturn(User(id = "2", username = "user2"))
 
-        assertThrows<Exception> { classService.togglePublishStatus(classId) }
+        assertThrows<Exception> { classService.setPublishStatus(classId) }
     }
 
     @Test

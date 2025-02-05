@@ -179,9 +179,9 @@ class ClassController
                 ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
             }
 
-        @Operation(summary = "Toggle registration status of a class")
-        @PatchMapping("/{id}/toggle-registration-status")
-        fun toggleRegistrationStatus(
+        @Operation(summary = "Set registration status of a class")
+        @PatchMapping("/{id}/set-registration-status")
+        fun setRegistrationStatus(
             @PathVariable id: String,
         ): ResponseEntity<Response<Classroom>> =
             try {
@@ -189,7 +189,7 @@ class ClassController
                     Response(
                         success = true,
                         result =
-                            classService.toggleRegistrationStatus(id),
+                            classService.setRegistrationStatus(id),
                         error = null,
                     ),
                 )
@@ -197,9 +197,9 @@ class ClassController
                 ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
             }
 
-        @Operation(summary = "Toggle publish status of a class")
-        @PatchMapping("/{id}/toggle-publish-status")
-        fun togglePublicationStatus(
+        @Operation(summary = "Set publish status of a class")
+        @PatchMapping("/{id}/set-publish-status")
+        fun setPublicationStatus(
             @PathVariable id: String,
         ): ResponseEntity<Response<Classroom>> =
             try {
@@ -207,7 +207,7 @@ class ClassController
                     Response(
                         success = true,
                         result =
-                            classService.togglePublishStatus(id),
+                            classService.setPublishStatus(id),
                         error = null,
                     ),
                 )

@@ -140,7 +140,7 @@ class ClassService
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
-        fun toggleRegistrationStatus(id: String): Classroom {
+        fun setRegistrationStatus(id: String): Classroom {
             val classToUpdate = findClassById(id)
             isOwnerOfClass(classToUpdate)
             classToUpdate.registrationStatus = !classToUpdate.registrationStatus!!
@@ -166,7 +166,7 @@ class ClassService
             }
         }
 
-        fun togglePublishStatus(id: String): Classroom {
+        fun setPublishStatus(id: String): Classroom {
             val classToUpdate = findClassById(id)
             isOwnerOfClass(classToUpdate)
             classToUpdate.isPublished = !classToUpdate.isPublished!!

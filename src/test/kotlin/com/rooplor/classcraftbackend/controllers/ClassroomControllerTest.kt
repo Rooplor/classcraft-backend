@@ -398,10 +398,10 @@ class ClassroomControllerTest {
                 capacity = 30,
                 dates = listOf(),
             )
-        Mockito.`when`(classService.toggleRegistrationStatus(classId)).thenReturn(classroomObj)
+        Mockito.`when`(classService.setRegistrationStatus(classId)).thenReturn(classroomObj)
 
         mockMvc
-            .perform(patch("/api/class/$classId/toggle-registration-status"))
+            .perform(patch("/api/class/$classId/set-registration-status"))
             .andExpect(status().isOk)
     }
 
@@ -420,10 +420,10 @@ class ClassroomControllerTest {
                 capacity = 30,
                 dates = listOf(),
             )
-        Mockito.`when`(classService.togglePublishStatus(classId)).thenReturn(classroomObj)
+        Mockito.`when`(classService.setPublishStatus(classId)).thenReturn(classroomObj)
 
         mockMvc
-            .perform(patch("/api/class/$classId/toggle-publish-status"))
+            .perform(patch("/api/class/$classId/set-publish-status"))
             .andExpect(status().isOk)
     }
 
