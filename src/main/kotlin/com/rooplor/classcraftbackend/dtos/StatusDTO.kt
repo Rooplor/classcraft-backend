@@ -5,6 +5,6 @@ import lombok.Setter
 
 @Getter
 @Setter
-data class statusDTO(
+data class StatusDTO(
     var status: Boolean = false
 )
