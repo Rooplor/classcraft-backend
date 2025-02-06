@@ -1,5 +1,8 @@
 package com.rooplor.classcraftbackend.controllers
 
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.client.j2se.MatrixToImageWriter
+import com.google.zxing.qrcode.QRCodeWriter
 import com.rooplor.classcraftbackend.dtos.FormCreateDTO
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.dtos.UserDetailDTO
@@ -12,6 +15,7 @@ import com.rooplor.classcraftbackend.services.FormSubmissionService
 import io.swagger.v3.oas.annotations.Operation
 import org.modelmapper.ModelMapper
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.awt.image.BufferedImage
 
 @RestController
 @RequestMapping("/api/form")
@@ -209,5 +214,10 @@ class FormController(
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
         }
+    }
+
+    @GetMapping("/qrcode/{barcode}", produces = [MediaType.IMAGE_PNG_VALUE])
+    fun barbecueEAN13Barcode(@PathVariable barcode: String): ResponseEntity<BufferedImage> {
+        return ResponseEntity(formSubmissionService.generateQRCodeWithLogo("https://capstone24.sit.kmutt.ac.th/kp2/class", "src/main/resources/classcraftlogo.png"), HttpStatus.OK)
     }
 }
