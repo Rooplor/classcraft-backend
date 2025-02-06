@@ -2,6 +2,7 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
 import com.rooplor.classcraftbackend.dtos.Response
+import com.rooplor.classcraftbackend.dtos.statusDTO
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.services.ClassService
 import com.rooplor.classcraftbackend.types.DateWithVenue
@@ -183,13 +184,14 @@ class ClassController
         @PatchMapping("/{id}/set-registration-status")
         fun setRegistrationStatus(
             @PathVariable id: String,
+            @RequestBody registrationStatus: statusDTO,
         ): ResponseEntity<Response<Classroom>> =
             try {
                 ResponseEntity.ok(
                     Response(
                         success = true,
                         result =
-                            classService.setRegistrationStatus(id),
+                            classService.setRegistrationStatus(id, registrationStatus.status),
                         error = null,
                     ),
                 )
@@ -201,13 +203,14 @@ class ClassController
         @PatchMapping("/{id}/set-publish-status")
         fun setPublicationStatus(
             @PathVariable id: String,
+            @RequestBody publicStatus: statusDTO,
         ): ResponseEntity<Response<Classroom>> =
             try {
                 ResponseEntity.ok(
                     Response(
                         success = true,
                         result =
-                            classService.setPublishStatus(id),
+                            classService.setPublishStatus(id, publicStatus.status),
                         error = null,
                     ),
                 )

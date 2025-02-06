@@ -3,6 +3,7 @@ package com.rooplor.classcraftbackend.services
 import com.rooplor.classcraftbackend.dtos.DateDetail
 import com.rooplor.classcraftbackend.dtos.DateWithVenueDTO
 import com.rooplor.classcraftbackend.dtos.StartEndDetail
+import com.rooplor.classcraftbackend.dtos.statusDTO
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.enums.Status
@@ -140,10 +141,10 @@ class ClassService
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
-        fun setRegistrationStatus(id: String): Classroom {
+        fun setRegistrationStatus(id: String, status: Boolean): Classroom {
             val classToUpdate = findClassById(id)
             isOwnerOfClass(classToUpdate)
-            classToUpdate.registrationStatus = !classToUpdate.registrationStatus!!
+            classToUpdate.registrationStatus = status
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
@@ -166,10 +167,10 @@ class ClassService
             }
         }
 
-        fun setPublishStatus(id: String): Classroom {
+        fun setPublishStatus(id: String, status: Boolean): Classroom {
             val classToUpdate = findClassById(id)
             isOwnerOfClass(classToUpdate)
-            classToUpdate.isPublished = !classToUpdate.isPublished!!
+            classToUpdate.isPublished = status
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 

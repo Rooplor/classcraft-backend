@@ -472,7 +472,7 @@ class ClassroomServiceTest {
         Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
         Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "1", username = "admin"))
 
-        val result = classService.setRegistrationStatus(classId)
+        val result = classService.setRegistrationStatus(classId, false)
         assertEquals(classroomObj, result)
     }
 
@@ -498,7 +498,7 @@ class ClassroomServiceTest {
         Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
         Mockito.`when`(userService.findByUsername("user2")).thenReturn(User(id = "2", username = "user2"))
 
-        assertThrows<Exception> { classService.setRegistrationStatus(classId) }
+        assertThrows<Exception> { classService.setRegistrationStatus(classId, false) }
     }
 
     @Test
@@ -523,7 +523,7 @@ class ClassroomServiceTest {
         Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
         Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "1", username = "admin"))
 
-        val result = classService.setPublishStatus(classId)
+        val result = classService.setPublishStatus(classId, false)
         assertEquals(classroomObj, result)
     }
 
@@ -549,7 +549,7 @@ class ClassroomServiceTest {
         Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
         Mockito.`when`(userService.findByUsername("user2")).thenReturn(User(id = "2", username = "user2"))
 
-        assertThrows<Exception> { classService.setPublishStatus(classId) }
+        assertThrows<Exception> { classService.setPublishStatus(classId, false) }
     }
 
     @Test
