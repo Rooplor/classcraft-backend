@@ -2,6 +2,7 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
 import com.rooplor.classcraftbackend.dtos.Response
+import com.rooplor.classcraftbackend.dtos.StatusDTO
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.services.ClassService
 import com.rooplor.classcraftbackend.types.DateWithVenue
@@ -179,17 +180,18 @@ class ClassController
                 ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
             }
 
-        @Operation(summary = "Toggle registration status of a class")
-        @PatchMapping("/{id}/toggle-registration-status")
-        fun toggleRegistrationStatus(
+        @Operation(summary = "Set registration status of a class")
+        @PatchMapping("/{id}/set-registration-status")
+        fun setRegistrationStatus(
             @PathVariable id: String,
+            @RequestBody registrationStatus: StatusDTO,
         ): ResponseEntity<Response<Classroom>> =
             try {
                 ResponseEntity.ok(
                     Response(
                         success = true,
                         result =
-                            classService.toggleRegistrationStatus(id),
+                            classService.setRegistrationStatus(id, registrationStatus.status),
                         error = null,
                     ),
                 )
@@ -197,17 +199,18 @@ class ClassController
                 ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
             }
 
-        @Operation(summary = "Toggle publish status of a class")
-        @PatchMapping("/{id}/toggle-publish-status")
-        fun togglePublicationStatus(
+        @Operation(summary = "Set publish status of a class")
+        @PatchMapping("/{id}/set-publish-status")
+        fun setPublicationStatus(
             @PathVariable id: String,
+            @RequestBody publicStatus: StatusDTO,
         ): ResponseEntity<Response<Classroom>> =
             try {
                 ResponseEntity.ok(
                     Response(
                         success = true,
                         result =
-                            classService.togglePublishStatus(id),
+                            classService.setPublishStatus(id, publicStatus.status),
                         error = null,
                     ),
                 )

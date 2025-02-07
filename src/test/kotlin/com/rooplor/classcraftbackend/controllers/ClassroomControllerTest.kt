@@ -398,10 +398,20 @@ class ClassroomControllerTest {
                 capacity = 30,
                 dates = listOf(),
             )
-        Mockito.`when`(classService.toggleRegistrationStatus(classId)).thenReturn(classroomObj)
+        Mockito.`when`(classService.setRegistrationStatus(classId, true)).thenReturn(classroomObj)
 
         mockMvc
-            .perform(patch("/api/class/$classId/toggle-registration-status"))
+            .perform(
+                patch("/api/class/$classId/set-registration-status")
+                    .contentType("application/json")
+                    .content(
+                        """
+                        {
+                            "status": true
+                        }
+                        """.trimIndent()
+                    ),
+            )
             .andExpect(status().isOk)
     }
 
@@ -420,10 +430,20 @@ class ClassroomControllerTest {
                 capacity = 30,
                 dates = listOf(),
             )
-        Mockito.`when`(classService.togglePublishStatus(classId)).thenReturn(classroomObj)
+        Mockito.`when`(classService.setPublishStatus(classId, true)).thenReturn(classroomObj)
 
         mockMvc
-            .perform(patch("/api/class/$classId/toggle-publish-status"))
+            .perform(
+                patch("/api/class/$classId/set-publish-status")
+                    .contentType("application/json")
+                    .content(
+                        """
+                        {
+                            "status": true
+                        }
+                        """.trimIndent()
+                    ),
+            )
             .andExpect(status().isOk)
     }
 
@@ -520,7 +540,8 @@ class ClassroomControllerTest {
     @Test
     fun `should return 400 when update classroom stepper status with unsupport status id`() {
         val classId = "1"
-        Mockito.`when`(classService.updateStepperStatus(classId, 5)).thenThrow(IllegalArgumentException("Stepper status is not valid"))
+        Mockito.`when`(classService.updateStepperStatus(classId, 5))
+            .thenThrow(IllegalArgumentException("Stepper status is not valid"))
 
         mockMvc
             .perform(patch("/api/class/$classId/stepper-status?status=5"))
@@ -550,7 +571,11 @@ class ClassroomControllerTest {
                             startDateTime = LocalDateTime.parse("2024-11-19T08:00:00.000"),
                             endDateTime = LocalDateTime.parse("2024-11-19T16:00:00.000"),
                         ),
-                    venueId = listOf("67388208776cc565fae80e51", "6738820d776cc565fae80e52", "67388212776cc565fae80e54"),
+                    venueId = listOf(
+                        "67388208776cc565fae80e51",
+                        "6738820d776cc565fae80e52",
+                        "67388212776cc565fae80e54"
+                    ),
                 ),
             )
         val requestJson =
@@ -639,7 +664,8 @@ class ClassroomControllerTest {
                 venueStatus = VenueStatus.PENDING.id,
             )
         val rejectReason = "Venue is not available"
-        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason)).thenReturn(classroomObj)
+        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason))
+            .thenReturn(classroomObj)
 
         mockMvc
             .perform(
@@ -664,7 +690,8 @@ class ClassroomControllerTest {
                 venueStatus = VenueStatus.PENDING.id,
             )
         val rejectReason = "Venue is not available"
-        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason)).thenReturn(classroomObj)
+        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason))
+            .thenReturn(classroomObj)
 
         mockMvc
             .perform(
@@ -689,7 +716,8 @@ class ClassroomControllerTest {
                 venueStatus = VenueStatus.PENDING.id,
             )
         val rejectReason = "Venue is not available"
-        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason)).thenReturn(classroomObj)
+        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason))
+            .thenReturn(classroomObj)
 
         mockMvc
             .perform(
