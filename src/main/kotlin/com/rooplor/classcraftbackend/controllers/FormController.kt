@@ -216,8 +216,13 @@ class FormController(
         }
     }
 
-    @GetMapping("/qrcode/{barcode}", produces = [MediaType.IMAGE_PNG_VALUE])
-    fun barbecueEAN13Barcode(@PathVariable barcode: String): ResponseEntity<BufferedImage> {
-        return ResponseEntity(formSubmissionService.generateQRCodeWithLogo("https://capstone24.sit.kmutt.ac.th/kp2/class", "src/main/resources/classcraftlogo.png"), HttpStatus.OK)
+    @GetMapping("/qrcode/{classId}", produces = [MediaType.IMAGE_PNG_VALUE])
+    fun barbecueEAN13Barcode(@PathVariable classId: String): ResponseEntity<BufferedImage> {
+        return ResponseEntity(
+            formSubmissionService.generateQRCodeWithLogo(
+                classId,
+                "src/main/resources/classcraftlogo.png"
+            ), HttpStatus.OK
+        )
     }
 }

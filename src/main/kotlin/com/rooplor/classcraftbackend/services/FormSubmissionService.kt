@@ -9,6 +9,7 @@ import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
@@ -23,6 +24,9 @@ class FormSubmissionService(
     private val authService: AuthService,
     private val userService: UserService,
 ) {
+    @Value("\${attendees.url}")
+    private val attendeesURL: String? = null
+
     fun submitForm(formSubmission: FormSubmission): FormSubmission {
         val userId = authService.getUserId()
         val existingSubmission = formSubmissionRepository.findByFormIdAndSubmittedBy(formSubmission.formId, userId)
@@ -121,23 +125,19 @@ class FormSubmissionService(
 
     fun generateQRCodeWithLogo(barcode: String, logoPath: String): BufferedImage {
         val barcodeWriter = QRCodeWriter()
-        val bitMatrix = barcodeWriter.encode(barcode, BarcodeFormat.QR_CODE, 500, 500)
+        val bitMatrix = barcodeWriter.encode(attendeesURL + barcode, BarcodeFormat.QR_CODE, 500, 500)
         val qrCodeGrayscale = MatrixToImageWriter.toBufferedImage(bitMatrix)
 
-        // Create a new BufferedImage with a color model
         val qrCode = BufferedImage(qrCodeGrayscale.width, qrCodeGrayscale.height, BufferedImage.TYPE_INT_ARGB)
         val g2d: Graphics2D = qrCode.createGraphics()
         g2d.drawImage(qrCodeGrayscale, 0, 0, null)
         g2d.dispose()
 
-        // Load the logo image
         val logo = ImageIO.read(File(logoPath))
 
-        // Calculate the position to place the logo
         val deltaHeight = qrCode.height - logo.height
         val deltaWidth = qrCode.width - logo.width
 
-        // Draw the logo onto the QR code
         val g: Graphics2D = qrCode.createGraphics()
         g.drawImage(logo, deltaWidth / 2, deltaHeight / 2, null)
         g.dispose()
