@@ -60,6 +60,7 @@ class FormControllerTest {
                 LocalDateTime.of(2024, 9, 1, 0, 0),
                 LocalDateTime.of(2024, 9, 30, 0, 0),
                 emptyList(),
+                true,
             )
         val form =
             Form(
@@ -70,6 +71,7 @@ class FormControllerTest {
                 LocalDateTime.of(2024, 9, 1, 0, 0),
                 LocalDateTime.of(2024, 9, 30, 0, 0),
                 emptyList(),
+                true,
             )
         `when`(modelMapper.map(formCreateDTO, Form::class.java)).thenReturn(form)
         `when`(formService.createForm(form)).thenReturn(form)
@@ -88,7 +90,8 @@ class FormControllerTest {
                            "closeDate":"2024-09-30T00:00:00.0000Z",
                            "fields":[
                               
-                           ]
+                           ],
+                           "isOwnerApprovalRequired":true
                         }
                         """.trimIndent(),
                     ),
@@ -107,6 +110,7 @@ class FormControllerTest {
                 LocalDateTime.of(2024, 9, 1, 0, 0),
                 LocalDateTime.of(2024, 9, 30, 0, 0),
                 emptyList(),
+                true,
             )
         val form =
             Form(
@@ -117,6 +121,7 @@ class FormControllerTest {
                 LocalDateTime.of(2024, 9, 1, 0, 0),
                 LocalDateTime.of(2024, 9, 30, 0, 0),
                 emptyList(),
+                true,
             )
         `when`(modelMapper.map(formCreateDTO, Form::class.java)).thenReturn(form)
         `when`(formService.updateForm("1", form)).thenReturn(form)
@@ -135,7 +140,8 @@ class FormControllerTest {
                            "closeDate":"2024-09-30T00:00:00.0000Z",
                            "fields":[
                               
-                           ]
+                           ], 
+                           "isOwnerApprovalRequired":true
                         }
                         """,
                     ),
