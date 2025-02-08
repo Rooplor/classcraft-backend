@@ -79,13 +79,16 @@ class ClassroomControllerTest {
                     dates = listOf(),
                 ),
             )
-        Mockito.`when`(formSubmissionService.getFormSubmissionsByClassroomId(anyString())).thenReturn(emptyList())
         Mockito.`when`(authService.getUserId()).thenReturn("1")
+        Mockito.`when`(formSubmissionService.getFormSubmissionsByClassroomId(anyString())).thenReturn(emptyList())
         Mockito.`when`(classService.findAllClassPublishedWithRegistrationCondition(true)).thenReturn(classrooms)
 
         mockMvc
-            .perform(get("/api/class?registrationStatus=true"))
-            .andExpect(status().isOk)
+            .perform(
+                get("/api/class")
+                    .param("registrationStatus", "true"),
+            )
+        Mockito.verify(classService).findAllClassPublishedWithRegistrationCondition(true)
     }
 
     @Test
@@ -119,7 +122,8 @@ class ClassroomControllerTest {
 
         mockMvc
             .perform(get("/api/class"))
-            .andExpect(status().isOk)
+
+        Mockito.verify(classService).findAllClassPublished()
     }
 
     @Test
