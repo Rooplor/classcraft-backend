@@ -1,10 +1,15 @@
 package com.rooplor.classcraftbackend.controllers
 
+import com.rooplor.classcraftbackend.dtos.ClassEnrollDetail
+import com.rooplor.classcraftbackend.dtos.ClassroomResponse
 import com.rooplor.classcraftbackend.dtos.InitClassDTO
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.dtos.StatusDTO
+import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.Classroom
+import com.rooplor.classcraftbackend.services.AuthService
 import com.rooplor.classcraftbackend.services.ClassService
+import com.rooplor.classcraftbackend.services.FormSubmissionService
 import com.rooplor.classcraftbackend.types.DateWithVenue
 import io.swagger.v3.oas.annotations.Operation
 import org.modelmapper.ModelMapper
@@ -28,22 +33,18 @@ class ClassController
     constructor(
         val modelMapper: ModelMapper,
         private val classService: ClassService,
+        private val formSubmissionService: FormSubmissionService,
+        private val authService: AuthService,
     ) {
         @Operation(summary = "Get all classes with registration status and published status, or by owners if provided")
         @GetMapping("")
         fun findAllClassPublishedOrByOwners(
             @RequestParam(name = "registrationStatus", required = false) registrationStatus: Boolean?,
             @RequestParam(name = "userId", required = false) userId: List<String>?,
-        ): ResponseEntity<Response<List<Classroom>>> =
+        ): ResponseEntity<Response<List<ClassroomResponse>>> =
             try {
-                val result =
-                    if (userId != null && userId.isNotEmpty()) {
-                        classService.findClassByOwners(userId)
-                    } else if (registrationStatus != null) {
-                        classService.findAllClassPublishedWithRegistrationCondition(registrationStatus)
-                    } else {
-                        classService.findAllClassPublished()
-                    }
+                val classroomList = getClassroomList(userId, registrationStatus)
+                val result = classroomList.map { classroom -> mapToClassroomResponse(classroom) }
                 ResponseEntity.ok(Response(success = true, result = result, error = null))
             } catch (e: Exception) {
                 ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
@@ -299,4 +300,68 @@ class ClassController
             } catch (e: Exception) {
                 ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
             }
+
+        private fun getClassroomList(
+            userId: List<String>?,
+            registrationStatus: Boolean?,
+        ): List<Classroom> =
+            when {
+                userId != null && userId.isNotEmpty() -> classService.findClassByOwners(userId)
+                registrationStatus != null -> classService.findAllClassPublishedWithRegistrationCondition(registrationStatus)
+                else -> classService.findAllClassPublished()
+            }
+
+        private fun mapToClassroomResponse(classroom: Classroom): ClassroomResponse {
+            val formSubmissionList = formSubmissionService.getFormSubmissionsByClassroomId(classroom.id!!)
+            val enrollBy =
+                formSubmissionList.map { formSubmission ->
+                    UserDetailDTO(
+                        id = formSubmission.submittedBy!!,
+                        username = formSubmission.userDetail!!.username,
+                        profilePicture = formSubmission.userDetail!!.profilePicture,
+                    )
+                }
+            val isEnrolled = formSubmissionList.any { it.submittedBy == authService.getUserId() }
+            val isApproved =
+                if (isEnrolled) {
+                    formSubmissionList.first { it.submittedBy == authService.getUserId() }.isApprovedByOwner
+                } else {
+                    false
+                }
+            val enrollDetail =
+                ClassEnrollDetail(
+                    enrollBy = enrollBy,
+                    isEnrolled = isEnrolled,
+                    isApproved = isApproved,
+                )
+            return ClassroomResponse(
+                id = classroom.id,
+                title = classroom.title,
+                details = classroom.details,
+                target = classroom.target,
+                prerequisite = classroom.prerequisite,
+                type = classroom.type,
+                format = classroom.format,
+                capacity = classroom.capacity,
+                dates = classroom.dates,
+                stepperStatus = classroom.stepperStatus,
+                meetingUrl = classroom.meetingUrl,
+                content = classroom.content,
+                registrationUrl = classroom.registrationUrl,
+                registrationStatus = classroom.registrationStatus,
+                isPublished = classroom.isPublished,
+                venueStatus = classroom.venueStatus,
+                rejectReason = classroom.rejectReason,
+                instructorName = classroom.instructorName,
+                instructorBio = classroom.instructorBio,
+                instructorAvatar = classroom.instructorAvatar,
+                instructorFamiliarity = classroom.instructorFamiliarity,
+                coverImage = classroom.coverImage,
+                createdWhen = classroom.createdWhen,
+                updatedWhen = classroom.updatedWhen,
+                owner = classroom.owner,
+                coOwners = classroom.coOwners,
+                classEnrollDetail = enrollDetail,
+            )
+        }
     }

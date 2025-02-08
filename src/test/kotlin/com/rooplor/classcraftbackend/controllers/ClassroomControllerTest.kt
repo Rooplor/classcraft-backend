@@ -8,11 +8,14 @@ import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
+import com.rooplor.classcraftbackend.services.AuthService
 import com.rooplor.classcraftbackend.services.ClassService
+import com.rooplor.classcraftbackend.services.FormSubmissionService
 import com.rooplor.classcraftbackend.types.DateDetail
 import com.rooplor.classcraftbackend.types.DateWithVenue
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.Mockito.anyString
 import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.`when`
 import org.modelmapper.ModelMapper
@@ -43,6 +46,12 @@ class ClassroomControllerTest {
     private lateinit var classRepository: ClassroomRepository
 
     @MockBean
+    private lateinit var formSubmissionService: FormSubmissionService
+
+    @MockBean
+    private lateinit var authService: AuthService
+
+    @MockBean
     private lateinit var modelMapper: ModelMapper
 
     @Test
@@ -70,7 +79,8 @@ class ClassroomControllerTest {
                     dates = listOf(),
                 ),
             )
-
+        Mockito.`when`(formSubmissionService.getFormSubmissionsByClassroomId(anyString())).thenReturn(emptyList())
+        Mockito.`when`(authService.getUserId()).thenReturn("1")
         Mockito.`when`(classService.findAllClassPublishedWithRegistrationCondition(true)).thenReturn(classrooms)
 
         mockMvc
@@ -103,7 +113,8 @@ class ClassroomControllerTest {
                     dates = listOf(),
                 ),
             )
-
+        Mockito.`when`(formSubmissionService.getFormSubmissionsByClassroomId(anyString())).thenReturn(emptyList())
+        Mockito.`when`(authService.getUserId()).thenReturn("1")
         Mockito.`when`(classService.findAllClassPublished()).thenReturn(classrooms)
 
         mockMvc
@@ -138,10 +149,12 @@ class ClassroomControllerTest {
                 ),
             )
 
+        Mockito.`when`(formSubmissionService.getFormSubmissionsByClassroomId(anyString())).thenReturn(emptyList())
+        Mockito.`when`(authService.getUserId()).thenReturn("1")
         Mockito.`when`(classService.findClassByOwners(owners)).thenReturn(classrooms)
 
         mockMvc
-            .perform(get("/api/class?userId=owner1,owner2"))
+            .perform(get("/api/class?userId=owner1,owner2").param("userId", "owner1,owner2"))
             .andExpect(status().isOk)
     }
 
@@ -409,10 +422,9 @@ class ClassroomControllerTest {
                         {
                             "status": true
                         }
-                        """.trimIndent()
+                        """.trimIndent(),
                     ),
-            )
-            .andExpect(status().isOk)
+            ).andExpect(status().isOk)
     }
 
     @Test
@@ -441,10 +453,9 @@ class ClassroomControllerTest {
                         {
                             "status": true
                         }
-                        """.trimIndent()
+                        """.trimIndent(),
                     ),
-            )
-            .andExpect(status().isOk)
+            ).andExpect(status().isOk)
     }
 
     @Test
@@ -540,7 +551,8 @@ class ClassroomControllerTest {
     @Test
     fun `should return 400 when update classroom stepper status with unsupport status id`() {
         val classId = "1"
-        Mockito.`when`(classService.updateStepperStatus(classId, 5))
+        Mockito
+            .`when`(classService.updateStepperStatus(classId, 5))
             .thenThrow(IllegalArgumentException("Stepper status is not valid"))
 
         mockMvc
@@ -571,11 +583,12 @@ class ClassroomControllerTest {
                             startDateTime = LocalDateTime.parse("2024-11-19T08:00:00.000"),
                             endDateTime = LocalDateTime.parse("2024-11-19T16:00:00.000"),
                         ),
-                    venueId = listOf(
-                        "67388208776cc565fae80e51",
-                        "6738820d776cc565fae80e52",
-                        "67388212776cc565fae80e54"
-                    ),
+                    venueId =
+                        listOf(
+                            "67388208776cc565fae80e51",
+                            "6738820d776cc565fae80e52",
+                            "67388212776cc565fae80e54",
+                        ),
                 ),
             )
         val requestJson =
@@ -664,7 +677,8 @@ class ClassroomControllerTest {
                 venueStatus = VenueStatus.PENDING.id,
             )
         val rejectReason = "Venue is not available"
-        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason))
+        Mockito
+            .`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason))
             .thenReturn(classroomObj)
 
         mockMvc
@@ -690,7 +704,8 @@ class ClassroomControllerTest {
                 venueStatus = VenueStatus.PENDING.id,
             )
         val rejectReason = "Venue is not available"
-        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason))
+        Mockito
+            .`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason))
             .thenReturn(classroomObj)
 
         mockMvc
@@ -716,7 +731,8 @@ class ClassroomControllerTest {
                 venueStatus = VenueStatus.PENDING.id,
             )
         val rejectReason = "Venue is not available"
-        Mockito.`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason))
+        Mockito
+            .`when`(classService.updateVenueStatus(classId, VenueStatus.REJECTED.id, rejectReason))
             .thenReturn(classroomObj)
 
         mockMvc
