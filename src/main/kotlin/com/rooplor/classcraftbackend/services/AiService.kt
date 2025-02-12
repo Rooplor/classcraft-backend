@@ -59,7 +59,7 @@ class AiService(
         val request =
             Request
                 .Builder()
-                .url("http://localhost:11434/api/chat")
+                .url("http://cp24kp2.sit.kmutt.ac.th:11434/api/chat")
                 .post(jsonBody)
                 .build()
 
