@@ -12,7 +12,15 @@ class AiService(
     private val classService: ClassService,
 ) {
     fun getAiResponse(classId: String): String {
-        val client = OkHttpClient()
+        val client =
+            OkHttpClient()
+                .newBuilder()
+                .connectTimeout(
+                    15,
+                    java.util.concurrent.TimeUnit.MINUTES,
+                ).readTimeout(15, java.util.concurrent.TimeUnit.MINUTES)
+                .writeTimeout(15, java.util.concurrent.TimeUnit.MINUTES)
+                .build()
         val mediaType = "application/json".toMediaType()
 
         val classData = classService.findClassById(classId)
