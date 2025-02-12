@@ -14,7 +14,7 @@ class AiController
     constructor(
         val aiService: AiService,
     ) {
-        @GetMapping("/{topic}")
+        @GetMapping("/{classId}")
         fun getAiResponse(
             @PathVariable classId: String,
         ): String = aiService.getAiResponse(classId)
