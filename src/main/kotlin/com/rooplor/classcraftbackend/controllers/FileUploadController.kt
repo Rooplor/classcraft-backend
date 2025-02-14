@@ -33,13 +33,15 @@ class FileUploadController(
     @PostMapping("/upload", consumes = ["multipart/form-data"])
     fun uploadFile(
         @Parameter(description = "File to be uploaded", required = true, content = [Content(mediaType = "multipart/form-data")])
-        @RequestParam("file") file: MultipartFile,
+        @RequestParam("file") files: List<MultipartFile>,
         @Parameter(description = "File Category", required = true)
         @RequestParam("fileCategory") fileCategory: String,
     ): ResponseEntity<Response<FileResponse>> =
         try {
-            val url = fileUploadService.fileUpload(file, fileCategory)
-            ResponseEntity.ok(Response(success = true, result = FileResponse(url), error = null))
+            val urls: MutableList<String> = ArrayList()
+            files.map { file -> fileUploadService.fileUpload(file, fileCategory) }.map { url -> urls.add(url) }
+            val result = FileResponse(urls)
+            ResponseEntity.ok(Response(success = true, result = result, error = null))
         } catch (e: Exception) {
             ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
         }
