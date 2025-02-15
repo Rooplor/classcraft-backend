@@ -1,8 +1,5 @@
 package com.rooplor.classcraftbackend.controllers
 
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.client.j2se.MatrixToImageWriter
-import com.google.zxing.qrcode.QRCodeWriter
 import com.rooplor.classcraftbackend.dtos.FormCreateDTO
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.dtos.UserDetailDTO
@@ -216,13 +213,15 @@ class FormController(
         }
     }
 
-    @GetMapping("/qrcode/{classId}", produces = [MediaType.IMAGE_PNG_VALUE])
-    fun barbecueEAN13Barcode(@PathVariable classId: String): ResponseEntity<BufferedImage> {
-        return ResponseEntity(
+    @GetMapping("/qrcode/checkin/{classId}", produces = [MediaType.IMAGE_PNG_VALUE])
+    fun barbecueEAN13Barcode(
+        @PathVariable classId: String,
+    ): ResponseEntity<BufferedImage> =
+        ResponseEntity(
             formSubmissionService.generateQRCodeWithLogo(
                 classId,
-                "src/main/resources/classcraftlogo.png"
-            ), HttpStatus.OK
+                "src/main/resources/classcraftlogo.png",
+            ),
+            HttpStatus.OK,
         )
-    }
 }

@@ -24,8 +24,8 @@ class FormSubmissionService(
     private val authService: AuthService,
     private val userService: UserService,
 ) {
-    @Value("\${attendees.url}")
-    private val attendeesURL: String? = null
+    @Value("\${staff.domain}")
+    private val domain: String? = null
 
     fun submitForm(formSubmission: FormSubmission): FormSubmission {
         val userId = authService.getUserId()
@@ -123,9 +123,12 @@ class FormSubmissionService(
         return formSubmissionRepository.save(formSubmission)
     }
 
-    fun generateQRCodeWithLogo(barcode: String, logoPath: String): BufferedImage {
+    fun generateQRCodeWithLogo(
+        classId: String,
+        logoPath: String,
+    ): BufferedImage {
         val barcodeWriter = QRCodeWriter()
-        val bitMatrix = barcodeWriter.encode(attendeesURL + barcode, BarcodeFormat.QR_CODE, 500, 500)
+        val bitMatrix = barcodeWriter.encode("$domain/class/$classId/checkin", BarcodeFormat.QR_CODE, 500, 500)
         val qrCodeGrayscale = MatrixToImageWriter.toBufferedImage(bitMatrix)
 
         val qrCode = BufferedImage(qrCodeGrayscale.width, qrCodeGrayscale.height, BufferedImage.TYPE_INT_ARGB)
