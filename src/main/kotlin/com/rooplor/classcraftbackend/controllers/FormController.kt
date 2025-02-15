@@ -217,11 +217,18 @@ class FormController(
     fun barbecueEAN13Barcode(
         @PathVariable classId: String,
     ): ResponseEntity<BufferedImage> =
-        ResponseEntity(
-            formSubmissionService.generateQRCodeWithLogo(
-                classId,
-                "src/main/resources/classcraftlogo.png",
-            ),
-            HttpStatus.OK,
-        )
+        try {
+            ResponseEntity(
+                formSubmissionService.generateQRCodeWithLogo(
+                    classId,
+                    "src/main/resources/classcraftlogo.png",
+                ),
+                HttpStatus.OK,
+            )
+        } catch (e: Exception) {
+            ResponseEntity(
+                null,
+                HttpStatus.BAD_REQUEST,
+            )
+        }
 }

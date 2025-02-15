@@ -23,6 +23,7 @@ class FormSubmissionService(
     private val formService: FormService,
     private val authService: AuthService,
     private val userService: UserService,
+    private val classService: ClassService,
 ) {
     @Value("\${staff.domain}")
     private val domain: String? = null
@@ -127,24 +128,29 @@ class FormSubmissionService(
         classId: String,
         logoPath: String,
     ): BufferedImage {
-        val barcodeWriter = QRCodeWriter()
-        val bitMatrix = barcodeWriter.encode("$domain/class/$classId/checkin", BarcodeFormat.QR_CODE, 500, 500)
-        val qrCodeGrayscale = MatrixToImageWriter.toBufferedImage(bitMatrix)
+        val classroom = classService.findClassById(classId)
+        if (classroom == null) {
+            throw Exception("Cannot generate QR code: " + ErrorMessages.CLASS_NOT_FOUND)
+        } else {
+            val barcodeWriter = QRCodeWriter()
+            val bitMatrix = barcodeWriter.encode("$domain/class/$classId/checkin", BarcodeFormat.QR_CODE, 500, 500)
+            val qrCodeGrayscale = MatrixToImageWriter.toBufferedImage(bitMatrix)
 
-        val qrCode = BufferedImage(qrCodeGrayscale.width, qrCodeGrayscale.height, BufferedImage.TYPE_INT_ARGB)
-        val g2d: Graphics2D = qrCode.createGraphics()
-        g2d.drawImage(qrCodeGrayscale, 0, 0, null)
-        g2d.dispose()
+            val qrCode = BufferedImage(qrCodeGrayscale.width, qrCodeGrayscale.height, BufferedImage.TYPE_INT_ARGB)
+            val g2d: Graphics2D = qrCode.createGraphics()
+            g2d.drawImage(qrCodeGrayscale, 0, 0, null)
+            g2d.dispose()
 
-        val logo = ImageIO.read(File(logoPath))
+            val logo = ImageIO.read(File(logoPath))
 
-        val deltaHeight = qrCode.height - logo.height
-        val deltaWidth = qrCode.width - logo.width
+            val deltaHeight = qrCode.height - logo.height
+            val deltaWidth = qrCode.width - logo.width
 
-        val g: Graphics2D = qrCode.createGraphics()
-        g.drawImage(logo, deltaWidth / 2, deltaHeight / 2, null)
-        g.dispose()
+            val g: Graphics2D = qrCode.createGraphics()
+            g.drawImage(logo, deltaWidth / 2, deltaHeight / 2, null)
+            g.dispose()
 
-        return qrCode
+            return qrCode
+        }
     }
 }
