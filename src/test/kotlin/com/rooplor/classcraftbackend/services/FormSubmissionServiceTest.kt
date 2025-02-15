@@ -23,7 +23,8 @@ class FormSubmissionServiceTest {
     private val formService = mock(FormService::class.java)
     private val authService = mock(AuthService::class.java)
     private val userService = mock(UserService::class.java)
-    private val formSubmissionService = FormSubmissionService(formSubmissionRepository, formService, authService, userService)
+    private val classService = mock(ClassService::class.java)
+    private val formSubmissionService = FormSubmissionService(formSubmissionRepository, formService, authService, userService, classService)
 
     @Test
     fun `submitForm should save and return form submission`() {

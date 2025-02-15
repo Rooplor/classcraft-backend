@@ -30,4 +30,7 @@ object ErrorMessages {
 
     // authorization error messages
     const val FORBIDDEN = "Forbidden"
+
+    // Class error messages
+    const val CLASS_NOT_FOUND = "Class not found"
 }

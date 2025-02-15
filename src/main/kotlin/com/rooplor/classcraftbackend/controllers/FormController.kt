@@ -12,6 +12,7 @@ import com.rooplor.classcraftbackend.services.FormSubmissionService
 import io.swagger.v3.oas.annotations.Operation
 import org.modelmapper.ModelMapper
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.awt.image.BufferedImage
 
 @RestController
 @RequestMapping("/api/form")
@@ -210,4 +212,23 @@ class FormController(
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
         }
     }
+
+    @GetMapping("/qrcode/checkin/{classId}", produces = [MediaType.IMAGE_PNG_VALUE])
+    fun barbecueEAN13Barcode(
+        @PathVariable classId: String,
+    ): ResponseEntity<BufferedImage> =
+        try {
+            ResponseEntity(
+                formSubmissionService.generateQRCodeWithLogo(
+                    classId,
+                    "src/main/resources/classcraftlogo.png",
+                ),
+                HttpStatus.OK,
+            )
+        } catch (e: Exception) {
+            ResponseEntity(
+                null,
+                HttpStatus.BAD_REQUEST,
+            )
+        }
 }

@@ -1,13 +1,21 @@
 package com.rooplor.classcraftbackend.services
 
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.client.j2se.MatrixToImageWriter
+import com.google.zxing.qrcode.QRCodeWriter
 import com.opencsv.CSVWriter
 import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.awt.Graphics2D
+import java.awt.image.BufferedImage
+import java.io.File
 import java.io.StringWriter
+import javax.imageio.ImageIO
 
 @Service
 class FormSubmissionService(
@@ -15,7 +23,11 @@ class FormSubmissionService(
     private val formService: FormService,
     private val authService: AuthService,
     private val userService: UserService,
+    private val classService: ClassService,
 ) {
+    @Value("\${staff.domain}")
+    private val domain: String? = null
+
     fun submitForm(formSubmission: FormSubmission): FormSubmission {
         val userId = authService.getUserId()
         val existingSubmission = formSubmissionRepository.findByFormIdAndSubmittedBy(formSubmission.formId, userId)
@@ -110,5 +122,35 @@ class FormSubmissionService(
         val formSubmission = formSubmissionRepository.findById(formSubmissionId).orElseThrow { Exception(ErrorMessages.ANSWER_NOT_FOUND) }
         formSubmission.attendeesStatus = attendeesStatus
         return formSubmissionRepository.save(formSubmission)
+    }
+
+    fun generateQRCodeWithLogo(
+        classId: String,
+        logoPath: String,
+    ): BufferedImage {
+        val classroom = classService.findClassById(classId)
+        if (classroom == null) {
+            throw Exception("Cannot generate QR code: " + ErrorMessages.CLASS_NOT_FOUND)
+        } else {
+            val barcodeWriter = QRCodeWriter()
+            val bitMatrix = barcodeWriter.encode("$domain/class/$classId/checkin", BarcodeFormat.QR_CODE, 500, 500)
+            val qrCodeGrayscale = MatrixToImageWriter.toBufferedImage(bitMatrix)
+
+            val qrCode = BufferedImage(qrCodeGrayscale.width, qrCodeGrayscale.height, BufferedImage.TYPE_INT_ARGB)
+            val g2d: Graphics2D = qrCode.createGraphics()
+            g2d.drawImage(qrCodeGrayscale, 0, 0, null)
+            g2d.dispose()
+
+            val logo = ImageIO.read(File(logoPath))
+
+            val deltaHeight = qrCode.height - logo.height
+            val deltaWidth = qrCode.width - logo.width
+
+            val g: Graphics2D = qrCode.createGraphics()
+            g.drawImage(logo, deltaWidth / 2, deltaHeight / 2, null)
+            g.dispose()
+
+            return qrCode
+        }
     }
 }
