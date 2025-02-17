@@ -175,7 +175,8 @@ class FormSubmissionServiceTest {
 
         val result = formSubmissionService.generateCsvFromForm("class1")
 
-        val expectedCsv = "\"No.\",\"email\",\"phone\"\n\"1\",\"test@example.com\",\"1234567890\"\n"
+        val expectedCsv =
+            "\"No.\",\"email\",\"phone\",\"Registration Status\",\"Attendees Status\"\n\"1\",\"test@example.com\",\"1234567890\",\"false\",\"null\"\n"
         assertEquals(expectedCsv, result)
     }
 

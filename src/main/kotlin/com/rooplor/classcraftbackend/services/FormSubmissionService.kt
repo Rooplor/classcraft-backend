@@ -88,7 +88,7 @@ class FormSubmissionService(
         // Add csv header
         val header =
             arrayOf("No.") +
-                allAnswer.fields.map { it.name }.toTypedArray()
+                allAnswer.fields.map { it.name }.toTypedArray() + "Registration Status" + "Attendees Status"
         csvWriter.writeNext(header)
         // Add csv data
         submission.forEachIndexed { index, formSubmission ->
@@ -97,7 +97,7 @@ class FormSubmissionService(
                     allAnswer.fields
                         .map { field ->
                             formSubmission.responses[field.name]?.toString() ?: ""
-                        }.toTypedArray()
+                        }.toTypedArray() + formSubmission.isApprovedByOwner.toString() + formSubmission.attendeesStatus.toString()
             csvWriter.writeNext(data)
         }
         csvWriter.close()
