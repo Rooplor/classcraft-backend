@@ -55,6 +55,7 @@ class FormSubmissionService(
             val response = formSubmission.responses[field.name]
             if (response != null && field.validation != null) {
                 val regex = field.validation!!.regex
+                println("field: ${field.name}, response: $response, regex: $regex")
                 if (!regex.matches(response.toString())) {
                     throw Exception(ErrorMessages.FIELD_VALIDATE_FAIL.replace("$0", field.name))
                 }
