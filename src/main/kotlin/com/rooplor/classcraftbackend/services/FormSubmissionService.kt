@@ -51,6 +51,8 @@ class FormSubmissionService(
             throw Exception(ErrorMessages.MISSING_REQUIRED_FIELDS.replace("$0", diff.joinToString(", ")))
         }
 
+        println("question: " + form.fields)
+
         form.fields.forEach { field ->
             val response = formSubmission.responses[field.name]
             if (response != null && field.validation != null) {
