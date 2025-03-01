@@ -9,6 +9,7 @@ import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
+import com.rooplor.classcraftbackend.types.Attendees
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.awt.Graphics2D
@@ -62,7 +63,7 @@ class FormSubmissionService(
         }
 
         formSubmission.isApprovedByOwner = !form.isOwnerApprovalRequired
-        formSubmission.attendeesStatus = AttendeesStatus.PENDING
+        formSubmission.attendeesStatus = createAttendeesList(formSubmission.classroomId)
 
         return formSubmissionRepository.save(formSubmission)
     }
@@ -118,9 +119,17 @@ class FormSubmissionService(
     fun setAttendeesStatus(
         formSubmissionId: String,
         attendeesStatus: AttendeesStatus,
+        day: Int,
     ): FormSubmission {
         val formSubmission = formSubmissionRepository.findById(formSubmissionId).orElseThrow { Exception(ErrorMessages.ANSWER_NOT_FOUND) }
-        formSubmission.attendeesStatus = attendeesStatus
+        formSubmission.attendeesStatus =
+            formSubmission.attendeesStatus?.map {
+                if (it.day == day) {
+                    it.copy(attendeesStatus = attendeesStatus)
+                } else {
+                    it
+                }
+            }
         return formSubmissionRepository.save(formSubmission)
     }
 
@@ -152,5 +161,21 @@ class FormSubmissionService(
 
             return qrCode
         }
+    }
+
+    private fun createAttendeesList(classroomId: String): List<Attendees> {
+        val classroom = classService.findClassById(classroomId)
+        val attendees = mutableListOf<Attendees>()
+        var idCounter = 1
+        classroom.dates.forEach { data ->
+            attendees.add(
+                Attendees(
+                    day = idCounter++,
+                    date = data.date.startDateTime.toLocalDate(),
+                    attendeesStatus = AttendeesStatus.PENDING,
+                ),
+            )
+        }
+        return attendees
     }
 }
