@@ -10,8 +10,7 @@ import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.services.FormService
 import com.rooplor.classcraftbackend.services.FormSubmissionService
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.doNothing
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.*
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -186,11 +185,10 @@ class FormControllerTest {
     fun `submitForm should return submitted form`() {
         val formSubmission =
             FormSubmission(
-                "1",
-                "form1",
+                any(),
+                "class1",
                 "class1",
                 mapOf("email" to "test@example.com"),
-                attendeesStatus = AttendeesStatus.PRESENT,
             )
         `when`(formSubmissionService.submitForm(formSubmission)).thenReturn(formSubmission)
 
@@ -200,16 +198,14 @@ class FormControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
                         """
-                        {"id":"1",
-                        "formId":"form1",
+                        {"formId":"class1",
                         "classroomId":"class1",
-                        "responses":{"email":"test@example.com"},
-                        "attendeesStatus":"PRESENT"}
+                        "responses":{"email":"test@example.com"}}
                         """.trimIndent(),
                     ),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.result.id").value("1"))
+            .andExpect(jsonPath("$.result.formId").value("class1"))
     }
 
     @Test
