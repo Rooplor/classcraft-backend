@@ -1,6 +1,7 @@
 package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.FormCreateDTO
+import com.rooplor.classcraftbackend.dtos.FormSubmissionDTO
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.Form
@@ -105,10 +106,16 @@ class FormController(
     @Operation(summary = "Submit a form")
     @PostMapping("/submit")
     fun submitForm(
-        @RequestBody formSubmission: FormSubmission,
+        @RequestBody formSubmission: FormSubmissionDTO,
     ): ResponseEntity<Response<FormSubmission>> {
         try {
-            val submittedForm = formSubmissionService.submitForm(formSubmission)
+            val formToSubmit =
+                FormSubmission(
+                    formId = formSubmission.formId,
+                    classroomId = formSubmission.classroomId,
+                    responses = formSubmission.responses,
+                )
+            val submittedForm = formSubmissionService.submitForm(formToSubmit)
             return ResponseEntity.ok(Response(success = true, result = submittedForm, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
