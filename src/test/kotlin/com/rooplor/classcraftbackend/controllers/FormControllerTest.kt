@@ -189,7 +189,8 @@ class FormControllerTest {
     fun `submitForm should return submitted form`() {
         val formSubmission =
             FormSubmission(
-                formId = "form1",
+                id = any(),
+                formId = "class1",
                 classroomId = "class1",
                 responses = mapOf("email" to "test@example.com"),
             )
@@ -202,7 +203,7 @@ class FormControllerTest {
                     .content(
                         """
                         {
-                        "formId":"form1",
+                        "formId":"class1",
                         "classroomId":"class1",
                         "responses":{"email":"test@example.com"}
                         }
