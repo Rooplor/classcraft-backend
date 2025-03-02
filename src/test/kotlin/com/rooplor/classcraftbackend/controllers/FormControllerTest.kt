@@ -11,6 +11,7 @@ import com.rooplor.classcraftbackend.services.FormService
 import com.rooplor.classcraftbackend.services.FormSubmissionService
 import com.rooplor.classcraftbackend.types.Attendees
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.any
 import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.`when`
 import org.modelmapper.ModelMapper
@@ -209,6 +210,7 @@ class FormControllerTest {
                     ),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.result.formId").value("class1"))
     }
 
     @Test
