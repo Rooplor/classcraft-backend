@@ -197,10 +197,11 @@ class FormController(
     @PatchMapping("/attendees/{id}")
     fun changeAttendeesStatus(
         @PathVariable id: String,
+        @RequestParam day: Int,
         @RequestParam status: AttendeesStatus,
     ): ResponseEntity<Response<FormSubmission>> {
         try {
-            val submission = formSubmissionService.setAttendeesStatus(id, status)
+            val submission = formSubmissionService.setAttendeesStatus(id, status, day)
             return ResponseEntity.ok(Response(success = true, result = submission, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))

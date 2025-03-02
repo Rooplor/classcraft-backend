@@ -1,13 +1,17 @@
 package com.rooplor.classcraftbackend.services
 
 import com.rooplor.classcraftbackend.dtos.UserDetailDTO
+import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.entities.FormField
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.entities.User
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
+import com.rooplor.classcraftbackend.enums.ClassType
+import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
+import com.rooplor.classcraftbackend.types.Attendees
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -15,6 +19,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
 
@@ -49,6 +54,20 @@ class FormSubmissionServiceTest {
                 classroomId = "class1",
                 responses = mapOf("email" to "test@example.com"),
             )
+        val classroom =
+            Classroom(
+                id = "class1",
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                isPublished = true,
+                registrationStatus = true,
+                dates = listOf(),
+            )
 
         `when`(formService.findByClassroomId("class1")).thenReturn(form)
         `when`(formSubmissionRepository.save(formSubmission)).thenReturn(formSubmission)
@@ -57,6 +76,7 @@ class FormSubmissionServiceTest {
         ).thenReturn(User(id = "owner1", username = "owner1", email = "owner1@mail.com", profilePicture = null))
         `when`(authService.getUserId()).thenReturn("owner1")
         `when`(userService.findUserById("owner1")).thenReturn(User(id = "owner1", username = "owner1", email = "owner1@mail.com"))
+        `when`(classService.findClassById("class1")).thenReturn(classroom)
 
         val result = formSubmissionService.submitForm(formSubmission)
 
@@ -176,7 +196,7 @@ class FormSubmissionServiceTest {
         val result = formSubmissionService.generateCsvFromForm("class1")
 
         val expectedCsv =
-            "\"No.\",\"email\",\"phone\",\"Registration Status\",\"Attendees Status\"\n\"1\",\"test@example.com\",\"1234567890\",\"false\",\"null\"\n"
+            "\"No.\",\"email\",\"phone\",\"Registration Status\",\"Attendees Status\"\n\"1\",\"test@example.com\",\"1234567890\",\"false\",\"[]\"\n"
         assertEquals(expectedCsv, result)
     }
 
@@ -276,11 +296,12 @@ class FormSubmissionServiceTest {
                 UserDetailDTO("user1", "user1"),
                 false,
             )
-        val expectation = formSubmission.copy(attendeesStatus = AttendeesStatus.PRESENT)
+        val listOfAttendees = listOf(Attendees(1, LocalDate.now(), AttendeesStatus.PRESENT))
+        val expectation = formSubmission.copy(attendeesStatus = listOfAttendees)
         `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.of(formSubmission))
         `when`(formSubmissionRepository.save(formSubmission)).thenReturn(expectation)
 
-        val result = formSubmissionService.setAttendeesStatus("1", AttendeesStatus.PRESENT)
+        val result = formSubmissionService.setAttendeesStatus("1", AttendeesStatus.PRESENT, 1)
 
         assertEquals(expectation, result)
         verify(formSubmissionRepository, times(1)).findById("1")

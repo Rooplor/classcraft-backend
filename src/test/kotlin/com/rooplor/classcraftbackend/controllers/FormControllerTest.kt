@@ -9,6 +9,7 @@ import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.services.FormService
 import com.rooplor.classcraftbackend.services.FormSubmissionService
+import com.rooplor.classcraftbackend.types.Attendees
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.any
 import org.mockito.Mockito.doNothing
@@ -32,6 +33,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @SpringBootTest
@@ -187,10 +189,10 @@ class FormControllerTest {
     fun `submitForm should return submitted form`() {
         val formSubmission =
             FormSubmission(
-                any(),
-                "class1",
-                "class1",
-                mapOf("email" to "test@example.com"),
+                id = any(),
+                formId = "class1",
+                classroomId = "class1",
+                responses = mapOf("email" to "test@example.com"),
             )
         `when`(formSubmissionService.submitForm(formSubmission)).thenReturn(formSubmission)
 
@@ -200,9 +202,11 @@ class FormControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
                         """
-                        {"formId":"class1",
+                        {
+                        "formId":"class1",
                         "classroomId":"class1",
-                        "responses":{"email":"test@example.com"}}
+                        "responses":{"email":"test@example.com"}
+                        }
                         """.trimIndent(),
                     ),
             ).andExpect(status().isOk)
@@ -328,22 +332,23 @@ class FormControllerTest {
     fun `set attendees status should return updated form`() {
         val formSubmission =
             FormSubmission(
-                "1",
-                "form1",
-                "class1",
-                mapOf("email" to "test@mail.com"),
-                "user1",
-                UserDetailDTO("user1", "user1"),
+                id = "1",
+                formId = "form1",
+                classroomId = "class1",
+                responses = mapOf("email" to "test@mail.com"),
+                submittedBy = "user1",
+                userDetail = UserDetailDTO("user1", "user1"),
                 isApprovedByOwner = true,
-                attendeesStatus = AttendeesStatus.PRESENT,
+                attendeesStatus = listOf(Attendees(1, LocalDate.now(), AttendeesStatus.PRESENT)),
             )
 
-        `when`(formSubmissionService.setAttendeesStatus("1", AttendeesStatus.PRESENT)).thenReturn(formSubmission)
+        `when`(formSubmissionService.setAttendeesStatus("1", AttendeesStatus.PRESENT, 1)).thenReturn(formSubmission)
 
         mockMvc
             .perform(
                 patch("/api/form/attendees/1")
                     .param("status", "PRESENT")
+                    .param("day", "1")
                     .contentType(MediaType.APPLICATION_JSON),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
