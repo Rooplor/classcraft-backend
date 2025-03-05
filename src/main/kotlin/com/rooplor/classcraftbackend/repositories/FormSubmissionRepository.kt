@@ -14,4 +14,6 @@ interface FormSubmissionRepository : MongoRepository<FormSubmission, String> {
     ): FormSubmission?
 
     fun findBySubmittedBy(submittedBy: String): List<FormSubmission>
+
+    fun deleteByFormId(formId: String)
 }

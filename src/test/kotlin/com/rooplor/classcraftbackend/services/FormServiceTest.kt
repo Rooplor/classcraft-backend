@@ -5,6 +5,7 @@ import com.rooplor.classcraftbackend.entities.FormField
 import com.rooplor.classcraftbackend.helpers.FormHelper
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.FormRepository
+import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -19,7 +20,8 @@ import java.util.Optional
 class FormServiceTest {
     private val formRepository = mock(FormRepository::class.java)
     private val formHelper = mock(FormHelper::class.java)
-    private val formService = FormService(formRepository, formHelper)
+    private val formSubmissionRepository = mock(FormSubmissionRepository::class.java)
+    private val formService = FormService(formRepository, formHelper, formSubmissionRepository)
 
     private val form =
         Form(
@@ -110,5 +112,6 @@ class FormServiceTest {
         formService.deleteFormById("1")
 
         verify(formRepository, times(1)).deleteById("1")
+        verify(formSubmissionRepository, times(1)).deleteByFormId("1")
     }
 }
