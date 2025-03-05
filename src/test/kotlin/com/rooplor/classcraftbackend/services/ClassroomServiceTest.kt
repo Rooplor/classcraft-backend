@@ -19,6 +19,7 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
@@ -1055,5 +1056,18 @@ class ClassroomServiceTest {
         } catch (e: IllegalArgumentException) {
             assertEquals(expectationErrorMessage, e.message)
         }
+    }
+
+    @Test
+    fun `should delete class and form by id`() {
+        val classId = "1"
+
+        Mockito.doNothing().`when`(classRepository).deleteById(classId)
+        Mockito.doNothing().`when`(formService).deleteFormById(classId)
+
+        classService.deleteClass(classId)
+
+        verify(classRepository, times(1)).deleteById(classId)
+        verify(formService, times(1)).deleteFormById(classId)
     }
 }
