@@ -6,12 +6,14 @@ import com.rooplor.classcraftbackend.enums.FieldValidation
 import com.rooplor.classcraftbackend.helpers.FormHelper
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.FormRepository
+import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
 import org.springframework.stereotype.Service
 
 @Service
 class FormService(
     private val formRepository: FormRepository,
     private val formHelper: FormHelper,
+    private val formSubmissionRepository: FormSubmissionRepository,
 ) {
     fun createForm(form: Form): Form {
         formHelper.validateForm(form)
@@ -41,7 +43,14 @@ class FormService(
     fun findByClassroomId(classroomId: String): Form =
         formRepository.findByClassroomId(classroomId) ?: throw Exception(ErrorMessages.FORM_NOT_FOUND)
 
-    fun deleteFormById(id: String) = formRepository.deleteById(id)
+    fun deleteFormById(id: String) {
+        formRepository.deleteById(id)
+        formSubmissionRepository.deleteByFormId(id)
+    }
+
+    fun deleteFormSubmissionByFormId(formId: String) {
+        formSubmissionRepository.deleteByFormId(formId)
+    }
 
     private fun initDefaultFormQuestions(form: Form) {
         val question =

@@ -33,4 +33,5 @@ object ErrorMessages {
 
     // Class error messages
     const val CLASS_NOT_FOUND = "Class not found"
+    const val CLASS_CANNOT_CHANGE_DATE = "Cannot change dates of a published class"
 }

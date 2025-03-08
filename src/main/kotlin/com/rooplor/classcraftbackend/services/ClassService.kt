@@ -74,6 +74,20 @@ class ClassService
             classroomHelper.validateClassroom(updatedClassroom)
             val classToUpdate = findClassById(id)
             isOwnerOfClass(classToUpdate)
+            val originalDates = classToUpdate.dates
+            val updatedDates = updatedClassroom.dates
+            val isDateChange = originalDates != updatedDates
+            if (classToUpdate.isPublished == true) {
+                if (isDateChange) {
+                    throw Exception(ErrorMessages.CLASS_CANNOT_CHANGE_DATE)
+                }
+            }
+            if (classToUpdate.venueStatus == VenueStatus.APPROVED.id) {
+                if (isDateChange) {
+                    classToUpdate.venueStatus = VenueStatus.NO_REQUEST.id
+                    formService.deleteFormSubmissionByFormId(classToUpdate.id!!)
+                }
+            }
             classToUpdate.title = updatedClassroom.title
             classToUpdate.details = updatedClassroom.details
             classToUpdate.target = updatedClassroom.target
@@ -140,7 +154,10 @@ class ClassService
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
-        fun setRegistrationStatus(id: String, status: Boolean): Classroom {
+        fun setRegistrationStatus(
+            id: String,
+            status: Boolean,
+        ): Classroom {
             val classToUpdate = findClassById(id)
             isOwnerOfClass(classToUpdate)
             classToUpdate.registrationStatus = status
@@ -166,7 +183,10 @@ class ClassService
             }
         }
 
-        fun setPublishStatus(id: String, status: Boolean): Classroom {
+        fun setPublishStatus(
+            id: String,
+            status: Boolean,
+        ): Classroom {
             val classToUpdate = findClassById(id)
             isOwnerOfClass(classToUpdate)
             classToUpdate.isPublished = status
@@ -175,6 +195,7 @@ class ClassService
 
         fun deleteClass(id: String) {
             classRepository.deleteById(id)
+            formService.deleteFormById(id)
         }
 
         fun findClassByOwners(owners: List<String>): List<Classroom> = owners.flatMap { owner -> classRepository.findByOwner(owner) }
