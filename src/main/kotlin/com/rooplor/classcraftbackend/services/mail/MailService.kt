@@ -47,14 +47,14 @@ class MailService
 
         fun announcementEmail(
             subject: String,
-            context: String,
+            topic: String,
             description: String,
             classroomId: String,
             to: String,
         ) {
             try {
                 val context = Context()
-                context.setVariable("context", context)
+                context.setVariable("context", topic)
                 context.setVariable("description", description)
                 context.setVariable("classroomLink", "$domain/class/$classroomId")
                 sendEmail(

@@ -68,7 +68,7 @@ class FormSubmissionService(
         formSubmission.attendeesStatus = createAttendeesList(formSubmission.classroomId)
         mailService.announcementEmail(
             subject = "Confirmation of your registration",
-            context = "You’ve registered for \"${classService.findClassById(formSubmission.classroomId).title}\"\n",
+            topic = "You’ve registered for \"${classService.findClassById(formSubmission.classroomId).title}\"\n",
             description = "You’ve successfully registered for the class. We look forward to seeing you there!",
             classroomId = formSubmission.classroomId,
             to = userDetail.email,
