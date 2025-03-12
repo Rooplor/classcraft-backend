@@ -799,6 +799,7 @@ class ClassroomServiceTest {
             subject = eq("[ClassCraft] Reservation venue for ${classroom.title} request from ${user.username}"),
             template = eq("reservation"),
             context = any(Context::class.java),
+            to = eq(null),
         )
 
         val context = Context()
