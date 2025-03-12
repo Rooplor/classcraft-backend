@@ -11,6 +11,7 @@ import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
+import com.rooplor.classcraftbackend.services.mail.MailService
 import com.rooplor.classcraftbackend.types.Attendees
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -29,7 +30,9 @@ class FormSubmissionServiceTest {
     private val authService = mock(AuthService::class.java)
     private val userService = mock(UserService::class.java)
     private val classService = mock(ClassService::class.java)
-    private val formSubmissionService = FormSubmissionService(formSubmissionRepository, formService, authService, userService, classService)
+    private val mailService = mock(MailService::class.java)
+    private val formSubmissionService =
+        FormSubmissionService(formSubmissionRepository, formService, authService, userService, classService, mailService)
 
     @Test
     fun `submitForm should save and return form submission`() {
