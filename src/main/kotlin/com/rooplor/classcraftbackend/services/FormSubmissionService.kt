@@ -13,7 +13,6 @@ import com.rooplor.classcraftbackend.services.mail.MailService
 import com.rooplor.classcraftbackend.types.Attendees
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import org.thymeleaf.context.Context
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.io.File
@@ -67,17 +66,13 @@ class FormSubmissionService(
 
         formSubmission.isApprovedByOwner = !form.isOwnerApprovalRequired
         formSubmission.attendeesStatus = createAttendeesList(formSubmission.classroomId)
-
-        val context = Context()
-        context.setVariable("context", "You’ve registered for \"${classService.findClassById(formSubmission.classroomId).title}\"")
-        context.setVariable("description", "You’ve successfully registered for the class. We look forward to seeing you there!")
-        context.setVariable("classroomLink", "$domain/class/${formSubmission.classroomId}")
-        mailService.sendEmail(
-            "Confirmation of your registration",
-            "announcement",
-            context,
+        mailService.announcementEmail(
+            subject = "Confirmation of your registration",
+            context = "You’ve registered for \"${classService.findClassById(formSubmission.classroomId).title}\"\n",
+            description = "You’ve successfully registered for the class. We look forward to seeing you there!",
+            classroomId = formSubmission.classroomId,
+            to = userDetail.email,
         )
-
         return formSubmissionRepository.save(formSubmission)
     }
 

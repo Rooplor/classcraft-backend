@@ -19,12 +19,16 @@ class MailService
         private val from: String? = null
 
         @Value("\${staff.email}")
-        private val to: String? = null
+        private val staffMail: String? = null
+
+        @Value("\${staff.domain}")
+        private val domain: String? = null
 
         fun sendEmail(
             subject: String?,
             template: String?,
             context: Context?,
+            to: String? = staffMail,
         ) {
             try {
                 val mailMessage = javaMailSender!!.createMimeMessage()
@@ -36,6 +40,29 @@ class MailService
                 val htmlTemplate: String = templateEngine?.process(template, context) ?: ""
                 helper.setText(htmlTemplate, true)
                 javaMailSender.send(mailMessage)
+            } catch (e: Exception) {
+                throw RuntimeException(e.message)
+            }
+        }
+
+        fun announcementEmail(
+            subject: String,
+            context: String,
+            description: String,
+            classroomId: String,
+            to: String,
+        ) {
+            try {
+                val context = Context()
+                context.setVariable("context", context)
+                context.setVariable("description", description)
+                context.setVariable("classroomLink", "$domain/class/$classroomId")
+                sendEmail(
+                    subject,
+                    "announcement",
+                    context,
+                    to,
+                )
             } catch (e: Exception) {
                 throw RuntimeException(e.message)
             }
