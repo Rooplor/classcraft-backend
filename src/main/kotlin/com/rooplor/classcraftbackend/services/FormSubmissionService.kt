@@ -8,6 +8,7 @@ import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.messages.ErrorMessages
+import com.rooplor.classcraftbackend.messages.MailMessage
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
 import com.rooplor.classcraftbackend.services.mail.MailService
 import com.rooplor.classcraftbackend.types.Attendees
@@ -66,10 +67,16 @@ class FormSubmissionService(
 
         formSubmission.isApprovedByOwner = !form.isOwnerApprovalRequired
         formSubmission.attendeesStatus = createAttendeesList(formSubmission.classroomId)
+
         mailService.announcementEmail(
-            subject = "Confirmation of your registration",
-            topic = "You’ve registered for \"${classService.findClassById(formSubmission.classroomId).title}\"\n",
-            description = "You’ve successfully registered for the class. We look forward to seeing you there!",
+            subject = MailMessage.REGISTRATION_SUBJECT,
+            topic = MailMessage.TOPIC_REGISTRATION + "\"${classService.findClassById(formSubmission.classroomId).title}\"\n",
+            description =
+                if (form.isOwnerApprovalRequired) {
+                    MailMessage.REGISTRATION_PENDING
+                } else {
+                    MailMessage.REGISTRATION_SUCCESS
+                },
             classroomId = formSubmission.classroomId,
             to = userDetail.email,
         )
