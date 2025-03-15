@@ -34,6 +34,7 @@ data class Classroom(
     var instructorAvatar: String = "",
     var instructorFamiliarity: String = "",
     var coverImage: String? = "",
+    var classMaterials: List<String>? = emptyList(),
     var createdWhen: LocalDateTime = LocalDateTime.now(),
     var updatedWhen: LocalDateTime = LocalDateTime.now(),
     var owner: String = "",
