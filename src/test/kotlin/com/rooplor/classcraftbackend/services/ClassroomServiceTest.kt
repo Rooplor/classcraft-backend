@@ -850,9 +850,11 @@ class ClassroomServiceTest {
                 capacity = 30,
                 dates = listOf(),
                 venueStatus = 1,
+                owner = "1",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        `when`(userService.findUserById("1")).thenReturn(User(id = "1", username = "admin", email = "123@gmail.com"))
 
         val fillCraftDetail = classService.updateVenueStatus(classId, 2)
         assertEquals(fillCraftDetail.venueStatus, 2)
@@ -938,9 +940,11 @@ class ClassroomServiceTest {
                 capacity = 30,
                 dates = listOf(),
                 venueStatus = 2,
+                owner = "1",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        `when`(userService.findUserById("1")).thenReturn(User(id = "1", username = "admin", email = "123@gmail.com"))
 
         val result = classService.updateVenueStatus(classId, 3, "")
         assertEquals(classroomObj, result)
@@ -963,9 +967,11 @@ class ClassroomServiceTest {
                 dates = listOf(),
                 venueStatus = 2,
                 rejectReason = "Venue is not available",
+                owner = "1"
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        `when`(userService.findUserById("1")).thenReturn(User(id = "1", username = "admin", email = "123@gmail.com"))
 
         val result = classService.updateVenueStatus(classId, 4, rejectReason)
         assertEquals(classroomObj, result)

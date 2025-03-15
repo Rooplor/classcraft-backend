@@ -9,6 +9,7 @@ import com.rooplor.classcraftbackend.enums.Status
 import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.helpers.ClassroomHelper
 import com.rooplor.classcraftbackend.messages.ErrorMessages
+import com.rooplor.classcraftbackend.messages.MailMessage
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import com.rooplor.classcraftbackend.services.mail.MailService
 import com.rooplor.classcraftbackend.types.DateWithVenue
@@ -176,6 +177,17 @@ class ClassService
                 if (VenueStatus.values().contains(VenueStatus.values().find { it.id == venueStatus })) {
                     classToUpdate.venueStatus = VenueStatus.values().find { it.id == venueStatus }?.id
                     classToUpdate.rejectReason = rejectReason
+                    mailService.announcementEmail(
+                        subject = MailMessage.VENUE_STATUS_SUBJECT + "${classToUpdate.title}",
+                        topic = MailMessage.VENUE_STATUS_TOPIC + "${classToUpdate.title}",
+                        description = if(venueStatus == VenueStatus.APPROVED.id) {
+                            MailMessage.VENUE_STATUS_APPROVED
+                        } else {
+                            MailMessage.VENUE_STATUS_REJECTED + rejectReason
+                        },
+                        classroomId = classToUpdate.id!!,
+                        to = userService.findUserById(classToUpdate.owner).email,
+                    )
                 } else {
                     throw IllegalArgumentException(ErrorMessages.VENUE_STATUS_INVALID)
                 }
