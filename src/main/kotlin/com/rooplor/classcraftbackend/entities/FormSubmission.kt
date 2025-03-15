@@ -12,6 +12,7 @@ data class FormSubmission(
     var formId: String,
     var classroomId: String,
     var responses: Map<String, Any>,
+    var feedbackResponse: Map<String, Any>? = null,
     var submittedBy: String? = null,
     var userDetail: UserDetailDTO? = null,
     var isApprovedByOwner: Boolean = false,
