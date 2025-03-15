@@ -5,6 +5,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter
 import com.google.zxing.qrcode.QRCodeWriter
 import com.opencsv.CSVWriter
 import com.rooplor.classcraftbackend.dtos.UserDetailDTO
+import com.rooplor.classcraftbackend.entities.FormField
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.messages.ErrorMessages
@@ -52,19 +53,24 @@ class FormSubmissionService(
             throw Exception(ErrorMessages.MISSING_REQUIRED_FIELDS.replace("$0", diff.joinToString(", ")))
         }
 
-        form.fields.forEach { field ->
-            val response = formSubmission.responses[field.name]
-            if (response != null && field.validation != null) {
-                val regex = field.validation!!.regex
-                if (!regex.matches(response.toString())) {
-                    throw Exception(ErrorMessages.FIELD_VALIDATE_FAIL.replace("$0", field.name))
-                }
-            }
-        }
+        validateFormFields(form.fields, formSubmission.responses)
 
         formSubmission.isApprovedByOwner = !form.isOwnerApprovalRequired
         formSubmission.attendeesStatus = createAttendeesList(formSubmission.classroomId)
 
+        return formSubmissionRepository.save(formSubmission)
+    }
+
+    fun submitFeedback(
+        formSubmissionId: String,
+        feedbackResponse: Map<String, Any>,
+    ): FormSubmission {
+        val formSubmission = formSubmissionRepository.findById(formSubmissionId).orElseThrow { Exception(ErrorMessages.ANSWER_NOT_FOUND) }
+        println(formSubmission.classroomId)
+        val form = formService.findByClassroomId(formSubmission.classroomId)
+        println(form)
+        validateFormFields(form.feedback!!, feedbackResponse)
+        formSubmission.feedbackResponse = feedbackResponse
         return formSubmissionRepository.save(formSubmission)
     }
 
@@ -177,5 +183,23 @@ class FormSubmissionService(
             )
         }
         return attendees
+    }
+
+    private fun validateFormFields(
+        formField: List<FormField>,
+        responses: Map<String, Any>,
+    ) {
+        println(formField)
+        println(responses)
+        formField.forEach { field ->
+            val response = responses[field.name]
+            if (response != null && field.validation != null) {
+                val regex = field.validation!!.regex
+                if (!regex.matches(response.toString())) {
+                    println("Field: ${field.name} - Response: $response - Regex: $regex")
+                    throw Exception(ErrorMessages.FIELD_VALIDATE_FAIL.replace("$0", field.name))
+                }
+            }
+        }
     }
 }
