@@ -13,7 +13,7 @@ object MailMessage {
     const val CHECKIN_SUCCESS = "You’ve successfully checked in for the class. Enjoy!"
     const val CHECKIN_PENDING = "Your check-in is pending approval. We will notify you once it’s approved."
 
-    const val VENUE_STATUS_SUBJECT = "[ClassCraft] Venue status update"
+    const val VENUE_STATUS_SUBJECT = "[ClassCraft] Venue status update on "
     const val VENUE_STATUS_TOPIC = "The status of your venue has been updated"
     const val VENUE_STATUS_APPROVED = "Your venue has been approved. Congratulations!"
     const val VENUE_STATUS_REJECTED = "Your venue has been rejected. with the following reason: "
@@ -27,6 +27,6 @@ object MailMessage {
     const val CLASS_DELETED_TOPIC = "The class "
     const val CLASS_DELETED = " has been deleted. please contact the $0 for more information."
 
-    const val CLASS_DELETED_VENUE_SUBJECT = "$CLASS_DELETED_SUBJECT Please cancel reservation for venue $0"
+    const val CLASS_DELETED_VENUE_SUBJECT = "$CLASS_DELETED_SUBJECT Please cancel reservation for venue $1"
 
 }

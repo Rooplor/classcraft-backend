@@ -227,7 +227,7 @@ class ClassService
             userList.forEach {
                 mailService.announcementEmail(
                     subject = MailMessage.CLASS_DELETED_SUBJECT.replace("\$0", title),
-                    topic = MailMessage.CLASS_DELETED_TOPIC,
+                    topic = MailMessage.CLASS_DELETED_TOPIC + title,
                     description = MailMessage.CLASS_DELETED.replace("\$0", userService.findUserById(owner).email),
                     classroomId = id,
                     to = userService.findUserById(it).email,
@@ -236,8 +236,8 @@ class ClassService
             formService.deleteFormById(id)
             if (staffEmail != null) {
                 mailService.announcementEmail(
-                    subject = MailMessage.CLASS_DELETED_VENUE_SUBJECT.replace("\$0", dates.flatMap { it.venueId.map { venueId -> venueService.findVenueById(venueId).room } }.joinToString(", ").trimEnd(',')),
-                    topic = MailMessage.CLASS_DELETED_TOPIC,
+                    subject = MailMessage.CLASS_DELETED_VENUE_SUBJECT.replace("\$0", title).replace("\$1", dates.flatMap { it.venueId.map { venueId -> venueService.findVenueById(venueId).room } }.joinToString(", ").trimEnd(',')),
+                    topic = MailMessage.CLASS_DELETED_TOPIC + title,
                     description = MailMessage.CLASS_DELETED.replace("\$0", userService.findUserById(owner).email),
                     classroomId = id,
                     to = staffEmail ,
