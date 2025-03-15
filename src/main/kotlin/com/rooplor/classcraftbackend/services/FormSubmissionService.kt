@@ -167,8 +167,7 @@ class FormSubmissionService(
         formSubmission.attendeesStatus =
             formSubmission.attendeesStatus?.map {
                 if (it.day == day) {
-                    it.copy(attendeesStatus = attendeesStatus)
-                    it.copy(checkInDateTime = LocalDateTime.now())
+                    it.copy(attendeesStatus = attendeesStatus, checkInDateTime = LocalDateTime.now())
                 } else {
                     it
                 }
