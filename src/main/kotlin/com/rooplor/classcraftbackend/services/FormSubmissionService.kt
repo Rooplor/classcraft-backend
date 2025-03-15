@@ -46,13 +46,7 @@ class FormSubmissionService(
             )
         val form = formService.findByClassroomId(formSubmission.classroomId)
         val allQuestion = form.fields.toSet()
-        val expectedQuestions = allQuestion.filter { it.required }.map { it.name }.toSet()
-        val submissionForm = formSubmission.responses.map { it.key }.toSet()
-        val diff = expectedQuestions - submissionForm
-        if (diff.isNotEmpty()) {
-            throw Exception(ErrorMessages.MISSING_REQUIRED_FIELDS.replace("$0", diff.joinToString(", ")))
-        }
-
+        validateRequiredFields(allQuestion, formSubmission.responses)
         validateFormFields(form.fields, formSubmission.responses)
 
         formSubmission.isApprovedByOwner = !form.isOwnerApprovalRequired
@@ -66,9 +60,13 @@ class FormSubmissionService(
         feedbackResponse: Map<String, Any>,
     ): FormSubmission {
         val formSubmission = formSubmissionRepository.findById(formSubmissionId).orElseThrow { Exception(ErrorMessages.ANSWER_NOT_FOUND) }
-        println(formSubmission.classroomId)
+        val existingSubmission = formSubmission.feedbackResponse
+        if (existingSubmission != null) {
+            throw Exception(ErrorMessages.ANSWER_ALREADY_SUBMITTED)
+        }
         val form = formService.findByClassroomId(formSubmission.classroomId)
-        println(form)
+        val allFeedbackQuestion = form.feedback?.toSet()
+        validateRequiredFields(allFeedbackQuestion!!, feedbackResponse)
         validateFormFields(form.feedback!!, feedbackResponse)
         formSubmission.feedbackResponse = feedbackResponse
         return formSubmissionRepository.save(formSubmission)
@@ -189,17 +187,26 @@ class FormSubmissionService(
         formField: List<FormField>,
         responses: Map<String, Any>,
     ) {
-        println(formField)
-        println(responses)
         formField.forEach { field ->
             val response = responses[field.name]
             if (response != null && field.validation != null) {
                 val regex = field.validation!!.regex
                 if (!regex.matches(response.toString())) {
-                    println("Field: ${field.name} - Response: $response - Regex: $regex")
                     throw Exception(ErrorMessages.FIELD_VALIDATE_FAIL.replace("$0", field.name))
                 }
             }
+        }
+    }
+
+    private fun validateRequiredFields(
+        allQuestion: Set<FormField>,
+        responses: Map<String, Any>,
+    ) {
+        val expectedQuestions = allQuestion.filter { it.required }.map { it.name }.toSet()
+        val submissionForm = responses.map { it.key }.toSet()
+        val diff = expectedQuestions - submissionForm
+        if (diff.isNotEmpty()) {
+            throw Exception(ErrorMessages.MISSING_REQUIRED_FIELDS.replace("$0", diff.joinToString(", ")))
         }
     }
 }

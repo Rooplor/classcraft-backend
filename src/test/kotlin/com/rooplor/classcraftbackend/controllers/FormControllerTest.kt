@@ -74,6 +74,7 @@ class FormControllerTest {
                 LocalDateTime.of(2024, 9, 1, 0, 0),
                 LocalDateTime.of(2024, 9, 30, 0, 0),
                 emptyList(),
+                emptyList(),
                 true,
             )
         `when`(modelMapper.map(formCreateDTO, Form::class.java)).thenReturn(form)
@@ -123,6 +124,7 @@ class FormControllerTest {
                 "Updated Description",
                 LocalDateTime.of(2024, 9, 1, 0, 0),
                 LocalDateTime.of(2024, 9, 30, 0, 0),
+                emptyList(),
                 emptyList(),
                 true,
             )
@@ -235,6 +237,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@example.com"),
+                mapOf(),
                 "user1",
                 UserDetailDTO("user1", "user1"),
             )
@@ -263,6 +266,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                mapOf(),
                 "user1",
                 UserDetailDTO("user1", "user1"),
                 isApprovedByOwner = false,
@@ -287,6 +291,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                mapOf(),
                 "user1",
                 UserDetailDTO("user1", "user1"),
                 isApprovedByOwner = true,
@@ -311,6 +316,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                mapOf(),
                 "user1",
                 UserDetailDTO("user1", "user1"),
             )
@@ -363,6 +369,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                mapOf(),
                 "user1",
                 UserDetailDTO("user1", "user1"),
             )
