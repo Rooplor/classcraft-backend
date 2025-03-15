@@ -1152,4 +1152,60 @@ class ClassroomServiceTest {
         assertEquals(VenueStatus.NO_REQUEST.id, result.venueStatus)
         verify(formService, times(1)).deleteFormSubmissionByFormId(classId)
     }
+
+    @Test
+    fun `should update class materials successfully`() {
+        val classId = "1"
+        val classMaterials = listOf("Material1", "Material2")
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                owner = "1",
+                classMaterials = listOf(),
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(classRepository.save(any(Classroom::class.java))).thenReturn(classroomObj.copy(classMaterials = classMaterials))
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "1", username = "admin"))
+
+        val result = classService.updateClassMaterials(classId, classMaterials)
+        assertEquals(classMaterials, result.classMaterials)
+    }
+
+    @Test
+    fun `should throw exception when user is not the owner`() {
+        val classId = "1"
+        val classMaterials = listOf("Material1", "Material2")
+        val classroomObj =
+            Classroom(
+                id = classId,
+                title = "React Native",
+                details = "Learn how to build mobile apps with React Native",
+                target = "Beginner",
+                prerequisite = "None",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(),
+                owner = "1",
+                classMaterials = listOf(),
+            )
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "2", username = "admin"))
+
+        val exception =
+            assertThrows<Exception> {
+                classService.updateClassMaterials(classId, classMaterials)
+            }
+        assertEquals(ErrorMessages.FORBIDDEN, exception.message)
+    }
 }

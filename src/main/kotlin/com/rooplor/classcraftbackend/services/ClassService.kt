@@ -294,6 +294,16 @@ class ClassService
                 keyword,
             )
 
+        fun updateClassMaterials(
+            id: String,
+            classMaterials: List<String>,
+        ): Classroom {
+            val classToUpdate = findClassById(id)
+            isOwnerOfClass(classToUpdate)
+            classToUpdate.classMaterials = classMaterials
+            return classRepository.save(updateUpdatedWhen(classToUpdate))
+        }
+
         private fun updateUpdatedWhen(classroom: Classroom): Classroom {
             classroom.updatedWhen = LocalDateTime.now()
             return classroom

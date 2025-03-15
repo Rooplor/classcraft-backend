@@ -311,6 +311,25 @@ class ClassController
                 else -> classService.findAllClassPublished()
             }
 
+        @Operation(summary = "Update class Materials")
+        @PatchMapping("/{id}/materials")
+        fun updateMaterials(
+            @PathVariable id: String,
+            @RequestBody materials: List<String>,
+        ): ResponseEntity<Response<Classroom>> =
+            try {
+                ResponseEntity.ok(
+                    Response(
+                        success = true,
+                        result =
+                            classService.updateClassMaterials(id, materials),
+                        error = null,
+                    ),
+                )
+            } catch (e: Exception) {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
+
         private fun mapToClassroomResponse(classroom: Classroom): ClassroomResponse {
             val formSubmissionList = formSubmissionService.getFormSubmissionsByClassroomId(classroom.id!!)
             val enrollBy =
