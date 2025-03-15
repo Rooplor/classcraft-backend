@@ -4,6 +4,7 @@ import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.types.Attendees
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import java.time.LocalDateTime
 
 @Document(collection = "formSubmissions")
 data class FormSubmission(
@@ -17,4 +18,5 @@ data class FormSubmission(
     var userDetail: UserDetailDTO? = null,
     var isApprovedByOwner: Boolean = false,
     var attendeesStatus: List<Attendees>? = emptyList(),
+    var checkInDateTime: LocalDateTime? = null,
 )
