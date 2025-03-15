@@ -172,7 +172,7 @@ class FormSubmissionService(
                     it
                 }
             }
-        formSubmission.checkInWhen = LocalDateTime.now()
+        formSubmission.checkInDateTime = LocalDateTime.now()
         val title = classService.findClassById(formSubmission.classroomId).title
         mailService.announcementEmail(
             subject = MailMessage.CHECKIN_SUBJECT + "\"${title}\"\n",
