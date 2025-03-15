@@ -1,5 +1,7 @@
 package com.rooplor.classcraftbackend.services.mail
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender
@@ -52,19 +54,21 @@ class MailService
             classroomId: String,
             to: String,
         ) {
-            try {
-                val context = Context()
-                context.setVariable("context", topic)
-                context.setVariable("description", description)
-                context.setVariable("classroomLink", "$domain/class/$classroomId")
-                sendEmail(
-                    subject,
-                    "announcement",
-                    context,
-                    to,
-                )
-            } catch (e: Exception) {
-                throw RuntimeException(e.message)
+            GlobalScope.launch {
+                try {
+                    val context = Context()
+                    context.setVariable("context", topic)
+                    context.setVariable("description", description)
+                    context.setVariable("classroomLink", "$domain/class/$classroomId")
+                    sendEmail(
+                        subject,
+                        "announcement",
+                        context,
+                        to,
+                    )
+                } catch (e: Exception) {
+                    throw RuntimeException(e.message)
+                }
             }
         }
     }

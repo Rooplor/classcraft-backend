@@ -70,7 +70,7 @@ class FormSubmissionService(
 
         mailService.announcementEmail(
             subject = MailMessage.REGISTRATION_SUBJECT,
-            topic = MailMessage.TOPIC_REGISTRATION + "\"${classService.findClassById(formSubmission.classroomId).title}\"\n",
+            topic = MailMessage.REGISTRATION_TOPIC + "\"${classService.findClassById(formSubmission.classroomId).title}\"\n",
             description =
                 if (form.isOwnerApprovalRequired) {
                     MailMessage.REGISTRATION_PENDING
@@ -136,6 +136,7 @@ class FormSubmissionService(
         attendeesStatus: AttendeesStatus,
         day: Int,
     ): FormSubmission {
+        val userId = authService.getUserId()
         val formSubmission = formSubmissionRepository.findById(formSubmissionId).orElseThrow { Exception(ErrorMessages.ANSWER_NOT_FOUND) }
         formSubmission.attendeesStatus =
             formSubmission.attendeesStatus?.map {
@@ -145,6 +146,13 @@ class FormSubmissionService(
                     it
                 }
             }
+        mailService.announcementEmail(
+            subject = MailMessage.CHECKIN_SUBJECT,
+            topic = MailMessage.CHECKIN_SUBJECT + "\"${classService.findClassById(formSubmission.classroomId).title}\"\n",
+            description = MailMessage.CHECKIN_SUCCESS,
+            classroomId = formSubmission.classroomId,
+            to = userService.findUserById(userId).email,
+        )
         return formSubmissionRepository.save(formSubmission)
     }
 
