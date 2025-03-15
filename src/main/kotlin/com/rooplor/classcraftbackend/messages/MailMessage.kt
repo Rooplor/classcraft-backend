@@ -17,4 +17,9 @@ object MailMessage {
     const val VENUE_STATUS_TOPIC = "The status of your venue has been updated"
     const val VENUE_STATUS_APPROVED = "Your venue has been approved. Congratulations!"
     const val VENUE_STATUS_REJECTED = "Your venue has been rejected. with the following reason: "
+
+    const val REGISTRATION_APPROVED_SUBJECT = "[ClassCraft] Your registration has been approved"
+    const val REGISTRATION_PENDING_SUBJECT = "[ClassCraft] Your registration is pending approval"
+    const val REGISTRATION_APPROVED_TOPIC = "Your registration has been approved for "
+    const val REGISTRATION_PENDING_TOPIC = "Your registration is pending approval for "
 }

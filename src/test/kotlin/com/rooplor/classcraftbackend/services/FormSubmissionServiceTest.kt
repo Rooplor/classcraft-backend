@@ -218,6 +218,8 @@ class FormSubmissionServiceTest {
         val expectation = formSubmission.copy(isApprovedByOwner = true)
         `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.of(formSubmission))
         `when`(formSubmissionRepository.save(formSubmission)).thenReturn(expectation)
+        `when`(classService.findClassById("class1")).thenReturn(Classroom(id = "class1", title = "React Native"))
+        `when`(userService.findUserById("user1")).thenReturn(User(id = "user1", username = "user1", email = "123@gmail.com"))
 
         val result = formSubmissionService.setFormSubmissionApprovalStatus("1", true)
 
@@ -250,6 +252,8 @@ class FormSubmissionServiceTest {
         val expectation = formSubmission.copy(isApprovedByOwner = false)
         `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.of(formSubmission))
         `when`(formSubmissionRepository.save(formSubmission)).thenReturn(expectation)
+        `when`(classService.findClassById("class1")).thenReturn(Classroom(id = "class1", title = "React Native"))
+        `when`(userService.findUserById("user1")).thenReturn(User(id = "user1", username = "user1", email = "123@gmail.com"))
 
         val result = formSubmissionService.setFormSubmissionApprovalStatus("1", false)
 

@@ -125,6 +125,26 @@ class FormSubmissionService(
         isApproved: Boolean,
     ): FormSubmission {
         val formSubmission = formSubmissionRepository.findById(formSubmissionId).orElseThrow { Exception(ErrorMessages.ANSWER_NOT_FOUND) }
+        val (subject, topic, description) = if (isApproved) {
+            Triple(
+                MailMessage.REGISTRATION_APPROVED_SUBJECT,
+                MailMessage.REGISTRATION_APPROVED_TOPIC + "\"${classService.findClassById(formSubmission.classroomId).title}\"\n",
+                MailMessage.REGISTRATION_SUCCESS
+            )
+        } else {
+            Triple(
+                MailMessage.REGISTRATION_PENDING_SUBJECT,
+                MailMessage.REGISTRATION_PENDING_TOPIC + "\"${classService.findClassById(formSubmission.classroomId).title}\"\n",
+                MailMessage.REGISTRATION_PENDING
+            )
+        }
+        mailService.announcementEmail(
+            subject = subject,
+            topic = topic,
+            description = description,
+            classroomId = formSubmission.classroomId,
+            to = userService.findUserById(formSubmission.submittedBy!!).email
+        )
         formSubmission.isApprovedByOwner = isApproved
         return formSubmissionRepository.save(formSubmission)
     }
