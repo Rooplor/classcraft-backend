@@ -114,4 +114,13 @@ class FormServiceTest {
         verify(formRepository, times(1)).deleteById("1")
         verify(formSubmissionRepository, times(1)).deleteByFormId("1")
     }
+
+    @Test
+    fun `deleteFormSubmissionByFormId should delete form submission by form id`() {
+        doNothing().`when`(formSubmissionRepository).deleteByFormId("1")
+
+        formService.deleteFormSubmissionByFormId("1")
+
+        verify(formSubmissionRepository, times(1)).deleteByFormId("1")
+    }
 }

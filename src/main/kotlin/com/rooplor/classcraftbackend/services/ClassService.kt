@@ -74,6 +74,20 @@ class ClassService
             classroomHelper.validateClassroom(updatedClassroom)
             val classToUpdate = findClassById(id)
             isOwnerOfClass(classToUpdate)
+            val originalDates = classToUpdate.dates
+            val updatedDates = updatedClassroom.dates
+            val isDateChange = originalDates != updatedDates
+            if (classToUpdate.isPublished == true) {
+                if (isDateChange) {
+                    throw Exception(ErrorMessages.CLASS_CANNOT_CHANGE_DATE)
+                }
+            }
+            if (classToUpdate.venueStatus == VenueStatus.APPROVED.id) {
+                if (isDateChange) {
+                    classToUpdate.venueStatus = VenueStatus.NO_REQUEST.id
+                    formService.deleteFormSubmissionByFormId(classToUpdate.id!!)
+                }
+            }
             classToUpdate.title = updatedClassroom.title
             classToUpdate.details = updatedClassroom.details
             classToUpdate.target = updatedClassroom.target

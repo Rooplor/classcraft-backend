@@ -48,6 +48,10 @@ class FormService(
         formSubmissionRepository.deleteByFormId(id)
     }
 
+    fun deleteFormSubmissionByFormId(formId: String) {
+        formSubmissionRepository.deleteByFormId(formId)
+    }
+
     private fun initDefaultFormQuestions(form: Form) {
         val question =
             listOf(
