@@ -181,7 +181,7 @@ class ClassService
                     if (venueStatus == VenueStatus.APPROVED.id || venueStatus == VenueStatus.REJECTED.id) {
                         mailService.announcementEmail(
                             subject = MailMessage.VENUE_STATUS_SUBJECT + "${classToUpdate.title}",
-                            topic = MailMessage.VENUE_STATUS_TOPIC + "${classToUpdate.title}",
+                            topic = MailMessage.VENUE_STATUS_TOPIC,
                             description = (if(venueStatus == VenueStatus.APPROVED.id) {
                                 MailMessage.VENUE_STATUS_APPROVED
                             } else {
