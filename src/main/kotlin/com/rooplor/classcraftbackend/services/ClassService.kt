@@ -101,6 +101,7 @@ class ClassService
             classToUpdate.instructorAvatar = updatedClassroom.instructorAvatar
             classToUpdate.instructorFamiliarity = updatedClassroom.instructorFamiliarity
             classToUpdate.coverImage = updatedClassroom.coverImage
+            classToUpdate.classMaterials = updatedClassroom.classMaterials
             if (updatedClassroom.coOwners != null) {
                 validateCoOwners(updatedClassroom.coOwners!!)
                 classToUpdate.coOwners = updatedClassroom.coOwners
@@ -250,6 +251,16 @@ class ClassService
                 keyword,
                 keyword,
             )
+
+        fun updateClassMaterials(
+            id: String,
+            classMaterials: List<String>,
+        ): Classroom {
+            val classToUpdate = findClassById(id)
+            isOwnerOfClass(classToUpdate)
+            classToUpdate.classMaterials = classMaterials
+            return classRepository.save(updateUpdatedWhen(classToUpdate))
+        }
 
         private fun updateUpdatedWhen(classroom: Classroom): Classroom {
             classroom.updatedWhen = LocalDateTime.now()

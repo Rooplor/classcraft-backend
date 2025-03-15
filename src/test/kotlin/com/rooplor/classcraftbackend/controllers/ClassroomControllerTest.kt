@@ -17,18 +17,21 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.doNothing
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Import
+import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDateTime
 
@@ -241,6 +244,7 @@ class ClassroomControllerTest {
                             "instructorAvatar": "https://example.com/johndoe.jpg",
                             "instructorFamiliarity": "John Doe has 5 years of experience",
                             "coverImage": "https://example.com/cover.jpg",
+                            "classMaterials": [],
                             "dates": [],
                             "owner": "owner1",
                             "coOwners": []
@@ -521,6 +525,7 @@ class ClassroomControllerTest {
                             "instructorAvatar": "https://example.com/johndoe.jpg",
                             "instructorFamiliarity": "John Doe has 5 years of experience",
                             "coverImage": "https://example.com/cover.jpg",
+                            "classMaterials": [],
                             "dates": [],
                             "owner": "owner1",
                             "coOwners": []
@@ -772,5 +777,62 @@ class ClassroomControllerTest {
             .perform(
                 get("/api/class/$classId/venue-status?venueStatusId=4"),
             ).andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `should update class materials successfully`() {
+        val classId = "1"
+        val materials = listOf("Material1", "Material2")
+        val classroom = Classroom(id = classId, classMaterials = materials)
+
+        `when`(classService.updateClassMaterials(classId, materials)).thenReturn(classroom)
+
+        mockMvc
+            .perform(
+                patch("/api/class/$classId/materials")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""["Material1", "Material2"]"""),
+            ).andExpect(status().isOk)
+            .andExpect(content().json("""{"success":true,"result":{"id":"1","classMaterials":["Material1","Material2"]},"error":null}"""))
+
+        verify(classService).updateClassMaterials(classId, materials)
+    }
+
+    @Test
+    fun `should return bad request when update class materials fails`() {
+        val classId = "1"
+        val materials = listOf("Material1", "Material2")
+        val errorMessage = "Failed to update materials"
+
+        `when`(classService.updateClassMaterials(classId, materials)).thenThrow(RuntimeException(errorMessage))
+
+        mockMvc
+            .perform(
+                patch("/api/class/$classId/materials")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""["Material1", "Material2"]"""),
+            ).andExpect(status().isBadRequest)
+            .andExpect(content().json("""{"success":false,"result":null,"error":"$errorMessage"}"""))
+
+        verify(classService).updateClassMaterials(classId, materials)
+    }
+
+    @Test
+    fun `should return bad request when materials list is empty`() {
+        val classId = "1"
+        val materials = emptyList<String>()
+        val errorMessage = "Materials list cannot be empty"
+
+        `when`(classService.updateClassMaterials(classId, materials)).thenThrow(IllegalArgumentException(errorMessage))
+
+        mockMvc
+            .perform(
+                patch("/api/class/$classId/materials")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""[]"""),
+            ).andExpect(status().isBadRequest)
+            .andExpect(content().json("""{"success":false,"result":null,"error":"$errorMessage"}"""))
+
+        verify(classService).updateClassMaterials(classId, materials)
     }
 }
