@@ -4,6 +4,7 @@ import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.types.Attendees
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import java.time.LocalDateTime
 
 @Document(collection = "formSubmissions")
 data class FormSubmission(
