@@ -293,7 +293,7 @@ class FormSubmissionServiceTest {
             FormSubmission(
                 "1",
                 "form1",
-                "class1",
+                "1",
                 mapOf("email" to "test@mail.com"),
                 "user1",
                 UserDetailDTO("user1", "user1"),
@@ -303,6 +303,9 @@ class FormSubmissionServiceTest {
         val expectation = formSubmission.copy(attendeesStatus = listOfAttendees)
         `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.of(formSubmission))
         `when`(formSubmissionRepository.save(formSubmission)).thenReturn(expectation)
+        `when`(authService.getUserId()).thenReturn("user1")
+        `when`(classService.findClassById("1")).thenReturn(Classroom(id = "1", title = "React Native"))
+        `when`(userService.findUserById("user1")).thenReturn(User(id = "user1", username = "user1", email = "123@gmail.com"))
 
         val result = formSubmissionService.setAttendeesStatus("1", AttendeesStatus.PRESENT, 1)
 
