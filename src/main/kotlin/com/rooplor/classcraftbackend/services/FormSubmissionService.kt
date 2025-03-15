@@ -5,6 +5,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter
 import com.google.zxing.qrcode.QRCodeWriter
 import com.opencsv.CSVWriter
 import com.rooplor.classcraftbackend.dtos.UserDetailDTO
+import com.rooplor.classcraftbackend.entities.FormField
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.messages.ErrorMessages
@@ -45,26 +46,29 @@ class FormSubmissionService(
             )
         val form = formService.findByClassroomId(formSubmission.classroomId)
         val allQuestion = form.fields.toSet()
-        val expectedQuestions = allQuestion.filter { it.required }.map { it.name }.toSet()
-        val submissionForm = formSubmission.responses.map { it.key }.toSet()
-        val diff = expectedQuestions - submissionForm
-        if (diff.isNotEmpty()) {
-            throw Exception(ErrorMessages.MISSING_REQUIRED_FIELDS.replace("$0", diff.joinToString(", ")))
-        }
-
-        form.fields.forEach { field ->
-            val response = formSubmission.responses[field.name]
-            if (response != null && field.validation != null) {
-                val regex = field.validation!!.regex
-                if (!regex.matches(response.toString())) {
-                    throw Exception(ErrorMessages.FIELD_VALIDATE_FAIL.replace("$0", field.name))
-                }
-            }
-        }
+        validateRequiredFields(allQuestion, formSubmission.responses)
+        validateFormFields(form.fields, formSubmission.responses)
 
         formSubmission.isApprovedByOwner = !form.isOwnerApprovalRequired
         formSubmission.attendeesStatus = createAttendeesList(formSubmission.classroomId)
 
+        return formSubmissionRepository.save(formSubmission)
+    }
+
+    fun submitFeedback(
+        formSubmissionId: String,
+        feedbackResponse: Map<String, Any>,
+    ): FormSubmission {
+        val formSubmission = formSubmissionRepository.findById(formSubmissionId).orElseThrow { Exception(ErrorMessages.ANSWER_NOT_FOUND) }
+        val existingSubmission = formSubmission.feedbackResponse
+        if (existingSubmission != null) {
+            throw Exception(ErrorMessages.ANSWER_ALREADY_SUBMITTED)
+        }
+        val form = formService.findByClassroomId(formSubmission.classroomId)
+        val allFeedbackQuestion = form.feedback?.toSet()
+        validateRequiredFields(allFeedbackQuestion!!, feedbackResponse)
+        validateFormFields(form.feedback!!, feedbackResponse)
+        formSubmission.feedbackResponse = feedbackResponse
         return formSubmissionRepository.save(formSubmission)
     }
 
@@ -177,5 +181,32 @@ class FormSubmissionService(
             )
         }
         return attendees
+    }
+
+    private fun validateFormFields(
+        formField: List<FormField>,
+        responses: Map<String, Any>,
+    ) {
+        formField.forEach { field ->
+            val response = responses[field.name]
+            if (response != null && field.validation != null) {
+                val regex = field.validation!!.regex
+                if (!regex.matches(response.toString())) {
+                    throw Exception(ErrorMessages.FIELD_VALIDATE_FAIL.replace("$0", field.name))
+                }
+            }
+        }
+    }
+
+    private fun validateRequiredFields(
+        allQuestion: Set<FormField>,
+        responses: Map<String, Any>,
+    ) {
+        val expectedQuestions = allQuestion.filter { it.required }.map { it.name }.toSet()
+        val submissionForm = responses.map { it.key }.toSet()
+        val diff = expectedQuestions - submissionForm
+        if (diff.isNotEmpty()) {
+            throw Exception(ErrorMessages.MISSING_REQUIRED_FIELDS.replace("$0", diff.joinToString(", ")))
+        }
     }
 }

@@ -8,6 +8,7 @@ import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.entities.User
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.enums.ClassType
+import com.rooplor.classcraftbackend.enums.FieldValidation
 import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
@@ -128,6 +129,7 @@ class FormSubmissionServiceTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@example.com"),
+                mapOf(),
                 "user1",
                 UserDetailDTO("user1", "user1"),
             )
@@ -208,6 +210,7 @@ class FormSubmissionServiceTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                mapOf(),
                 "user1",
                 UserDetailDTO("user1", "user1"),
                 false,
@@ -240,6 +243,7 @@ class FormSubmissionServiceTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                mapOf(),
                 "user1",
                 UserDetailDTO("user1", "user1"),
                 true,
@@ -292,6 +296,7 @@ class FormSubmissionServiceTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                mapOf(),
                 "user1",
                 UserDetailDTO("user1", "user1"),
                 false,
@@ -368,5 +373,87 @@ class FormSubmissionServiceTest {
         val result = formSubmissionService.getUserInClassroom("class1")
 
         assertEquals(emptyList<UserDetailDTO>(), result)
+    }
+
+    @Test
+    fun `submitFeedback should save and return form submission`() {
+        val formSubmissionId = "1"
+        val feedbackResponse = mapOf("Full Name" to "John Doe", "Email" to "john.doe@example.com")
+        val formSubmission =
+            FormSubmission(
+                id = formSubmissionId,
+                formId = "form1",
+                classroomId = "class1",
+                responses = mapOf("email" to "test@example.com"),
+                feedbackResponse = null,
+            )
+        val form =
+            Form(
+                id = "form1",
+                classroomId = "class1",
+                title = "Test Form",
+                description = "Description",
+                openDate = LocalDateTime.of(2024, 9, 1, 0, 0),
+                closeDate = LocalDateTime.of(2024, 9, 30, 0, 0),
+                fields = emptyList(),
+                feedback =
+                    listOf(
+                        FormField(name = "Full Name", type = "text", required = true, validation = FieldValidation.TEXT),
+                        FormField(name = "Email", type = "email", required = true, validation = FieldValidation.EMAIL),
+                    ),
+            )
+        val updatedFormSubmission = formSubmission.copy(feedbackResponse = feedbackResponse)
+
+        `when`(formSubmissionRepository.findById(formSubmissionId)).thenReturn(Optional.of(formSubmission))
+        `when`(formService.findByClassroomId("class1")).thenReturn(form)
+        `when`(formSubmissionRepository.save(formSubmission)).thenReturn(updatedFormSubmission)
+
+        val result = formSubmissionService.submitFeedback(formSubmissionId, feedbackResponse)
+
+        assertEquals(updatedFormSubmission, result)
+        verify(formSubmissionRepository, times(1)).findById(formSubmissionId)
+        verify(formService, times(1)).findByClassroomId("class1")
+        verify(formSubmissionRepository, times(1)).save(formSubmission)
+    }
+
+    @Test
+    fun `submitFeedback should throw exception on validation failure`() {
+        val formSubmissionId = "1"
+        val feedbackResponse = mapOf("Full Name" to "John Doe", "Email" to "invalid-email")
+        val formSubmission =
+            FormSubmission(
+                id = formSubmissionId,
+                formId = "form1",
+                classroomId = "class1",
+                responses = mapOf("email" to "test@example.com"),
+                feedbackResponse = null,
+            )
+        val form =
+            Form(
+                id = "form1",
+                classroomId = "class1",
+                title = "Test Form",
+                description = "Description",
+                openDate = LocalDateTime.of(2024, 9, 1, 0, 0),
+                closeDate = LocalDateTime.of(2024, 9, 30, 0, 0),
+                fields = emptyList(),
+                feedback =
+                    listOf(
+                        FormField(name = "Full Name", type = "text", required = true, validation = FieldValidation.TEXT),
+                        FormField(name = "Email", type = "email", required = true, validation = FieldValidation.EMAIL),
+                    ),
+            )
+
+        `when`(formSubmissionRepository.findById(formSubmissionId)).thenReturn(Optional.of(formSubmission))
+        `when`(formService.findByClassroomId("class1")).thenReturn(form)
+
+        val exception =
+            assertThrows<Exception> {
+                formSubmissionService.submitFeedback(formSubmissionId, feedbackResponse)
+            }
+
+        assertEquals(ErrorMessages.FIELD_VALIDATE_FAIL.replace("\$0", "Email"), exception.message)
+        verify(formSubmissionRepository, times(1)).findById(formSubmissionId)
+        verify(formService, times(1)).findByClassroomId("class1")
     }
 }

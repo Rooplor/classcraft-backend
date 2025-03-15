@@ -5,6 +5,7 @@ import com.rooplor.classcraftbackend.dtos.FormSubmissionDTO
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.Form
+import com.rooplor.classcraftbackend.entities.FormField
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.helpers.FormHelper
@@ -239,4 +240,31 @@ class FormController(
                 HttpStatus.BAD_REQUEST,
             )
         }
+
+    @PatchMapping("/feedback/{formId}")
+    fun createFormFeedBack(
+        @PathVariable formId: String,
+        @RequestBody feedBack: List<FormField>,
+    ): ResponseEntity<Response<Form>> {
+        try {
+            val feedBackList = feedBack.map { modelMapper.map(it, FormField::class.java) }
+            val form = formService.createFormFeedback(formId, feedBackList)
+            return ResponseEntity.ok(Response(success = true, result = form, error = null))
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+        }
+    }
+
+    @PatchMapping("/feedback/submit/{formId}")
+    fun submitFormFeedBack(
+        @PathVariable formId: String,
+        @RequestBody feedBack: Map<String, Any>,
+    ): ResponseEntity<Response<FormSubmission>> {
+        try {
+            val form = formSubmissionService.submitFeedback(formId, feedBack)
+            return ResponseEntity.ok(Response(success = true, result = form, error = null))
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+        }
+    }
 }

@@ -5,8 +5,10 @@ import com.rooplor.classcraftbackend.configs.TestSecurityConfig
 import com.rooplor.classcraftbackend.dtos.FormCreateDTO
 import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.Form
+import com.rooplor.classcraftbackend.entities.FormField
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
+import com.rooplor.classcraftbackend.enums.FieldValidation
 import com.rooplor.classcraftbackend.services.FormService
 import com.rooplor.classcraftbackend.services.FormSubmissionService
 import com.rooplor.classcraftbackend.types.Attendees
@@ -74,6 +76,7 @@ class FormControllerTest {
                 LocalDateTime.of(2024, 9, 1, 0, 0),
                 LocalDateTime.of(2024, 9, 30, 0, 0),
                 emptyList(),
+                emptyList(),
                 true,
             )
         `when`(modelMapper.map(formCreateDTO, Form::class.java)).thenReturn(form)
@@ -123,6 +126,7 @@ class FormControllerTest {
                 "Updated Description",
                 LocalDateTime.of(2024, 9, 1, 0, 0),
                 LocalDateTime.of(2024, 9, 30, 0, 0),
+                emptyList(),
                 emptyList(),
                 true,
             )
@@ -235,6 +239,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@example.com"),
+                mapOf(),
                 "user1",
                 UserDetailDTO("user1", "user1"),
             )
@@ -263,6 +268,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                mapOf(),
                 "user1",
                 UserDetailDTO("user1", "user1"),
                 isApprovedByOwner = false,
@@ -287,6 +293,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                mapOf(),
                 "user1",
                 UserDetailDTO("user1", "user1"),
                 isApprovedByOwner = true,
@@ -311,6 +318,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                mapOf(),
                 "user1",
                 UserDetailDTO("user1", "user1"),
             )
@@ -363,6 +371,7 @@ class FormControllerTest {
                 "form1",
                 "class1",
                 mapOf("email" to "test@mail.com"),
+                mapOf(),
                 "user1",
                 UserDetailDTO("user1", "user1"),
             )
@@ -376,5 +385,89 @@ class FormControllerTest {
             .andExpect(jsonPath("$.success").value(true))
             .andExpect(jsonPath("$.result[0].id").value("user1"))
             .andExpect(jsonPath("$.result[0].username").value("user1"))
+    }
+
+    @Test
+    fun `createFormFeedback should be success`() {
+        val form =
+            Form(
+                "1",
+                "class1",
+                "Test Form",
+                "Description",
+                LocalDateTime.of(2024, 9, 1, 0, 0),
+                LocalDateTime.of(2024, 9, 30, 0, 0),
+                emptyList(),
+            )
+        val formFeedback =
+            listOf(
+                FormField(
+                    name = "Full Name",
+                    type = "text",
+                    required = true,
+                    validation = FieldValidation.TEXT,
+                ),
+                FormField(
+                    name = "Email",
+                    type = "email",
+                    required = true,
+                    validation = FieldValidation.EMAIL,
+                ),
+            )
+        `when`(formService.createFormFeedback("1", formFeedback)).thenReturn(form)
+
+        mockMvc
+            .perform(
+                patch("/api/form/feedback/1")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
+                        [
+                            {
+                                "name": "Full Name",
+                                "type": "text",
+                                "required": true,
+                                "validation": "TEXT"
+                            },
+                            {
+                                "name": "Email",
+                                "type": "email",
+                                "required": true,
+                                "validation": "EMAIL"
+                            }
+                        ]
+                        """.trimIndent(),
+                    ),
+            ).andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+    }
+
+    @Test
+    fun `submitFormFeedBack should be success`() {
+        val formSubmission =
+            FormSubmission(
+                "1",
+                "form1",
+                "class1",
+                mapOf(),
+                mapOf("email" to "mail@mailc.com"),
+                "user1",
+                UserDetailDTO("user1", "user1"),
+            )
+        `when`(formSubmissionService.submitFeedback("1", mapOf("email" to "mail@mail.com"))).thenReturn(formSubmission)
+
+        mockMvc
+            .perform(
+                patch("/api/form/feedback/submit/1")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
+                        {
+                            "email": "mail@mail.com"
+                        }
+                        """.trimIndent(),
+                    ),
+            ).andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
     }
 }

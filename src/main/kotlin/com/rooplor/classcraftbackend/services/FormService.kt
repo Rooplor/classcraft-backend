@@ -52,6 +52,15 @@ class FormService(
         formSubmissionRepository.deleteByFormId(formId)
     }
 
+    fun createFormFeedback(
+        formId: String,
+        feedBack: List<FormField>,
+    ): Form {
+        val form = getFormById(formId)
+        form.feedback = feedBack
+        return formRepository.save(form)
+    }
+
     private fun initDefaultFormQuestions(form: Form) {
         val question =
             listOf(

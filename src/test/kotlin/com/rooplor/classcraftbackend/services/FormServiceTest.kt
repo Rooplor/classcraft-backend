@@ -2,6 +2,7 @@ package com.rooplor.classcraftbackend.services
 
 import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.entities.FormField
+import com.rooplor.classcraftbackend.enums.FieldValidation
 import com.rooplor.classcraftbackend.helpers.FormHelper
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.FormRepository
@@ -122,5 +123,46 @@ class FormServiceTest {
         formService.deleteFormSubmissionByFormId("1")
 
         verify(formSubmissionRepository, times(1)).deleteByFormId("1")
+    }
+
+    @Test
+    fun `createFormFeedback should update feedback and return form`() {
+        val formId = "1"
+        val form =
+            Form(
+                id = formId,
+                classroomId = "class1",
+                title = "Test Form",
+                description = "Description",
+                openDate = LocalDateTime.of(2024, 9, 1, 0, 0),
+                closeDate = LocalDateTime.of(2024, 9, 30, 0, 0),
+                fields = emptyList(),
+                feedback = emptyList(),
+            )
+        val formFeedback =
+            listOf(
+                FormField(
+                    name = "Full Name",
+                    type = "text",
+                    required = true,
+                    validation = FieldValidation.TEXT,
+                ),
+                FormField(
+                    name = "Email",
+                    type = "email",
+                    required = true,
+                    validation = FieldValidation.EMAIL,
+                ),
+            )
+        val updatedForm = form.copy(feedback = formFeedback)
+
+        `when`(formRepository.findById(formId)).thenReturn(Optional.of(form))
+        `when`(formRepository.save(form)).thenReturn(updatedForm)
+
+        val result = formService.createFormFeedback(formId, formFeedback)
+
+        assertEquals(updatedForm, result)
+        verify(formRepository, times(1)).findById(formId)
+        verify(formRepository, times(1)).save(form)
     }
 }
