@@ -19,6 +19,7 @@ import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.io.File
 import java.io.StringWriter
+import java.time.LocalDateTime
 import javax.imageio.ImageIO
 
 @Service
@@ -184,14 +185,25 @@ class FormSubmissionService(
 
     fun generateQRCodeWithLogo(
         classId: String,
-        logoPath: String,
+        logoPath: String
     ): BufferedImage {
         val classroom = classService.findClassById(classId)
         if (classroom == null) {
             throw Exception("Cannot generate QR code: " + ErrorMessages.CLASS_NOT_FOUND)
         } else {
             val barcodeWriter = QRCodeWriter()
-            val bitMatrix = barcodeWriter.encode("$domain/class/$classId/checkin", BarcodeFormat.QR_CODE, 500, 500)
+            val currentDateTime = LocalDateTime.now()
+            val classDate = classroom.dates.sortedBy { it.date.startDateTime }.indexOfFirst {
+                val startTime = it.date.startDateTime
+                val endTime = it.date.endDateTime
+                currentDateTime.isAfter(startTime) && currentDateTime.isBefore(endTime)
+            }
+
+            if (classDate == -1) {
+                throw Exception("Cannot generate QR code: " + ErrorMessages.CLASS_CANNOT_GENERATE_QR_CODE)
+            }
+
+            val bitMatrix = barcodeWriter.encode("$domain/class/$classId/checkin?day=${classDate}", BarcodeFormat.QR_CODE, 500, 500)
             val qrCodeGrayscale = MatrixToImageWriter.toBufferedImage(bitMatrix)
 
             val qrCode = BufferedImage(qrCodeGrayscale.width, qrCodeGrayscale.height, BufferedImage.TYPE_INT_ARGB)

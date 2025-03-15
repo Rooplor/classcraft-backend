@@ -230,7 +230,7 @@ class FormController(
             ResponseEntity(
                 formSubmissionService.generateQRCodeWithLogo(
                     classId,
-                    "src/main/resources/classcraftlogo.png",
+                    "src/main/resources/classcraftlogo.png"
                 ),
                 HttpStatus.OK,
             )
