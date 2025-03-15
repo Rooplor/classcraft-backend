@@ -6,7 +6,9 @@ import com.rooplor.classcraftbackend.entities.User
 import com.rooplor.classcraftbackend.entities.Venue
 import com.rooplor.classcraftbackend.enums.ClassType
 import com.rooplor.classcraftbackend.enums.Format
+import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.helpers.ClassroomHelper
+import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import com.rooplor.classcraftbackend.services.mail.MailService
 import com.rooplor.classcraftbackend.types.DateDetail
@@ -1070,5 +1072,78 @@ class ClassroomServiceTest {
 
         verify(classRepository, times(1)).deleteById(classId)
         verify(formService, times(1)).deleteFormById(classId)
+    }
+
+    @Test
+    fun `should throw error when class is published and dates are changed`() {
+        val classId = "1"
+        val originalClassroom =
+            Classroom(
+                id = classId,
+                title = "Original Title",
+                details = "Original Details",
+                target = "Original Target",
+                prerequisite = "Original Prerequisite",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(DateWithVenue(DateDetail(LocalDateTime.now(), LocalDateTime.now()), listOf("1"))),
+                isPublished = true,
+                venueStatus = VenueStatus.APPROVED.id,
+                owner = "owner1",
+            )
+        val updatedClassroom =
+            originalClassroom.copy(
+                dates = listOf(DateWithVenue(DateDetail(LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(1)), listOf("1"))),
+            )
+
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(originalClassroom))
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "owner1", username = "admin"))
+
+        val exception =
+            assertThrows<Exception> {
+                classService.updateClass(classId, updatedClassroom)
+            }
+
+        assertEquals(ErrorMessages.CLASS_CANNOT_CHANGE_DATE, exception.message)
+    }
+
+    @Test
+    fun `should reset venue status and remove form submission when class is not published and dates are changed`() {
+        val classId = "1"
+        val originalClassroom =
+            Classroom(
+                id = classId,
+                title = "Original Title",
+                details = "Original Details",
+                target = "Original Target",
+                prerequisite = "Original Prerequisite",
+                type = ClassType.LECTURE,
+                format = Format.ONSITE,
+                capacity = 30,
+                dates = listOf(DateWithVenue(DateDetail(LocalDateTime.now(), LocalDateTime.now()), listOf("1"))),
+                isPublished = false,
+                venueStatus = VenueStatus.APPROVED.id,
+                owner = "owner1",
+            )
+        val updatedClassroom =
+            originalClassroom.copy(
+                dates = listOf(DateWithVenue(DateDetail(LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(1)), listOf("1"))),
+            )
+
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(originalClassroom))
+        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
+        Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "owner1", username = "admin"))
+        Mockito.doNothing().`when`(formService).deleteFormSubmissionByFormId(classId)
+        Mockito
+            .`when`(
+                classRepository.save(any(Classroom::class.java)),
+            ).thenReturn(updatedClassroom.copy(venueStatus = VenueStatus.NO_REQUEST.id))
+
+        val result = classService.updateClass(classId, updatedClassroom)
+
+        assertEquals(VenueStatus.NO_REQUEST.id, result.venueStatus)
+        verify(formService, times(1)).deleteFormSubmissionByFormId(classId)
     }
 }
