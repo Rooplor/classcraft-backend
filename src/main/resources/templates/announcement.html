@@ -55,7 +55,7 @@
             <p th:text="${description}">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </p>
-            <a th:if="${isDeleteClass == false}" th:href="${classroomLink}"><button class="btn">View classroom</button></a>        </div>
+            <a th:if="${!isDeleteClass}" th:href="${classroomLink}"><button class="btn">View classroom</button></a>        </div>
 </div>
 </body>
 </html>
