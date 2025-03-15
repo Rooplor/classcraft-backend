@@ -101,7 +101,6 @@ class ClassService
             classToUpdate.instructorAvatar = updatedClassroom.instructorAvatar
             classToUpdate.instructorFamiliarity = updatedClassroom.instructorFamiliarity
             classToUpdate.coverImage = updatedClassroom.coverImage
-            println(updatedClassroom.classMaterials)
             classToUpdate.classMaterials = updatedClassroom.classMaterials
             if (updatedClassroom.coOwners != null) {
                 validateCoOwners(updatedClassroom.coOwners!!)
