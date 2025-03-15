@@ -241,6 +241,7 @@ class ClassroomControllerTest {
                             "instructorAvatar": "https://example.com/johndoe.jpg",
                             "instructorFamiliarity": "John Doe has 5 years of experience",
                             "coverImage": "https://example.com/cover.jpg",
+                            "classMaterials": [],
                             "dates": [],
                             "owner": "owner1",
                             "coOwners": []
@@ -521,6 +522,7 @@ class ClassroomControllerTest {
                             "instructorAvatar": "https://example.com/johndoe.jpg",
                             "instructorFamiliarity": "John Doe has 5 years of experience",
                             "coverImage": "https://example.com/cover.jpg",
+                            "classMaterials": [],
                             "dates": [],
                             "owner": "owner1",
                             "coOwners": []

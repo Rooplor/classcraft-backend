@@ -18,5 +18,6 @@ data class InitClassDTO(
     var instructorAvatar: String = "",
     var instructorFamiliarity: String = "",
     var coverImage: String? = "",
+    var classMaterials: List<String>? = emptyList(),
     var coOwners: List<String>? = emptyList(),
 )
