@@ -1074,6 +1074,7 @@ class ClassroomServiceTest {
         val classId = "1"
 
         Mockito.doNothing().`when`(classRepository).deleteById(classId)
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(Classroom(id = classId, owner = "owner1")))
         Mockito.doNothing().`when`(formService).deleteFormById(classId)
 
         classService.deleteClass(classId)
