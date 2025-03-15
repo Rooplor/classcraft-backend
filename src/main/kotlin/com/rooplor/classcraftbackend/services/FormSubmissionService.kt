@@ -168,11 +168,11 @@ class FormSubmissionService(
             formSubmission.attendeesStatus?.map {
                 if (it.day == day) {
                     it.copy(attendeesStatus = attendeesStatus)
+                    it.copy(checkInDateTime = LocalDateTime.now())
                 } else {
                     it
                 }
             }
-        formSubmission.checkInDateTime = LocalDateTime.now()
         val title = classService.findClassById(formSubmission.classroomId).title
         mailService.announcementEmail(
             subject = MailMessage.CHECKIN_SUBJECT + "\"${title}\"\n",
