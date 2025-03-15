@@ -203,7 +203,7 @@ class FormSubmissionService(
                 throw Exception("Cannot generate QR code: " + ErrorMessages.CLASS_CANNOT_GENERATE_QR_CODE)
             }
 
-            val bitMatrix = barcodeWriter.encode("$domain/class/$classId/checkin?day=${classDate}", BarcodeFormat.QR_CODE, 500, 500)
+            val bitMatrix = barcodeWriter.encode("$domain/class/$classId/checkin?day=${classDate + 1}", BarcodeFormat.QR_CODE, 500, 500)
             val qrCodeGrayscale = MatrixToImageWriter.toBufferedImage(bitMatrix)
 
             val qrCode = BufferedImage(qrCodeGrayscale.width, qrCodeGrayscale.height, BufferedImage.TYPE_INT_ARGB)
