@@ -18,5 +18,4 @@ data class FormSubmission(
     var userDetail: UserDetailDTO? = null,
     var isApprovedByOwner: Boolean = false,
     var attendeesStatus: List<Attendees>? = emptyList(),
-    var checkInDateTime: LocalDateTime? = null,
 )
