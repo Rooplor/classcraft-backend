@@ -216,14 +216,17 @@ class ClassService
         fun deleteClass(id: String) {
             val userList = mutableListOf<String>()
             val classSubmission =  formSubmissionRepository.findByClassroomId(id)
-            val owner = findClassById(id).owner
+            val classroom = findClassById(id)
+            val title = classroom.title
+            val owner = classroom.owner
+            val dates = classroom.dates
             classRepository.deleteById(id)
             classSubmission.forEach {
                 userList.add(it.submittedBy!!)
             }
             userList.forEach {
                 mailService.announcementEmail(
-                    subject = MailMessage.CLASS_DELETED_SUBJECT.replace("\$0", findClassById(id).title),
+                    subject = MailMessage.CLASS_DELETED_SUBJECT.replace("\$0", title),
                     topic = MailMessage.CLASS_DELETED_TOPIC,
                     description = MailMessage.CLASS_DELETED.replace("\$0", userService.findUserById(owner).email),
                     classroomId = id,
@@ -233,7 +236,7 @@ class ClassService
             formService.deleteFormById(id)
             if (staffEmail != null) {
                 mailService.announcementEmail(
-                    subject = MailMessage.CLASS_DELETED_VENUE_SUBJECT.replace("\$0", findClassById(id).dates.flatMap { it.venueId.map { venueId -> venueService.findVenueById(venueId).room } }.joinToString(", ").trimEnd(',')),
+                    subject = MailMessage.CLASS_DELETED_VENUE_SUBJECT.replace("\$0", dates.flatMap { it.venueId.map { venueId -> venueService.findVenueById(venueId).room } }.joinToString(", ").trimEnd(',')),
                     topic = MailMessage.CLASS_DELETED_TOPIC,
                     description = MailMessage.CLASS_DELETED.replace("\$0", userService.findUserById(owner).email),
                     classroomId = id,
