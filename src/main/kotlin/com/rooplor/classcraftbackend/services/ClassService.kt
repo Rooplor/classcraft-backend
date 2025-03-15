@@ -231,6 +231,7 @@ class ClassService
                     description = MailMessage.CLASS_DELETED.replace("\$0", userService.findUserById(owner).email),
                     classroomId = id,
                     to = userService.findUserById(it).email,
+                    isDeleteClass = true,
                 )
             }
             formService.deleteFormById(id)
@@ -240,7 +241,8 @@ class ClassService
                     topic = MailMessage.CLASS_DELETED_TOPIC + title,
                     description = MailMessage.CLASS_DELETED.replace("\$0", userService.findUserById(owner).email),
                     classroomId = id,
-                    to = staffEmail ,
+                    to = staffEmail,
+                    isDeleteClass = true,
                 )
             }
         }

@@ -53,6 +53,7 @@ class MailService
             description: String,
             classroomId: String,
             to: String,
+            isDeleteClass: Boolean = false,
         ) {
             GlobalScope.launch {
                 try {
@@ -60,6 +61,7 @@ class MailService
                     context.setVariable("context", topic)
                     context.setVariable("description", description)
                     context.setVariable("classroomLink", "$domain/class/$classroomId")
+                    context.setVariable("isDeleteClass", isDeleteClass)
                     sendEmail(
                         subject,
                         "announcement",
