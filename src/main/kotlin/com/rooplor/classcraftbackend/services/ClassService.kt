@@ -216,6 +216,7 @@ class ClassService
         fun deleteClass(id: String) {
             val userList = mutableListOf<String>()
             val classSubmission =  formSubmissionRepository.findByClassroomId(id)
+            val owner = findClassById(id).owner
             classRepository.deleteById(id)
             classSubmission.forEach {
                 userList.add(it.submittedBy!!)
@@ -224,7 +225,7 @@ class ClassService
                 mailService.announcementEmail(
                     subject = MailMessage.CLASS_DELETED_SUBJECT.replace("\$0", findClassById(id).title),
                     topic = MailMessage.CLASS_DELETED_TOPIC,
-                    description = MailMessage.CLASS_DELETED.replace("\$0", userService.findUserById(findClassById(id).owner).email),
+                    description = MailMessage.CLASS_DELETED.replace("\$0", userService.findUserById(owner).email),
                     classroomId = id,
                     to = userService.findUserById(it).email,
                 )
@@ -234,7 +235,7 @@ class ClassService
                 mailService.announcementEmail(
                     subject = MailMessage.CLASS_DELETED_VENUE_SUBJECT.replace("\$0", findClassById(id).dates.flatMap { it.venueId.map { venueId -> venueService.findVenueById(venueId).room } }.joinToString(", ").trimEnd(',')),
                     topic = MailMessage.CLASS_DELETED_TOPIC,
-                    description = MailMessage.CLASS_DELETED.replace("\$0", userService.findUserById(findClassById(id).owner).email),
+                    description = MailMessage.CLASS_DELETED.replace("\$0", userService.findUserById(owner).email),
                     classroomId = id,
                     to = staffEmail ,
                 )
