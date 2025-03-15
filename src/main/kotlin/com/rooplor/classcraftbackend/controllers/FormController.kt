@@ -225,12 +225,14 @@ class FormController(
     @GetMapping("/qrcode/checkin/{classId}", produces = [MediaType.IMAGE_PNG_VALUE])
     fun barbecueEAN13Barcode(
         @PathVariable classId: String,
+        @RequestParam(required = false) day: Int? = null,
     ): ResponseEntity<BufferedImage> =
         try {
             ResponseEntity(
                 formSubmissionService.generateQRCodeWithLogo(
                     classId,
-                    "src/main/resources/classcraftlogo.png"
+                    "src/main/resources/classcraftlogo.png",
+                    day
                 ),
                 HttpStatus.OK,
             )
