@@ -69,7 +69,7 @@ class FormSubmissionService(
         formSubmission.attendeesStatus = createAttendeesList(formSubmission.classroomId)
 
         mailService.announcementEmail(
-            subject = MailMessage.REGISTRATION_SUBJECT,
+            subject = MailMessage.REGISTRATION_SUBJECT + "\"${classService.findClassById(formSubmission.classroomId).title}\"\n",
             topic = MailMessage.REGISTRATION_TOPIC + "\"${classService.findClassById(formSubmission.classroomId).title}\"\n",
             description =
                 if (form.isOwnerApprovalRequired) {
@@ -125,16 +125,17 @@ class FormSubmissionService(
         isApproved: Boolean,
     ): FormSubmission {
         val formSubmission = formSubmissionRepository.findById(formSubmissionId).orElseThrow { Exception(ErrorMessages.ANSWER_NOT_FOUND) }
+        val title = classService.findClassById(formSubmission.classroomId).title
         val (subject, topic, description) = if (isApproved) {
             Triple(
-                MailMessage.REGISTRATION_APPROVED_SUBJECT,
-                MailMessage.REGISTRATION_APPROVED_TOPIC + "\"${classService.findClassById(formSubmission.classroomId).title}\"\n",
+                MailMessage.REGISTRATION_APPROVED_SUBJECT + "\"${title}\"\n",
+                MailMessage.REGISTRATION_APPROVED_TOPIC + "\"${title}\"\n",
                 MailMessage.REGISTRATION_SUCCESS
             )
         } else {
             Triple(
-                MailMessage.REGISTRATION_PENDING_SUBJECT,
-                MailMessage.REGISTRATION_PENDING_TOPIC + "\"${classService.findClassById(formSubmission.classroomId).title}\"\n",
+                MailMessage.REGISTRATION_PENDING_SUBJECT + "\"${title}\"\n",
+                MailMessage.REGISTRATION_PENDING_TOPIC + "\"${title}\"\n",
                 MailMessage.REGISTRATION_PENDING
             )
         }
@@ -166,9 +167,10 @@ class FormSubmissionService(
                     it
                 }
             }
+        val title = classService.findClassById(formSubmission.classroomId).title
         mailService.announcementEmail(
-            subject = MailMessage.CHECKIN_SUBJECT,
-            topic = MailMessage.CHECKIN_SUBJECT + "\"${classService.findClassById(formSubmission.classroomId).title}\"\n",
+            subject = MailMessage.CHECKIN_SUBJECT + "\"${title}\"\n",
+            topic = MailMessage.CHECKIN_SUBJECT + "\"${title}\"\n",
             description = MailMessage.CHECKIN_SUCCESS,
             classroomId = formSubmission.classroomId,
             to = userService.findUserById(userId).email,
