@@ -172,6 +172,7 @@ class FormSubmissionService(
                     it
                 }
             }
+        formSubmission.checkInWhen = LocalDateTime.now()
         val title = classService.findClassById(formSubmission.classroomId).title
         mailService.announcementEmail(
             subject = MailMessage.CHECKIN_SUBJECT + "\"${title}\"\n",
@@ -196,7 +197,7 @@ class FormSubmissionService(
             val classDate = classroom.dates.sortedBy { it.date.startDateTime }.indexOfFirst {
                 val startTime = it.date.startDateTime
                 val endTime = it.date.endDateTime
-                currentDateTime.isAfter(startTime) && currentDateTime.isBefore(endTime)
+                currentDateTime.isAfter(startTime.minusMinutes(30)) && currentDateTime.isBefore(endTime)
             }
 
             if (classDate == -1) {
