@@ -28,5 +28,6 @@ object MailMessage {
     const val CLASS_DELETED = " has been deleted. please contact the $0 for more information."
 
     const val CLASS_DELETED_VENUE_SUBJECT = "$CLASS_DELETED_SUBJECT Please cancel reservation for venue $1"
+    const val CLASS_DELETED_VENUE = " has been deleted. Please cancel the reservation for venue, if you any questions please contact the $0."
 
 }
