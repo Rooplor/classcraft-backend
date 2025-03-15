@@ -47,7 +47,7 @@ class MailServiceTest {
 
         // Mock @Value properties
         setFinalField(mailService, "from", fromEmail)
-        setFinalField(mailService, "to", toEmail)
+        setFinalField(mailService, "staffMail", toEmail)
 
         // Stub the template engine to return predefined HTML content
         `when`(templateEngine.process(template, context)).thenReturn(htmlContent)

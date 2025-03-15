@@ -10,6 +10,7 @@ import com.rooplor.classcraftbackend.enums.VenueStatus
 import com.rooplor.classcraftbackend.helpers.ClassroomHelper
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
+import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
 import com.rooplor.classcraftbackend.services.mail.MailService
 import com.rooplor.classcraftbackend.types.DateDetail
 import com.rooplor.classcraftbackend.types.DateWithVenue
@@ -34,6 +35,7 @@ import kotlin.test.assertFailsWith
 @SpringBootTest
 class ClassroomServiceTest {
     private val classRepository: ClassroomRepository = Mockito.mock(ClassroomRepository::class.java)
+    private val formSubmissionRepository: FormSubmissionRepository = Mockito.mock(FormSubmissionRepository::class.java)
     private val venueService: VenueService = Mockito.mock(VenueService::class.java)
     private val authService: AuthService = Mockito.mock(AuthService::class.java)
     private val userService: UserService = Mockito.mock(UserService::class.java)
@@ -45,7 +47,7 @@ class ClassroomServiceTest {
     @BeforeEach
     fun setUp() {
         MockitoAnnotations.openMocks(this)
-        classService = ClassService(classRepository, venueService, authService, userService, mailService, formService, classroomHelper)
+        classService = ClassService(classRepository, formSubmissionRepository, venueService, authService, userService, mailService, formService, classroomHelper)
     }
 
     @Test
@@ -801,6 +803,7 @@ class ClassroomServiceTest {
             subject = eq("[ClassCraft] Reservation venue for ${classroom.title} request from ${user.username}"),
             template = eq("reservation"),
             context = any(Context::class.java),
+            to = eq(null),
         )
 
         val context = Context()
@@ -849,9 +852,11 @@ class ClassroomServiceTest {
                 capacity = 30,
                 dates = listOf(),
                 venueStatus = 1,
+                owner = "1",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        `when`(userService.findUserById("1")).thenReturn(User(id = "1", username = "admin", email = "123@gmail.com"))
 
         val fillCraftDetail = classService.updateVenueStatus(classId, 2)
         assertEquals(fillCraftDetail.venueStatus, 2)
@@ -937,9 +942,11 @@ class ClassroomServiceTest {
                 capacity = 30,
                 dates = listOf(),
                 venueStatus = 2,
+                owner = "1",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        `when`(userService.findUserById("1")).thenReturn(User(id = "1", username = "admin", email = "123@gmail.com"))
 
         val result = classService.updateVenueStatus(classId, 3, "")
         assertEquals(classroomObj, result)
@@ -962,9 +969,11 @@ class ClassroomServiceTest {
                 dates = listOf(),
                 venueStatus = 2,
                 rejectReason = "Venue is not available",
+                owner = "1"
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
+        `when`(userService.findUserById("1")).thenReturn(User(id = "1", username = "admin", email = "123@gmail.com"))
 
         val result = classService.updateVenueStatus(classId, 4, rejectReason)
         assertEquals(classroomObj, result)
@@ -1065,6 +1074,7 @@ class ClassroomServiceTest {
         val classId = "1"
 
         Mockito.doNothing().`when`(classRepository).deleteById(classId)
+        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(Classroom(id = classId, owner = "owner1")))
         Mockito.doNothing().`when`(formService).deleteFormById(classId)
 
         classService.deleteClass(classId)

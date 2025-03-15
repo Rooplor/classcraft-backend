@@ -4,7 +4,7 @@ enum class AttendeesStatus(
     val id: Int,
     val value: String,
 ) {
-    PRESENT(1, "Present"),
+    PRESENT(1, "Present"), //Check-in
     ABSENT(2, "Absent"),
     LATE(3, "Late"),
     NOT_GOING(4, "Not Going"),

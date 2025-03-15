@@ -12,6 +12,7 @@ import com.rooplor.classcraftbackend.enums.FieldValidation
 import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
+import com.rooplor.classcraftbackend.services.mail.MailService
 import com.rooplor.classcraftbackend.types.Attendees
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -30,7 +31,9 @@ class FormSubmissionServiceTest {
     private val authService = mock(AuthService::class.java)
     private val userService = mock(UserService::class.java)
     private val classService = mock(ClassService::class.java)
-    private val formSubmissionService = FormSubmissionService(formSubmissionRepository, formService, authService, userService, classService)
+    private val mailService = mock(MailService::class.java)
+    private val formSubmissionService =
+        FormSubmissionService(formSubmissionRepository, formService, authService, userService, classService, mailService)
 
     @Test
     fun `submitForm should save and return form submission`() {
@@ -218,6 +221,8 @@ class FormSubmissionServiceTest {
         val expectation = formSubmission.copy(isApprovedByOwner = true)
         `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.of(formSubmission))
         `when`(formSubmissionRepository.save(formSubmission)).thenReturn(expectation)
+        `when`(classService.findClassById("class1")).thenReturn(Classroom(id = "class1", title = "React Native"))
+        `when`(userService.findUserById("user1")).thenReturn(User(id = "user1", username = "user1", email = "123@gmail.com"))
 
         val result = formSubmissionService.setFormSubmissionApprovalStatus("1", true)
 
@@ -251,6 +256,8 @@ class FormSubmissionServiceTest {
         val expectation = formSubmission.copy(isApprovedByOwner = false)
         `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.of(formSubmission))
         `when`(formSubmissionRepository.save(formSubmission)).thenReturn(expectation)
+        `when`(classService.findClassById("class1")).thenReturn(Classroom(id = "class1", title = "React Native"))
+        `when`(userService.findUserById("user1")).thenReturn(User(id = "user1", username = "user1", email = "123@gmail.com"))
 
         val result = formSubmissionService.setFormSubmissionApprovalStatus("1", false)
 
@@ -294,7 +301,7 @@ class FormSubmissionServiceTest {
             FormSubmission(
                 "1",
                 "form1",
-                "class1",
+                "1",
                 mapOf("email" to "test@mail.com"),
                 mapOf(),
                 "user1",
@@ -305,6 +312,9 @@ class FormSubmissionServiceTest {
         val expectation = formSubmission.copy(attendeesStatus = listOfAttendees)
         `when`(formSubmissionRepository.findById("1")).thenReturn(Optional.of(formSubmission))
         `when`(formSubmissionRepository.save(formSubmission)).thenReturn(expectation)
+        `when`(authService.getUserId()).thenReturn("user1")
+        `when`(classService.findClassById("1")).thenReturn(Classroom(id = "1", title = "React Native"))
+        `when`(userService.findUserById("user1")).thenReturn(User(id = "user1", username = "user1", email = "123@gmail.com"))
 
         val result = formSubmissionService.setAttendeesStatus("1", AttendeesStatus.PRESENT, 1)
 

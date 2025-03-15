@@ -9,7 +9,9 @@ import com.rooplor.classcraftbackend.entities.FormField
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.messages.ErrorMessages
+import com.rooplor.classcraftbackend.messages.MailMessage
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
+import com.rooplor.classcraftbackend.services.mail.MailService
 import com.rooplor.classcraftbackend.types.Attendees
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -26,6 +28,7 @@ class FormSubmissionService(
     private val authService: AuthService,
     private val userService: UserService,
     private val classService: ClassService,
+    private val mailService: MailService,
 ) {
     @Value("\${staff.domain}")
     private val domain: String? = null
@@ -52,6 +55,18 @@ class FormSubmissionService(
         formSubmission.isApprovedByOwner = !form.isOwnerApprovalRequired
         formSubmission.attendeesStatus = createAttendeesList(formSubmission.classroomId)
 
+        mailService.announcementEmail(
+            subject = MailMessage.REGISTRATION_SUBJECT + "\"${classService.findClassById(formSubmission.classroomId).title}\"\n",
+            topic = MailMessage.REGISTRATION_TOPIC + "\"${classService.findClassById(formSubmission.classroomId).title}\"\n",
+            description =
+                if (form.isOwnerApprovalRequired) {
+                    MailMessage.REGISTRATION_PENDING
+                } else {
+                    MailMessage.REGISTRATION_SUCCESS
+                },
+            classroomId = formSubmission.classroomId,
+            to = userDetail.email,
+        )
         return formSubmissionRepository.save(formSubmission)
     }
 
@@ -114,6 +129,27 @@ class FormSubmissionService(
         isApproved: Boolean,
     ): FormSubmission {
         val formSubmission = formSubmissionRepository.findById(formSubmissionId).orElseThrow { Exception(ErrorMessages.ANSWER_NOT_FOUND) }
+        val title = classService.findClassById(formSubmission.classroomId).title
+        val (subject, topic, description) = if (isApproved) {
+            Triple(
+                MailMessage.REGISTRATION_APPROVED_SUBJECT + "\"${title}\"\n",
+                MailMessage.REGISTRATION_APPROVED_TOPIC + "\"${title}\"\n",
+                MailMessage.REGISTRATION_SUCCESS
+            )
+        } else {
+            Triple(
+                MailMessage.REGISTRATION_PENDING_SUBJECT + "\"${title}\"\n",
+                MailMessage.REGISTRATION_PENDING_TOPIC + "\"${title}\"\n",
+                MailMessage.REGISTRATION_PENDING
+            )
+        }
+        mailService.announcementEmail(
+            subject = subject,
+            topic = topic,
+            description = description,
+            classroomId = formSubmission.classroomId,
+            to = userService.findUserById(formSubmission.submittedBy!!).email
+        )
         formSubmission.isApprovedByOwner = isApproved
         return formSubmissionRepository.save(formSubmission)
     }
@@ -125,6 +161,7 @@ class FormSubmissionService(
         attendeesStatus: AttendeesStatus,
         day: Int,
     ): FormSubmission {
+        val userId = authService.getUserId()
         val formSubmission = formSubmissionRepository.findById(formSubmissionId).orElseThrow { Exception(ErrorMessages.ANSWER_NOT_FOUND) }
         formSubmission.attendeesStatus =
             formSubmission.attendeesStatus?.map {
@@ -134,6 +171,14 @@ class FormSubmissionService(
                     it
                 }
             }
+        val title = classService.findClassById(formSubmission.classroomId).title
+        mailService.announcementEmail(
+            subject = MailMessage.CHECKIN_SUBJECT + "\"${title}\"\n",
+            topic = MailMessage.CHECKIN_SUBJECT + "\"${title}\"\n",
+            description = MailMessage.CHECKIN_SUCCESS,
+            classroomId = formSubmission.classroomId,
+            to = userService.findUserById(userId).email,
+        )
         return formSubmissionRepository.save(formSubmission)
     }
 

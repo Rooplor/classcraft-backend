@@ -1,5 +1,7 @@
 package com.rooplor.classcraftbackend.services.mail
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender
@@ -19,12 +21,16 @@ class MailService
         private val from: String? = null
 
         @Value("\${staff.email}")
-        private val to: String? = null
+        private val staffMail: String? = null
+
+        @Value("\${staff.domain}")
+        private val domain: String? = null
 
         fun sendEmail(
             subject: String?,
             template: String?,
             context: Context?,
+            to: String? = staffMail,
         ) {
             try {
                 val mailMessage = javaMailSender!!.createMimeMessage()
@@ -38,6 +44,33 @@ class MailService
                 javaMailSender.send(mailMessage)
             } catch (e: Exception) {
                 throw RuntimeException(e.message)
+            }
+        }
+
+        fun announcementEmail(
+            subject: String,
+            topic: String,
+            description: String,
+            classroomId: String,
+            to: String,
+            isDeleteClass: Boolean = false,
+        ) {
+            GlobalScope.launch {
+                try {
+                    val context = Context()
+                    context.setVariable("context", topic)
+                    context.setVariable("description", description)
+                    context.setVariable("classroomLink", "$domain/class/$classroomId")
+                    context.setVariable("isDeleteClass", isDeleteClass)
+                    sendEmail(
+                        subject,
+                        "announcement",
+                        context,
+                        to,
+                    )
+                } catch (e: Exception) {
+                    throw RuntimeException(e.message)
+                }
             }
         }
     }
