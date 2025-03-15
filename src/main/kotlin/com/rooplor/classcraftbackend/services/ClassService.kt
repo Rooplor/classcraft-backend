@@ -11,6 +11,7 @@ import com.rooplor.classcraftbackend.helpers.ClassroomHelper
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.messages.MailMessage
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
+import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
 import com.rooplor.classcraftbackend.services.mail.MailService
 import com.rooplor.classcraftbackend.types.DateWithVenue
 import com.rooplor.classcraftbackend.utils.JsonValid.isValidJson
@@ -28,6 +29,7 @@ class ClassService
     @Autowired
     constructor(
         private val classRepository: ClassroomRepository,
+        private val formSubmissionRepository: FormSubmissionRepository,
         private val venueService: VenueService,
         private val authService: AuthService,
         private val userService: UserService,
@@ -35,11 +37,14 @@ class ClassService
         private val formService: FormService,
         private val classroomHelper: ClassroomHelper,
     ) {
-        @Value("\${staff.username}")
+    @Value("\${staff.username}")
         private val staffUsername: String? = null
 
         @Value("\${staff.domain}")
         private val staffDomain: String? = null
+
+        @Value("\${staff.email}")
+        private val staffEmail: String? = null
 
         fun findAllClassPublishedWithRegistrationCondition(registrationStatus: Boolean): List<Classroom> =
             classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(registrationStatus)
@@ -209,8 +214,31 @@ class ClassService
         }
 
         fun deleteClass(id: String) {
+            val userList = mutableListOf<String>()
+            val classSubmission =  formSubmissionRepository.findByClassroomId(id)
             classRepository.deleteById(id)
+            classSubmission.forEach {
+                userList.add(it.submittedBy!!)
+            }
+            userList.forEach {
+                mailService.announcementEmail(
+                    subject = MailMessage.CLASS_DELETED_SUBJECT.replace("\$0", findClassById(id).title),
+                    topic = MailMessage.CLASS_DELETED_TOPIC,
+                    description = MailMessage.CLASS_DELETED.replace("\$0", userService.findUserById(findClassById(id).owner).email),
+                    classroomId = id,
+                    to = userService.findUserById(it).email,
+                )
+            }
             formService.deleteFormById(id)
+            if (staffEmail != null) {
+                mailService.announcementEmail(
+                    subject = MailMessage.CLASS_DELETED_VENUE_SUBJECT.replace("\$0", findClassById(id).dates.flatMap { it.venueId.map { venueId -> venueService.findVenueById(venueId).room } }.joinToString(", ").trimEnd(',')),
+                    topic = MailMessage.CLASS_DELETED_TOPIC,
+                    description = MailMessage.CLASS_DELETED.replace("\$0", userService.findUserById(findClassById(id).owner).email),
+                    classroomId = id,
+                    to = staffEmail ,
+                )
+            }
         }
 
         fun findClassByOwners(owners: List<String>): List<Classroom> = owners.flatMap { owner -> classRepository.findByOwner(owner) }

@@ -22,4 +22,11 @@ object MailMessage {
     const val REGISTRATION_PENDING_SUBJECT = "[ClassCraft] Your registration is pending approval"
     const val REGISTRATION_APPROVED_TOPIC = "Your registration has been approved for "
     const val REGISTRATION_PENDING_TOPIC = "Your registration is pending approval for "
+
+    const val CLASS_DELETED_SUBJECT = "[ClassCraft] Class $0 has been deleted"
+    const val CLASS_DELETED_TOPIC = "The class "
+    const val CLASS_DELETED = " has been deleted. please contact the $0 for more information."
+
+    const val CLASS_DELETED_VENUE_SUBJECT = "$CLASS_DELETED_SUBJECT Please cancel reservation for venue $0"
+
 }
