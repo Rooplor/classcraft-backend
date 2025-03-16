@@ -2,23 +2,23 @@ package com.rooplor.classcraftbackend.services
 
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
+import io.minio.RemoveObjectArgs
 import io.minio.StatObjectArgs
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
 @Service
-class FileUploadService(
+class FileService(
     private val minioClient: MinioClient,
     private val environment: Environment,
 ) {
     fun fileUpload(
         file: MultipartFile,
-        classId: String,
-        className: String,
+        fileCategory: String,
     ): String {
         val objectName = "${System.currentTimeMillis()}-${file.originalFilename}"
-        val folder = "$classId-${className.toLowerCase()}/"
+        val folder = "$fileCategory/"
 
         val url = environment.getProperty("minio.reverse-url")
         val bucketName = environment.getProperty("minio.bucket-name")
@@ -52,5 +52,24 @@ class FileUploadService(
         )
 
         return "$url/$bucketName/$folder$objectName"
+    }
+
+    fun removeFile(fileUrl: String) {
+        val url = environment.getProperty("minio.reverse-url")
+        val bucketName = environment.getProperty("minio.bucket-name")
+
+        val objectName = fileUrl.removePrefix("$url/$bucketName/")
+
+        try {
+            minioClient.removeObject(
+                RemoveObjectArgs
+                    .builder()
+                    .bucket(bucketName)
+                    .`object`(objectName)
+                    .build(),
+            )
+        } catch (e: Exception) {
+            throw RuntimeException("Failed to remove file: $fileUrl", e)
+        }
     }
 }

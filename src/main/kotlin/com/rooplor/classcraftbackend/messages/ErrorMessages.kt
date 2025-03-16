@@ -16,4 +16,23 @@ object ErrorMessages {
     const val USER_WITH_USERNAME_ALREADY_EXISTS = "User with username $0 already exists"
     const val USER_CANNOT_DELETE_OWN_ACCOUNT = "User cannot delete own account"
     const val USER_WITH_ID_DOSE_NOT_EXIST = "User with id $0 does not exist"
+
+    // form error messages
+    const val FORM_NOT_FOUND = "Form not found"
+    const val MISSING_REQUIRED_FIELDS = "Missing required fields: $0"
+    const val ANSWER_NOT_FOUND = "Answer not found"
+    const val FIELD_VALIDATE_FAIL = "Field '$0' does not match the validation pattern."
+    const val ANSWER_ALREADY_SUBMITTED = "Answer already submitted"
+
+    // change venue status error messages
+    const val VENUE_REJECT_REASON_IS_BLANK_OR_NULL = "Reject reason is required when rejecting a venue"
+    const val VENUE_STATUS_INVALID = "Venue status is not valid"
+
+    // authorization error messages
+    const val FORBIDDEN = "Forbidden"
+
+    // Class error messages
+    const val CLASS_NOT_FOUND = "Class not found"
+    const val CLASS_CANNOT_GENERATE_QR_CODE = "Class is not scheduled for the current time"
+    const val CLASS_CANNOT_CHANGE_DATE = "Cannot change dates of a published class"
 }

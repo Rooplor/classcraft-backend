@@ -1,5 +1,6 @@
 package com.rooplor.classcraftbackend.utils
 
+import com.rooplor.classcraftbackend.constant.Age
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -13,15 +14,16 @@ class JwtUtil(
     private val environment: Environment,
 ) {
     private val secretKey = environment.getProperty("jwt.secret-key") ?: "secretalsdjflajjiernjbuasdfoaljnwiuebrialksjdnfkahsdfjalsdjf"
+    private val allowedClockSkewSeconds: Long = Age.REFRESH_TOKEN_AGE
 
     fun generateToken(username: String): String {
         val claims: Map<String, Any> = HashMap()
-        return createToken(claims, username, 1000 * 60 * 60 * 10) // 10 hours
+        return createToken(claims, username, Age.ACCESS_TOKEN_AGE) // 10 hours
     }
 
     fun generateRefreshToken(username: String): String {
         val claims: Map<String, Any> = HashMap()
-        return createToken(claims, username, 1000 * 60 * 60 * 24 * 7) // 7 days
+        return createToken(claims, username, Age.REFRESH_TOKEN_AGE) // 7 days
     }
 
     private fun createToken(
@@ -60,6 +62,7 @@ class JwtUtil(
         Jwts
             .parser()
             .setSigningKey(secretKey)
+            .setAllowedClockSkewSeconds(allowedClockSkewSeconds)
             .parseClaimsJws(token)
             .body
 

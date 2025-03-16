@@ -10,6 +10,8 @@
 data
 loki-data
 
+loki-data
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
@@ -153,3 +155,6 @@ replay_pid*
 
 ## Firebase Key
 /src/main/resources/serviceAccountKey.json
+
+## integration test
+/integration/node_modules

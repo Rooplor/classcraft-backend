@@ -11,6 +11,14 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+
+    env:
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+      STAFF_EMAIL: ${{ secrets.STAFF_EMAIL_QA }}
+      STAFF_USERNAME: ${{ secrets.STAFF_USERNAME }}
+      STAFF_DOMAIN: ${{ secrets.STAFF_DOMAIN_QA }}
+
     steps:
       - name: checkout-code
         uses: actions/checkout@v3
@@ -24,14 +32,5 @@ jobs:
       - name: init mongodb
         run: docker compose up -d
 
-      - name: install-dependency
+      - name: build-test
         run: ./mvnw install
-
-      - name: build
-        run: ./mvnw package
-
-      - name: ktlint
-        run: ./mvnw ktlint:check
-
-      - name: unit-test
-        run:  ./mvnw test

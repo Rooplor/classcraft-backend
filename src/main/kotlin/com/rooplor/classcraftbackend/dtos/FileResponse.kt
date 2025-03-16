@@ -1,5 +1,5 @@
 package com.rooplor.classcraftbackend.dtos
 
 data class FileResponse(
-    val url: String,
+    val urls: List<String>,
 )

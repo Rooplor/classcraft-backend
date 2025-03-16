@@ -3,6 +3,7 @@ package com.rooplor.classcraftbackend.services
 import io.minio.MinioClient
 import io.minio.ObjectWriteResponse
 import io.minio.PutObjectArgs
+import io.minio.RemoveObjectArgs
 import io.minio.StatObjectArgs
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -20,10 +21,10 @@ import org.springframework.web.ErrorResponseException
 import org.springframework.web.multipart.MultipartFile
 
 @SpringBootTest
-class FileUploadServiceTest {
+class FileServiceTest {
     private val minioClient: MinioClient = mock(MinioClient::class.java)
     private val environment: Environment = mock(Environment::class.java)
-    private val fileUploadService = FileUploadService(minioClient, environment)
+    private val fileService = FileService(minioClient, environment)
 
     @BeforeEach
     fun setUp() {
@@ -43,13 +44,13 @@ class FileUploadServiceTest {
         doThrow(ErrorResponseException::class.java).`when`(minioClient).statObject(any(StatObjectArgs::class.java))
         doAnswer { mock(ObjectWriteResponse::class.java) }.`when`(minioClient).putObject(any(PutObjectArgs::class.java))
 
-        val result = fileUploadService.fileUpload(file, "classId", "className")
+        val result = fileService.fileUpload(file, "classId")
 
         verify(minioClient, times(2)).putObject(any(PutObjectArgs::class.java))
         assertTrue(
             result.matches(
                 Regex(
-                    "http://localhost/classcraft/classId-classname/\\d+-testfile.txt",
+                    "http://localhost/classcraft/classId/\\d+-testfile.txt",
                 ),
             ),
         )
@@ -67,15 +68,38 @@ class FileUploadServiceTest {
             mock(ObjectWriteResponse::class.java)
         }.`when`(minioClient).putObject(any(PutObjectArgs::class.java))
 
-        val result = fileUploadService.fileUpload(file, "classId", "className")
+        val result = fileService.fileUpload(file, "classId")
 
         verify(minioClient, times(1)).putObject(any(PutObjectArgs::class.java))
         assertTrue(
             result.matches(
                 Regex(
-                    "http://localhost/classcraft/classId-classname/\\d+-testfile.txt",
+                    "http://localhost/classcraft/classId/\\d+-testfile.txt",
                 ),
             ),
         )
+    }
+
+    @Test
+    fun `test remove file successfully`() {
+        val fileUrl = "http://localhost/classcraft/classId/testfile.txt"
+
+        fileService.removeFile(fileUrl)
+
+        verify(minioClient, times(1)).removeObject(any(RemoveObjectArgs::class.java))
+    }
+
+    @Test
+    fun `test remove file failure`() {
+        val fileUrl = "http://localhost/classcraft/classId/testfile.txt"
+
+        doThrow(RuntimeException::class.java).`when`(minioClient).removeObject(any(RemoveObjectArgs::class.java))
+
+        val exception =
+            org.junit.jupiter.api.assertThrows<RuntimeException> {
+                fileService.removeFile(fileUrl)
+            }
+
+        assertTrue(exception.message!!.contains("Failed to remove file"))
     }
 }

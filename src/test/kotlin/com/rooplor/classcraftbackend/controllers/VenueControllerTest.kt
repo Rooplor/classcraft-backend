@@ -3,6 +3,7 @@ package com.rooplor.classcraftbackend.controllers
 import com.rooplor.classcraftbackend.configs.TestConfig
 import com.rooplor.classcraftbackend.configs.TestSecurityConfig
 import com.rooplor.classcraftbackend.entities.Venue
+import com.rooplor.classcraftbackend.entities.location
 import com.rooplor.classcraftbackend.services.VenueService
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,8 +28,17 @@ class VenueControllerTest {
 
     @Test
     fun `should return all venues`() {
-        val venue = listOf(Venue("1", "TRAIN_3"), Venue("2", "TRAIN_4"))
-        Mockito.`when`(venueService.findAllVenue()).thenReturn(venue)
+        val venue =
+            Venue(
+                "1",
+                "TRAIN_3",
+                location = location("building", 1),
+                description = "description",
+                capacity = 100,
+                imageUrl = "imageUrl",
+            )
+        val venueList = listOf(venue, venue.copy(id = "2"))
+        Mockito.`when`(venueService.findAllVenue()).thenReturn(venueList)
 
         mockMvc
             .perform(get("/api/venue"))
@@ -37,11 +47,75 @@ class VenueControllerTest {
 
     @Test
     fun `should insert a venue`() {
-        val venue = Venue("1", "TRAIN_3")
+        val venue =
+            Venue(
+                "1",
+                "TRAIN_3",
+                location = location("building", 1),
+                description = "description",
+                capacity = 100,
+                imageUrl = "imageUrl",
+            )
         Mockito.`when`(venueService.insertVenue(venue)).thenReturn(venue)
 
         mockMvc
             .perform(get("/api/venue"))
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `should update a venue`() {
+        val venue =
+            Venue(
+                "1",
+                "TRAIN_3",
+                location = location("building", 1),
+                description = "description",
+                capacity = 100,
+                imageUrl = "imageUrl",
+            )
+        Mockito.`when`(venueService.updateVenue("1", venue)).thenReturn(venue)
+
+        mockMvc
+            .perform(get("/api/venue"))
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `should return venue by id`() {
+        val venue =
+            Venue(
+                "1",
+                "TRAIN_3",
+                location = location("building", 1),
+                description = "description",
+                capacity = 100,
+                imageUrl = "imageUrl",
+            )
+        Mockito.`when`(venueService.findVenueById("1")).thenReturn(venue)
+
+        mockMvc
+            .perform(get("/api/venue/1"))
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `should return venues by ids`() {
+        val venue1 =
+            Venue(
+                "1",
+                "TRAIN_3",
+                location = location("building", 1),
+                description = "description",
+                capacity = 100,
+                imageUrl = "imageUrl",
+            )
+        val venue2 = venue1.copy(id = "2")
+        Mockito.`when`(venueService.findVenueById("1")).thenReturn(venue1)
+        Mockito.`when`(venueService.findVenueById("2")).thenReturn(venue2)
+
+        mockMvc
+            .perform(get("/api/venue/ids").param("ids", "1,2"))
             .andExpect(status().isOk)
     }
 }

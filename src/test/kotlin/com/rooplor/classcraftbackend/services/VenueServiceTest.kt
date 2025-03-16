@@ -41,4 +41,16 @@ class VenueServiceTest {
         val result = venueService.insertVenue(venue)
         assertEquals(venue, result)
     }
+
+    @Test
+    fun `should update a venue`() {
+        val venueId = "1"
+        val venue = Venue("1", "TRAIN_3")
+        val updatedVenue = Venue("1", "TRAIN_4")
+        Mockito.`when`(venueRepository.findById(venueId)).thenReturn(Optional.of(venue))
+        Mockito.`when`(venueRepository.save(venue)).thenReturn(updatedVenue)
+
+        val result = venueService.updateVenue(venueId, updatedVenue)
+        assertEquals(updatedVenue, result)
+    }
 }

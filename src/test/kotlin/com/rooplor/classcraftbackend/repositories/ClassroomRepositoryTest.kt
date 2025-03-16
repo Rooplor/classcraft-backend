@@ -29,7 +29,7 @@ class ClassroomRepositoryTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         `when`(classRepository.save(classroomToSave)).thenReturn(classroomToSave)
         `when`(classRepository.findById(classroomToSave.id!!)).thenReturn(Optional.of(classroomToSave))
@@ -52,7 +52,7 @@ class ClassroomRepositoryTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
                 Classroom(
                     id = "2",
@@ -63,7 +63,7 @@ class ClassroomRepositoryTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                 ),
             )
         `when`(classRepository.saveAll(classrooms)).thenReturn(classrooms)
@@ -92,7 +92,7 @@ class ClassroomRepositoryTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                     registrationStatus = true,
                     isPublished = true,
                 ),
@@ -105,7 +105,7 @@ class ClassroomRepositoryTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                     registrationStatus = false,
                     isPublished = true,
                 ),
@@ -139,7 +139,7 @@ class ClassroomRepositoryTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         `when`(classRepository.save(classroomToDelete)).thenReturn(classroomToDelete)
         `when`(classRepository.findById(classroomToDelete.id!!)).thenReturn(Optional.of(classroomToDelete))
@@ -164,7 +164,7 @@ class ClassroomRepositoryTest {
                 type = ClassType.LECTURE,
                 format = Format.ONSITE,
                 capacity = 30,
-                date = listOf(),
+                dates = listOf(),
             )
         `when`(classRepository.save(classroomToUpdate)).thenReturn(classroomToUpdate)
         `when`(classRepository.findById(classroomToUpdate.id!!)).thenReturn(Optional.of(classroomToUpdate))
@@ -189,7 +189,7 @@ class ClassroomRepositoryTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                     owner = "owner1",
                 ),
                 Classroom(
@@ -201,7 +201,7 @@ class ClassroomRepositoryTest {
                     type = ClassType.LECTURE,
                     format = Format.ONSITE,
                     capacity = 30,
-                    date = listOf(),
+                    dates = listOf(),
                     owner = "owner1",
                 ),
             )
@@ -209,6 +209,51 @@ class ClassroomRepositoryTest {
         `when`(classRepository.findByOwner("owner1")).thenReturn(classrooms)
 
         val result = classRepository.findByOwner("owner1")
+        assertEquals(classrooms, result)
+    }
+
+    @Test
+    fun `should return classes when search`() {
+        val classrooms =
+            listOf(
+                Classroom(
+                    id = "1",
+                    title = "React Native",
+                    details = "Learn how to build mobile apps using React Native",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    dates = listOf(),
+                    isPublished = true,
+                ),
+                Classroom(
+                    id = "2",
+                    title = "Spring Boot 101",
+                    details = "Learn how to build web apps using Spring Boot",
+                    target = "Beginner",
+                    prerequisite = "None",
+                    type = ClassType.LECTURE,
+                    format = Format.ONSITE,
+                    capacity = 30,
+                    dates = listOf(),
+                    isPublished = true,
+                ),
+            )
+
+        `when`(
+            classRepository.findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue(
+                "React",
+                "React",
+            ),
+        ).thenReturn(classrooms)
+
+        val result =
+            classRepository.findByIsPublishedTrueAndTitleContainingIgnoreCaseOrDetailsContainingIgnoreCaseAndIsPublishedTrue(
+                "React",
+                "React",
+            )
         assertEquals(classrooms, result)
     }
 }

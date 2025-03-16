@@ -21,7 +21,7 @@ class SecurityConfig {
 
     @Throws(Exception::class)
     @Bean
-    @Profile("production")
+    @Profile("prod")
     fun configure(http: HttpSecurity): DefaultSecurityFilterChain {
         http
             .csrf { it.disable() }
@@ -33,22 +33,12 @@ class SecurityConfig {
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
                         "/swagger-ui.html",
+                        "/api/class/*/venue-status",
                     ).permitAll()
                 it.anyRequest().authenticated()
             }.sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
-        return http.build()
-    }
-
-    @Throws(Exception::class)
-    @Bean
-    @Profile("development")
-    fun configureDevelopment(http: HttpSecurity): DefaultSecurityFilterChain {
-        http
-            .cors { it.disable() }
-            .csrf { it.disable() }
-            .authorizeRequests { it.anyRequest().permitAll() }
         return http.build()
     }
 }

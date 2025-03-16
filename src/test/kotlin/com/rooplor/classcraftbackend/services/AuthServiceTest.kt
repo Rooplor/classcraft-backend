@@ -11,7 +11,6 @@ import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 @SpringBootTest
 class AuthServiceTest {
@@ -58,17 +57,22 @@ class AuthServiceTest {
     }
 
     @Test
-    fun `getAuthenticatedUserDetails should return null when user is not authenticated`() {
+    fun `getUserId should return user id when user is authenticated`() {
+        val authentication = Mockito.mock(Authentication::class.java)
         val securityContext = Mockito.mock(SecurityContext::class.java)
+        val username = "user1"
+        val user = User(id = "1", username = username, email = "test@mail.com", profilePicture = "profilePicUrl")
 
-        Mockito.`when`(securityContext.authentication).thenReturn(null)
+        Mockito.`when`(authentication.name).thenReturn(username)
+        Mockito.`when`(securityContext.authentication).thenReturn(authentication)
+        Mockito.`when`(userService.findByUsername(username)).thenReturn(user)
 
         val mockedSecurityContextHolder: MockedStatic<SecurityContextHolder> = Mockito.mockStatic(SecurityContextHolder::class.java)
         mockedSecurityContextHolder.`when`<SecurityContext> { SecurityContextHolder.getContext() }.thenReturn(securityContext)
 
-        val result = authService.getAuthenticatedUserDetails()
+        val result = authService.getUserId()
 
-        assertNull(result)
+        assertEquals("1", result)
         mockedSecurityContextHolder.close()
     }
 }
