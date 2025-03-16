@@ -70,6 +70,7 @@ class DashboardService(
             endDate = endDate,
             numberOfSessions = classroom.dates.size,
             venueDetails = venueDetails,
+            viewCount = classroom.viewCount,
         )
     }
 

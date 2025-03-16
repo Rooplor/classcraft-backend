@@ -20,6 +20,7 @@ data class ClassroomDetails(
     val endDate: LocalDateTime,
     val numberOfSessions: Int,
     val venueDetails: List<VenueDetails>,
+    val viewCount: Int,
 )
 
 data class VenueDetails(

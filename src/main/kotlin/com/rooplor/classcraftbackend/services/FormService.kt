@@ -19,6 +19,7 @@ class FormService(
         formHelper.validateForm(form)
         form.id = form.classroomId
         initDefaultFormQuestions(form)
+        initDefaultFormFeedback(form)
         return formRepository.insert(form)
     }
 
@@ -85,5 +86,25 @@ class FormService(
             )
 
         form.fields += question
+    }
+
+    private fun initDefaultFormFeedback(form: Form) {
+        val feedback =
+            listOf(
+                FormField(
+                    name = "Rating",
+                    type = "number",
+                    required = true,
+                    validation = FieldValidation.RATE,
+                ),
+                FormField(
+                    name = "Comments",
+                    type = "textarea",
+                    required = false,
+                    validation = FieldValidation.TEXT,
+                ),
+            )
+
+        form.feedback = form.feedback?.plus(feedback)
     }
 }

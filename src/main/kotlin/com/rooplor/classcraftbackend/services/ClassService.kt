@@ -37,7 +37,7 @@ class ClassService
         private val formService: FormService,
         private val classroomHelper: ClassroomHelper,
     ) {
-    @Value("\${staff.username}")
+        @Value("\${staff.username}")
         private val staffUsername: String? = null
 
         @Value("\${staff.domain}")
@@ -116,7 +116,12 @@ class ClassService
             return classRepository.save(updateUpdatedWhen(classToUpdate))
         }
 
-        fun findClassById(id: String): Classroom = classRepository.findById(id).orElseThrow()
+        fun findClassById(id: String): Classroom {
+            val classroom = classRepository.findById(id).orElseThrow()
+            classroom.viewCount += 1
+            classRepository.save(classroom)
+            return classroom
+        }
 
         fun updateDateWithVenueClass(
             id: String,
@@ -187,11 +192,14 @@ class ClassService
                         mailService.announcementEmail(
                             subject = MailMessage.VENUE_STATUS_SUBJECT + "${classToUpdate.title}",
                             topic = MailMessage.VENUE_STATUS_TOPIC,
-                            description = (if(venueStatus == VenueStatus.APPROVED.id) {
-                                MailMessage.VENUE_STATUS_APPROVED
-                            } else {
-                                MailMessage.VENUE_STATUS_REJECTED + rejectReason
-                            }).toString(),
+                            description =
+                                (
+                                    if (venueStatus == VenueStatus.APPROVED.id) {
+                                        MailMessage.VENUE_STATUS_APPROVED
+                                    } else {
+                                        MailMessage.VENUE_STATUS_REJECTED + rejectReason
+                                    }
+                                ).toString(),
                             classroomId = classToUpdate.id!!,
                             to = userService.findUserById(classToUpdate.owner).email,
                         )
@@ -215,7 +223,7 @@ class ClassService
 
         fun deleteClass(id: String) {
             val userList = mutableListOf<String>()
-            val classSubmission =  formSubmissionRepository.findByClassroomId(id)
+            val classSubmission = formSubmissionRepository.findByClassroomId(id)
             val classroom = findClassById(id)
             val title = classroom.title
             val owner = classroom.owner
@@ -237,7 +245,19 @@ class ClassService
             formService.deleteFormById(id)
             if (staffEmail != null) {
                 mailService.announcementEmail(
-                    subject = MailMessage.CLASS_DELETED_VENUE_SUBJECT.replace("\$0", title).replace("\$1", dates.flatMap { it.venueId.map { venueId -> venueService.findVenueById(venueId).room } }.joinToString(", ").trimEnd(',')),
+                    subject =
+                        MailMessage.CLASS_DELETED_VENUE_SUBJECT
+                            .replace("\$0", title)
+                            .replace(
+                                "\$1",
+                                dates
+                                    .flatMap {
+                                        it.venueId.map { venueId ->
+                                            venueService.findVenueById(venueId).room
+                                        }
+                                    }.joinToString(", ")
+                                    .trimEnd(','),
+                            ),
                     topic = MailMessage.CLASS_DELETED_TOPIC + title,
                     description = MailMessage.CLASS_DELETED_VENUE.replace("\$0", userService.findUserById(owner).email),
                     classroomId = id,

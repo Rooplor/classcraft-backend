@@ -37,6 +37,7 @@ data class Classroom(
     var classMaterials: List<String>? = emptyList(),
     var createdWhen: LocalDateTime = LocalDateTime.now(),
     var updatedWhen: LocalDateTime = LocalDateTime.now(),
+    var viewCount: Int = 0,
     var owner: String = "",
     var coOwners: List<String>? = emptyList(),
 )

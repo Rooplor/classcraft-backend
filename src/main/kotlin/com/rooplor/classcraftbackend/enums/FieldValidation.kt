@@ -7,4 +7,5 @@ enum class FieldValidation(
     EMAIL(Regex("^[A-Za-z0-9+_.-]+@(.+)$")),
     PHONE(Regex("^\\+?[0-9]{10,13}\$")),
     NUMBER(Regex("^[0-9]+$")),
+    RATE(Regex("^[1-5]\$")),
 }

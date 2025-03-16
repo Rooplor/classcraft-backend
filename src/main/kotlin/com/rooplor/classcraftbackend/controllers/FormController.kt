@@ -232,7 +232,7 @@ class FormController(
                 formSubmissionService.generateQRCodeWithLogo(
                     classId,
                     "src/main/resources/classcraftlogo.png",
-                    day
+                    day,
                 ),
                 HttpStatus.OK,
             )
