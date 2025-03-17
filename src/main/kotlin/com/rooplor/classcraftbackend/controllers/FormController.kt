@@ -257,14 +257,27 @@ class FormController(
         }
     }
 
-    @PatchMapping("/feedback/submit/{formId}")
+    @PatchMapping("/feedback/submit/{formSubmissionId}")
     fun submitFormFeedBack(
-        @PathVariable formId: String,
+        @PathVariable formSubmissionId: String,
         @RequestBody feedBack: Map<String, Any>,
     ): ResponseEntity<Response<FormSubmission>> {
         try {
-            val form = formSubmissionService.submitFeedback(formId, feedBack)
+            val form = formSubmissionService.submitFeedback(formSubmissionId, feedBack)
             return ResponseEntity.ok(Response(success = true, result = form, error = null))
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+        }
+    }
+
+    @GetMapping("/feedback/{formSubmissionId}")
+    fun getFormFeedBack(
+        @PathVariable formSubmissionId: String,
+    ): ResponseEntity<Response<Map<String, Any>>> {
+        try {
+            val formSubmission = formSubmissionService.getFormSubmissionById(formSubmissionId)
+            val feedback = formSubmission.feedbackResponse ?: emptyMap()
+            return ResponseEntity.ok(Response(success = true, result = feedback, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
         }
