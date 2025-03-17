@@ -1,11 +1,10 @@
 package com.rooplor.classcraftbackend.services
 
 import com.rooplor.classcraftbackend.entities.Classroom
-import com.rooplor.classcraftbackend.entities.Form
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.entities.User
+import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
-import com.rooplor.classcraftbackend.repositories.FormRepository
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
 import com.rooplor.classcraftbackend.repositories.UserRepository
 import com.rooplor.classcraftbackend.repositories.VenueRepository
@@ -24,14 +23,12 @@ import java.time.LocalDateTime
 @Service
 class DashboardService(
     private val classroomRepository: ClassroomRepository,
-    private val formRepository: FormRepository,
     private val formSubmissionRepository: FormSubmissionRepository,
     private val userRepository: UserRepository,
     private val venueRepository: VenueRepository,
 ) {
     fun getDashboardData(classroomId: String): DashboardData {
         val classroom = classroomRepository.findById(classroomId).orElseThrow { Exception("Classroom not found") }
-        val forms = formRepository.findByClassroomId(classroomId)
         val formSubmissions = formSubmissionRepository.findByClassroomId(classroomId)
         val usersIdInClass = formSubmissions.mapNotNull { it.submittedBy }.distinct()
         val usersInClass = userRepository.findAllById(usersIdInClass)
@@ -39,7 +36,7 @@ class DashboardService(
         return DashboardData(
             classroomDetails = getClassroomDetails(classroom),
             attendanceSummary = getAttendanceSummary(formSubmissions),
-            feedbackSummary = getFeedbackSummary(forms!!, formSubmissions),
+            feedbackSummary = getFeedbackSummary(formSubmissions),
             formSubmissionsSummary = getFormSubmissionsSummary(formSubmissions),
             userEngagement = getUserEngagement(usersInClass, formSubmissions),
             classMaterialsSummary = getClassMaterialsSummary(classroom),
@@ -75,8 +72,17 @@ class DashboardService(
     }
 
     private fun getAttendanceSummary(formSubmissions: List<FormSubmission>): AttendanceSummary {
-        val totalAttendees = formSubmissions.size
-        val attendanceRate = formSubmissions.count { it.isApprovedByOwner }.toDouble() / totalAttendees * 100
+        val totalApprovedSubmissions = formSubmissions.count { it.isApprovedByOwner }
+        val totalAttendees =
+            formSubmissions.count {
+                it.isApprovedByOwner && it.attendeesStatus?.any { status -> status.attendeesStatus == AttendeesStatus.PRESENT } == true
+            }
+        val attendanceRate =
+            if (totalApprovedSubmissions > 0) {
+                totalAttendees.toDouble() / totalApprovedSubmissions * 100
+            } else {
+                0.0
+            }
         val attendees =
             formSubmissions.map {
                 Attendee(
@@ -88,16 +94,18 @@ class DashboardService(
         return AttendanceSummary(totalAttendees, attendanceRate, attendees)
     }
 
-    private fun getFeedbackSummary(
-        form: Form,
-        formSubmissions: List<FormSubmission>,
-    ): FeedbackSummary {
+    private fun getFeedbackSummary(formSubmissions: List<FormSubmission>): FeedbackSummary {
         val feedbackResponses = formSubmissions.mapNotNull { it.feedbackResponse }
+
         val averageScores =
-            form.feedback?.associate { it.name to feedbackResponses.mapNotNull { response -> response[it.name] as? Double }.average() }
-                ?: emptyMap()
-        val commonComments = feedbackResponses.flatMap { it.values.filterIsInstance<String>() }
+            mapOf(
+                "Rating" to feedbackResponses.mapNotNull { it["Rating"] as? Double }.average(),
+            )
+
+        val commonComments = feedbackResponses.mapNotNull { it["Comments"] as? String }
+
         val responseRate = feedbackResponses.size.toDouble() / formSubmissions.size * 100
+
         return FeedbackSummary(averageScores, commonComments, responseRate)
     }
 
