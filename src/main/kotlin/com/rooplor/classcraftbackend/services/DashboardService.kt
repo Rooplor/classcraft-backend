@@ -98,9 +98,12 @@ class DashboardService(
         val feedbackResponses = formSubmissions.mapNotNull { it.feedbackResponse }
 
         val averageScores =
-            mapOf(
+            mutableMapOf(
                 "Rating" to feedbackResponses.mapNotNull { it["Rating"] as? Double }.average(),
             )
+        if (averageScores["Rating"]!!.isNaN()) {
+            averageScores["Rating"] = 0.0
+        }
 
         val commonComments = feedbackResponses.mapNotNull { it["Comments"] as? String }
 

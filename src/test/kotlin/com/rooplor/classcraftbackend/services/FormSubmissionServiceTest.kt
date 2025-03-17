@@ -466,4 +466,23 @@ class FormSubmissionServiceTest {
         verify(formSubmissionRepository, times(1)).findById(formSubmissionId)
         verify(formService, times(1)).findByClassroomId("class1")
     }
+
+    @Test
+    fun `getFormSubmissionById should return form submission`() {
+        val formSubmissionId = "1"
+        val formSubmission =
+            FormSubmission(
+                id = formSubmissionId,
+                formId = "form1",
+                classroomId = "class1",
+                responses = mapOf("email" to "mail@mail.com"),
+            )
+
+        `when`(formSubmissionRepository.findById(formSubmissionId)).thenReturn(Optional.of(formSubmission))
+
+        val result = formSubmissionService.getFormSubmissionById(formSubmissionId)
+
+        assertEquals(formSubmission, result)
+        verify(formSubmissionRepository, times(1)).findById(formSubmissionId)
+    }
 }
