@@ -35,4 +35,7 @@ object ErrorMessages {
     const val CLASS_NOT_FOUND = "Class not found"
     const val CLASS_CANNOT_GENERATE_QR_CODE = "Class is not scheduled for the current time"
     const val CLASS_CANNOT_CHANGE_DATE = "Cannot change dates of a published class"
+
+    // Dashboard error messages
+    const val OWNER_NOT_MATCH = "Owner not match"
 }

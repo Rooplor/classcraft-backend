@@ -4,6 +4,7 @@ import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.entities.User
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
+import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
 import com.rooplor.classcraftbackend.repositories.UserRepository
@@ -26,9 +27,14 @@ class DashboardService(
     private val formSubmissionRepository: FormSubmissionRepository,
     private val userRepository: UserRepository,
     private val venueRepository: VenueRepository,
+    private val authService: AuthService,
 ) {
     fun getDashboardData(classroomId: String): DashboardData {
+        val userId = authService.getUserId()
         val classroom = classroomRepository.findById(classroomId).orElseThrow { Exception("Classroom not found") }
+        if (classroom.owner != userId) {
+            throw Exception(ErrorMessages.OWNER_NOT_MATCH)
+        }
         val formSubmissions = formSubmissionRepository.findByClassroomId(classroomId)
         val usersIdInClass = formSubmissions.mapNotNull { it.submittedBy }.distinct()
         val usersInClass = userRepository.findAllById(usersIdInClass)
