@@ -65,38 +65,42 @@ class DashboardControllerTest {
                 content().json(
                     """
                     {
-                        "classroomDetails": {
-                            "title": "Test Classroom",
-                            "description": "Details",
-                            "instructorName": "Instructor",
-                            "startDate": "${dashboardData.classroomDetails.startDate}",
-                            "endDate": "${dashboardData.classroomDetails.endDate}",
-                            "numberOfSessions": 10,
-                            "venueDetails": [],
-                            "viewCount": 100
+                        "success": true,
+                        "result": {
+                            "classroomDetails": {
+                                "title": "Test Classroom",
+                                "description": "Details",
+                                "instructorName": "Instructor",
+                                "startDate": "${dashboardData.classroomDetails.startDate}",
+                                "endDate": "${dashboardData.classroomDetails.endDate}",
+                                "numberOfSessions": 10,
+                                "venueDetails": [],
+                                "viewCount": 100
+                            },
+                            "attendanceSummary": {
+                                "totalAttendees": 10,
+                                "attendanceRate": 80.0,
+                                "attendees": []
+                            },
+                            "feedbackSummary": {
+                                "averageScores": {},
+                                "commonComments": [],
+                                "responseRate": 0.0
+                            },
+                            "formSubmissionsSummary": {
+                                "totalSubmissions": 10,
+                                "responsesSummary": {}
+                            },
+                            "userEngagement": {
+                                "totalUsers": 10,
+                                "activeUsers": 5
+                            },
+                            "classMaterialsSummary": {
+                                "materials": [],
+                                "accessStatistics": {}
+                            }
                         },
-                        "attendanceSummary": {
-                            "totalAttendees": 10,
-                            "attendanceRate": 80.0,
-                            "attendees": []
-                        },
-                        "feedbackSummary": {
-                            "averageScores": {},
-                            "commonComments": [],
-                            "responseRate": 0.0
-                        },
-                        "formSubmissionsSummary": {
-                            "totalSubmissions": 10,
-                            "responsesSummary": {}
-                        },
-                        "userEngagement": {
-                            "totalUsers": 10,
-                            "activeUsers": 5
-                        },
-                        "classMaterialsSummary": {
-                            "materials": [],
-                            "accessStatistics": {}
-                        }
+                        "error": null
                     }
                     """.trimIndent(),
                 ),
