@@ -270,20 +270,7 @@ class FormController(
         }
     }
 
-    @GetMapping("/feedback/{formSubmissionId}")
-    fun getFormFeedBack(
-        @PathVariable formSubmissionId: String,
-    ): ResponseEntity<Response<Map<String, Any>>> {
-        try {
-            val formSubmission = formSubmissionService.getFormSubmissionById(formSubmissionId)
-            val feedback = formSubmission.feedbackResponse ?: emptyMap()
-            return ResponseEntity.ok(Response(success = true, result = feedback, error = null))
-        } catch (e: Exception) {
-            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
-        }
-    }
-
-    @GetMapping("/feedbacks/{classroomId}")
+    @GetMapping("/feedback/{classroomId}")
     fun getFormFeedBackByClassRoomId(
         @PathVariable classroomId: String,
     ): ResponseEntity<Response<List<Map<String, Any>>>?> {

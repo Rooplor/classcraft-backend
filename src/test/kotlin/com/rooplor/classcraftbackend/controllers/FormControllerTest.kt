@@ -472,29 +472,6 @@ class FormControllerTest {
     }
 
     @Test
-    fun `getFormFeedBack should return feedback`() {
-        val formSubmission =
-            FormSubmission(
-                "1",
-                "form1",
-                "class1",
-                mapOf(),
-                mapOf("email" to "mail@mail.com"),
-                "user1",
-                UserDetailDTO("user1", "user1"),
-            )
-        `when`(formSubmissionService.getFormSubmissionById("1")).thenReturn(formSubmission)
-
-        mockMvc
-            .perform(
-                get("/api/form/feedback/1")
-                    .contentType(MediaType.APPLICATION_JSON),
-            ).andExpect(status().isOk)
-            .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.result.email").value("mail@mail.com"))
-    }
-
-    @Test
     fun `getFormFeedBackByClassRoomId should return feedbacks`() {
         val formSubmission =
             FormSubmission(
@@ -510,7 +487,7 @@ class FormControllerTest {
 
         mockMvc
             .perform(
-                get("/api/form/feedbacks/class1")
+                get("/api/form/feedback/class1")
                     .contentType(MediaType.APPLICATION_JSON),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
