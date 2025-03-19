@@ -36,6 +36,7 @@ class DashboardControllerTest {
     @Test
     fun `getDashboardData should return dashboard data`() {
         val classroomId = "classroomId"
+        val now = LocalDateTime.now().withNano(0)
         val dashboardData =
             DashboardData(
                 classroomDetails =
@@ -43,8 +44,8 @@ class DashboardControllerTest {
                         title = "Test Classroom",
                         description = "Details",
                         instructorName = "Instructor",
-                        startDate = LocalDateTime.now(),
-                        endDate = LocalDateTime.now(),
+                        startDate = now,
+                        endDate = now,
                         numberOfSessions = 10,
                         venueDetails = emptyList(),
                         viewCount = 100,
@@ -71,8 +72,8 @@ class DashboardControllerTest {
                                 "title": "Test Classroom",
                                 "description": "Details",
                                 "instructorName": "Instructor",
-                                "startDate": "${dashboardData.classroomDetails.startDate}",
-                                "endDate": "${dashboardData.classroomDetails.endDate}",
+                                "startDate": "$now",
+                                "endDate": "$now",
                                 "numberOfSessions": 10,
                                 "venueDetails": [],
                                 "viewCount": 100
