@@ -131,25 +131,26 @@ class FormSubmissionService(
     ): FormSubmission {
         val formSubmission = formSubmissionRepository.findById(formSubmissionId).orElseThrow { Exception(ErrorMessages.ANSWER_NOT_FOUND) }
         val title = classService.findClassById(formSubmission.classroomId).title
-        val (subject, topic, description) = if (isApproved) {
-            Triple(
-                MailMessage.REGISTRATION_APPROVED_SUBJECT + "\"${title}\"\n",
-                MailMessage.REGISTRATION_APPROVED_TOPIC + "\"${title}\"\n",
-                MailMessage.REGISTRATION_SUCCESS
-            )
-        } else {
-            Triple(
-                MailMessage.REGISTRATION_PENDING_SUBJECT + "\"${title}\"\n",
-                MailMessage.REGISTRATION_PENDING_TOPIC + "\"${title}\"\n",
-                MailMessage.REGISTRATION_PENDING
-            )
-        }
+        val (subject, topic, description) =
+            if (isApproved) {
+                Triple(
+                    MailMessage.REGISTRATION_APPROVED_SUBJECT + "\"${title}\"\n",
+                    MailMessage.REGISTRATION_APPROVED_TOPIC + "\"${title}\"\n",
+                    MailMessage.REGISTRATION_SUCCESS,
+                )
+            } else {
+                Triple(
+                    MailMessage.REGISTRATION_PENDING_SUBJECT + "\"${title}\"\n",
+                    MailMessage.REGISTRATION_PENDING_TOPIC + "\"${title}\"\n",
+                    MailMessage.REGISTRATION_PENDING,
+                )
+            }
         mailService.announcementEmail(
             subject = subject,
             topic = topic,
             description = description,
             classroomId = formSubmission.classroomId,
-            to = userService.findUserById(formSubmission.submittedBy!!).email
+            to = userService.findUserById(formSubmission.submittedBy!!).email,
         )
         formSubmission.isApprovedByOwner = isApproved
         return formSubmissionRepository.save(formSubmission)
@@ -194,18 +195,21 @@ class FormSubmissionService(
         } else {
             val barcodeWriter = QRCodeWriter()
             val currentDateTime = LocalDateTime.now()
-            val classDate = day
-                ?: (classroom.dates.sortedBy { it.date.startDateTime }.indexOfFirst {
-                    val startTime = it.date.startDateTime
-                    val endTime = it.date.endDateTime
-                    currentDateTime.isAfter(startTime.minusMinutes(30)) && currentDateTime.isBefore(endTime)
-                }) + 1
+            val classDate =
+                day
+                    ?: (
+                        classroom.dates.sortedBy { it.date.startDateTime }.indexOfFirst {
+                            val startTime = it.date.startDateTime
+                            val endTime = it.date.endDateTime
+                            currentDateTime.isAfter(startTime.minusMinutes(30)) && currentDateTime.isBefore(endTime)
+                        }
+                    ) + 1
 
             if (classDate == 0 || (day != null && day > classroom.dates.size)) {
                 throw Exception("Cannot generate QR code: " + ErrorMessages.CLASS_CANNOT_GENERATE_QR_CODE)
             }
 
-            val bitMatrix = barcodeWriter.encode("$domain/class/$classId/checkin?day=${classDate}", BarcodeFormat.QR_CODE, 500, 500)
+            val bitMatrix = barcodeWriter.encode("$domain/class/$classId/checkin?day=$classDate", BarcodeFormat.QR_CODE, 500, 500)
             val qrCodeGrayscale = MatrixToImageWriter.toBufferedImage(bitMatrix)
 
             val qrCode = BufferedImage(qrCodeGrayscale.width, qrCodeGrayscale.height, BufferedImage.TYPE_INT_ARGB)
@@ -225,6 +229,11 @@ class FormSubmissionService(
             return qrCode
         }
     }
+
+    fun getFormSubmissionById(formSubmissionId: String): FormSubmission =
+        formSubmissionRepository.findById(formSubmissionId).orElseThrow {
+            Exception(ErrorMessages.ANSWER_NOT_FOUND)
+        }
 
     private fun createAttendeesList(classroomId: String): List<Attendees> {
         val classroom = classService.findClassById(classroomId)

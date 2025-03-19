@@ -1,5 +1,6 @@
 package com.rooplor.classcraftbackend.controllers
 
+import com.rooplor.classcraftbackend.dtos.FeedbackResponse
 import com.rooplor.classcraftbackend.dtos.FormCreateDTO
 import com.rooplor.classcraftbackend.dtos.FormSubmissionDTO
 import com.rooplor.classcraftbackend.dtos.Response
@@ -232,7 +233,7 @@ class FormController(
                 formSubmissionService.generateQRCodeWithLogo(
                     classId,
                     "src/main/resources/classcraftlogo.png",
-                    day
+                    day,
                 ),
                 HttpStatus.OK,
             )
@@ -257,14 +258,33 @@ class FormController(
         }
     }
 
-    @PatchMapping("/feedback/submit/{formId}")
+    @PatchMapping("/feedback/submit/{formSubmissionId}")
     fun submitFormFeedBack(
-        @PathVariable formId: String,
+        @PathVariable formSubmissionId: String,
         @RequestBody feedBack: Map<String, Any>,
     ): ResponseEntity<Response<FormSubmission>> {
         try {
-            val form = formSubmissionService.submitFeedback(formId, feedBack)
+            val form = formSubmissionService.submitFeedback(formSubmissionId, feedBack)
             return ResponseEntity.ok(Response(success = true, result = form, error = null))
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+        }
+    }
+
+    @GetMapping("/feedback/{classroomId}")
+    fun getFormFeedBackByClassRoomId(
+        @PathVariable classroomId: String,
+    ): ResponseEntity<Response<List<FeedbackResponse>>> {
+        try {
+            val formSubmissions = formSubmissionService.getFormSubmissionsByClassroomId(classroomId)
+            val response =
+                formSubmissions.map {
+                    FeedbackResponse(
+                        userDetail = it.userDetail ?: UserDetailDTO(),
+                        feedbackResponse = it.feedbackResponse ?: emptyMap(),
+                    )
+                }
+            return ResponseEntity.ok(Response(success = true, result = response, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
         }
