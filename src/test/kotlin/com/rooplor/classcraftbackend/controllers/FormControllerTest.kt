@@ -2,6 +2,7 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.configs.TestConfig
 import com.rooplor.classcraftbackend.configs.TestSecurityConfig
+import com.rooplor.classcraftbackend.dtos.FeedbackResponse
 import com.rooplor.classcraftbackend.dtos.FormCreateDTO
 import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.Form
@@ -506,6 +507,11 @@ class FormControllerTest {
                 "user1",
                 UserDetailDTO("user1", "user1"),
             )
+        val feedbackResponse =
+            FeedbackResponse(
+                userDetail = UserDetailDTO("user1", "user1"),
+                feedbackResponse = mapOf("email" to "mail@mail.com"),
+            )
         `when`(formSubmissionService.getFormSubmissionsByClassroomId("class1")).thenReturn(listOf(formSubmission))
 
         mockMvc
@@ -514,6 +520,8 @@ class FormControllerTest {
                     .contentType(MediaType.APPLICATION_JSON),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.result[0].email").value("mail@mail.com"))
+            .andExpect(jsonPath("$.result[0].userDetail.id").value("user1"))
+            .andExpect(jsonPath("$.result[0].userDetail.username").value("user1"))
+            .andExpect(jsonPath("$.result[0].feedbackResponse.email").value("mail@mail.com"))
     }
 }
