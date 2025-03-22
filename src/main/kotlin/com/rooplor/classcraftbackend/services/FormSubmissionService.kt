@@ -20,6 +20,7 @@ import java.awt.image.BufferedImage
 import java.io.File
 import java.io.StringWriter
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.imageio.ImageIO
 
 @Service
@@ -102,25 +103,70 @@ class FormSubmissionService(
     }
 
     fun generateCsvFromForm(classroomId: String): String {
-        val allAnswer = formService.findByClassroomId(classroomId)
+        val form = formService.findByClassroomId(classroomId)
         val submission = getFormSubmissionsByClassroomId(classroomId)
+        val feedback = form.feedback ?: emptyList()
         val writer = StringWriter()
-        val csvWriter = CSVWriter(writer)
+        val csvWriter =
+            CSVWriter(
+                writer,
+                CSVWriter.DEFAULT_SEPARATOR,
+                CSVWriter.NO_QUOTE_CHARACTER,
+                CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                CSVWriter.DEFAULT_LINE_END,
+            )
+
         // Add csv header
         val header =
             arrayOf("No.") +
-                allAnswer.fields.map { it.name }.toTypedArray() + "Registration Status" + "Attendees Status"
+                form.fields.map { it.name }.toTypedArray() + "Registration Status" +
+                submission
+                    .flatMap { it.attendeesStatus ?: emptyList() }
+                    .distinctBy { it.day }
+                    .sortedBy { it.day }
+                    .map { "Attendees Status Day ${it.day}" }
+                    .toTypedArray() + "Check-in at" +
+                feedback.map { it.name }.toTypedArray()
         csvWriter.writeNext(header)
+
         // Add csv data
         submission.forEachIndexed { index, formSubmission ->
+            val registrationStatus = if (formSubmission.isApprovedByOwner) "Approved" else "Pending"
+            val attendeesStatusMap =
+                formSubmission.attendeesStatus?.associateBy<Attendees, Int, Attendees>({ it.day }, { it }) ?: emptyMap()
+
+            val attendeesStatusValues =
+                submission
+                    .flatMap { it.attendeesStatus ?: emptyList() }
+                    .distinctBy { it.day }
+                    .sortedBy { it.day }
+                    .map { day ->
+                        attendeesStatusMap[day.day]?.attendeesStatus.toString() ?: ""
+                    }.toTypedArray()
+
+            val checkInTimes =
+                submission
+                    .flatMap { it.attendeesStatus ?: emptyList() }
+                    .distinctBy { it.day }
+                    .sortedBy { it.day }
+                    .map { day ->
+                        attendeesStatusMap[day.day]?.checkInDateTime?.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) ?: ""
+                    }.toTypedArray()
+
             val data =
                 arrayOf((index + 1).toString()) +
-                    allAnswer.fields
+                    form.fields
                         .map { field ->
                             formSubmission.responses[field.name]?.toString() ?: ""
-                        }.toTypedArray() + formSubmission.isApprovedByOwner.toString() + formSubmission.attendeesStatus.toString()
+                        }.toTypedArray() + registrationStatus + attendeesStatusValues + checkInTimes +
+                    submission
+                        .flatMap { it.feedbackResponse?.entries ?: emptySet() }
+                        .map { it.value.toString() }
+                        .toTypedArray()
+
             csvWriter.writeNext(data)
         }
+
         csvWriter.close()
         return writer.toString()
     }
