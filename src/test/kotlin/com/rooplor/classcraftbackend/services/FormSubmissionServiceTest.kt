@@ -184,6 +184,10 @@ class FormSubmissionServiceTest {
                         FormField(name = "email", type = "text", required = true, validation = null, options = null),
                         FormField(name = "phone", type = "text", required = false, validation = null, options = null),
                     ),
+                feedback =
+                    listOf(
+                        FormField(name = "feedback", type = "text", required = false, validation = null, options = null),
+                    ),
             )
         val formSubmissions =
             listOf(
@@ -192,6 +196,17 @@ class FormSubmissionServiceTest {
                     formId = "form1",
                     classroomId = "class1",
                     responses = mapOf("email" to "test@example.com", "phone" to "1234567890"),
+                    isApprovedByOwner = true,
+                    attendeesStatus =
+                        listOf(
+                            Attendees(
+                                day = 1,
+                                date = LocalDate.of(2021, 9, 1),
+                                attendeesStatus = AttendeesStatus.PRESENT,
+                                checkInDateTime = LocalDateTime.of(2021, 9, 1, 9, 0),
+                            ),
+                        ),
+                    feedbackResponse = mapOf("feedback" to "Great class!"),
                 ),
             )
 
@@ -201,7 +216,8 @@ class FormSubmissionServiceTest {
         val result = formSubmissionService.generateCsvFromForm("class1")
 
         val expectedCsv =
-            "\"No.\",\"email\",\"phone\",\"Registration Status\",\"Attendees Status\"\n\"1\",\"test@example.com\",\"1234567890\",\"false\",\"[]\"\n"
+            "No.,email,phone,Registration Status,Attendees Status Day 1,Check-in at,feedback\n" +
+                "1,test@example.com,1234567890,Approved,PRESENT,2021-09-01 09:00:00,Great class!\n"
         assertEquals(expectedCsv, result)
     }
 
