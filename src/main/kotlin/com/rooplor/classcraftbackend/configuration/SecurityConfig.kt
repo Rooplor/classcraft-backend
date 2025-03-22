@@ -34,6 +34,7 @@ class SecurityConfig {
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         "/api/class/*/venue-status",
+                        "/actuator/prometheus",
                     ).permitAll()
                 it.anyRequest().authenticated()
             }.sessionManagement {
