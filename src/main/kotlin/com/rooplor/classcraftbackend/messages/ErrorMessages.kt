@@ -38,4 +38,8 @@ object ErrorMessages {
 
     // Dashboard error messages
     const val OWNER_NOT_MATCH = "Owner not match"
+
+    // Request error messages
+    const val REQUEST_ALREADY_EXISTS = "Request already exists"
+    const val REQUEST_OWNER_CANNOT_REQUEST = "Owner cannot request to reopen the class"
 }
