@@ -1,6 +1,7 @@
 package com.rooplor.classcraftbackend.services
 
 import com.rooplor.classcraftbackend.entities.Venue
+import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.VenueRepository
 import lombok.AllArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,7 +31,7 @@ class VenueService
             return venueRepository.save(venueToUpdate)
         }
 
-        fun findVenueById(id: String): Venue = venueRepository.findById(id).orElseThrow()
+        fun findVenueById(id: String): Venue = venueRepository.findById(id).orElseThrow({ Exception(ErrorMessages.VENUE_NOT_FOUND) })
 
         fun deleteClass(id: String) = venueRepository.deleteById(id)
     }
