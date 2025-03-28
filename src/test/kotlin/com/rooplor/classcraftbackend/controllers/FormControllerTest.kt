@@ -102,7 +102,7 @@ class FormControllerTest {
                         }
                         """.trimIndent(),
                     ),
-            ).andExpect(status().isOk)
+            ).andExpect(status().isCreated)
             .andExpect(jsonPath("$.success").value(true))
             .andExpect(jsonPath("$.result.id").value("1"))
     }

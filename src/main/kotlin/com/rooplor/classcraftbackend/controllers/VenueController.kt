@@ -2,9 +2,11 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.entities.Venue
+import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.services.VenueService
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -39,7 +41,7 @@ class VenueController
         ): ResponseEntity<Response<Venue>> =
             try {
                 val venue = venueService.insertVenue(addedVenue)
-                ResponseEntity.ok(Response(success = true, result = venue, error = null))
+                ResponseEntity.status(HttpStatus.CREATED).body(Response(success = true, result = venue, error = null))
             } catch (e: Exception) {
                 ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
             }
@@ -54,7 +56,11 @@ class VenueController
                 val venue = venueService.updateVenue(id, updatedVenue)
                 ResponseEntity.ok(Response(success = true, result = venue, error = null))
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                if (e.message == ErrorMessages.VENUE_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
 
         @Operation(summary = "Remove venue by id")
@@ -78,7 +84,11 @@ class VenueController
                 val venue = venueService.findVenueById(id)
                 ResponseEntity.ok(Response(success = true, result = venue, error = null))
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                if (e.message == ErrorMessages.VENUE_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
 
         @Operation(summary = "Get venues by ids")
@@ -90,6 +100,10 @@ class VenueController
                 val venues = ids.map { venueService.findVenueById(it) }
                 ResponseEntity.ok(Response(success = true, result = venues, error = null))
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                if (e.message == ErrorMessages.VENUE_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
     }

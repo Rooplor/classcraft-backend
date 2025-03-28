@@ -251,7 +251,7 @@ class ClassroomControllerTest {
                         }
                         """.trimIndent(),
                     ),
-            ).andExpect(status().isOk)
+            ).andExpect(status().isCreated)
     }
 
     @Test

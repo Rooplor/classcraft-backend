@@ -8,6 +8,7 @@ import com.rooplor.classcraftbackend.services.AuthService
 import com.rooplor.classcraftbackend.services.UserService
 import io.swagger.v3.oas.annotations.Operation
 import org.modelmapper.ModelMapper
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -41,7 +42,7 @@ class UserController(
     fun getUserProfile(): ResponseEntity<Response<User>> {
         try {
             val username =
-                authService.getAuthenticatedUser() ?: return ResponseEntity.badRequest().body(
+                authService.getAuthenticatedUser() ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     Response(success = false, result = null, error = ErrorMessages.USER_NOT_FOUND),
                 )
             val user = userService.findByUsername(username)
@@ -60,7 +61,11 @@ class UserController(
             val user = userService.findUserById(id)
             return ResponseEntity.ok(Response(success = true, result = user, error = null))
         } catch (e: Exception) {
-            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            return if (e.message == ErrorMessages.USER_NOT_FOUND) {
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+            } else {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
         }
     }
 
@@ -71,7 +76,7 @@ class UserController(
     ): ResponseEntity<Response<User>> {
         try {
             val addedUser = userService.createUser(modelMapper.map(user, User::class.java))
-            return ResponseEntity.ok(Response(success = true, result = addedUser, error = null))
+            return ResponseEntity.status(HttpStatus.CREATED).body(Response(success = true, result = addedUser, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
         }
@@ -89,7 +94,11 @@ class UserController(
             val result = userService.updateUser(existingUser, updatedUser)
             return ResponseEntity.ok(Response(success = true, result = result, error = null))
         } catch (e: Exception) {
-            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            return if (e.message == ErrorMessages.USER_NOT_FOUND) {
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+            } else {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
         }
     }
 
@@ -109,7 +118,11 @@ class UserController(
             userService.deleteUserById(id)
             return ResponseEntity.ok(Response(success = true, result = "User deleted", error = null))
         } catch (e: Exception) {
-            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            return if (e.message == ErrorMessages.USER_NOT_FOUND) {
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+            } else {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
         }
     }
 }

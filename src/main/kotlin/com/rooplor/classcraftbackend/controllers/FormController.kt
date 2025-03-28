@@ -10,6 +10,7 @@ import com.rooplor.classcraftbackend.entities.FormField
 import com.rooplor.classcraftbackend.entities.FormSubmission
 import com.rooplor.classcraftbackend.enums.AttendeesStatus
 import com.rooplor.classcraftbackend.helpers.FormHelper
+import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.services.FormService
 import com.rooplor.classcraftbackend.services.FormSubmissionService
 import io.swagger.v3.oas.annotations.Operation
@@ -45,7 +46,7 @@ class FormController(
     ): ResponseEntity<Response<Form>> {
         try {
             val createdForm = formService.createForm(modelMapper.map(form, Form::class.java))
-            return ResponseEntity.ok(Response(success = true, result = createdForm, error = null))
+            return ResponseEntity.status(HttpStatus.CREATED).body(Response(success = true, result = createdForm, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
         }
@@ -61,7 +62,11 @@ class FormController(
             val updatedForm = formService.updateForm(id, modelMapper.map(form, Form::class.java))
             return ResponseEntity.ok(Response(success = true, result = updatedForm, error = null))
         } catch (e: Exception) {
-            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            return if (e.message == ErrorMessages.FORM_NOT_FOUND) {
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+            } else {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
         }
     }
 
@@ -74,7 +79,11 @@ class FormController(
             val form = formService.getFormById(id)
             return ResponseEntity.ok(Response(success = true, result = form, error = null))
         } catch (e: Exception) {
-            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            return if (e.message == ErrorMessages.FORM_NOT_FOUND) {
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+            } else {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
         }
     }
 
@@ -88,7 +97,11 @@ class FormController(
             val questions = formHelper.mergeListOfMaps(form.fields.map { mapOf(it.name to it.type) })
             return ResponseEntity.ok(Response(success = true, result = questions, error = null))
         } catch (e: Exception) {
-            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            return if (e.message == ErrorMessages.FORM_NOT_FOUND) {
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+            } else {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
         }
     }
 
@@ -178,7 +191,11 @@ class FormController(
             val submission = formSubmissionService.setFormSubmissionApprovalStatus(id, isApproved)
             return ResponseEntity.ok(Response(success = true, result = submission, error = null))
         } catch (e: Exception) {
-            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            return if (e.message == ErrorMessages.ANSWER_NOT_FOUND) {
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+            } else {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
         }
     }
 
@@ -206,7 +223,11 @@ class FormController(
             val submission = formSubmissionService.setAttendeesStatus(id, status, day)
             return ResponseEntity.ok(Response(success = true, result = submission, error = null))
         } catch (e: Exception) {
-            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            return if (e.message == ErrorMessages.ANSWER_NOT_FOUND) {
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+            } else {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
         }
     }
 
@@ -254,7 +275,11 @@ class FormController(
             val form = formService.createFormFeedback(formId, feedBackList)
             return ResponseEntity.ok(Response(success = true, result = form, error = null))
         } catch (e: Exception) {
-            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            return if (e.message == ErrorMessages.FORM_NOT_FOUND) {
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+            } else {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
         }
     }
 
@@ -267,7 +292,11 @@ class FormController(
             val form = formSubmissionService.submitFeedback(formSubmissionId, feedBack)
             return ResponseEntity.ok(Response(success = true, result = form, error = null))
         } catch (e: Exception) {
-            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            return if (e.message == ErrorMessages.ANSWER_NOT_FOUND) {
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+            } else {
+                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+            }
         }
     }
 

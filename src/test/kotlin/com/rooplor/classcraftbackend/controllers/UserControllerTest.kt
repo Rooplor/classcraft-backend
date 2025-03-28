@@ -94,7 +94,7 @@ class UserControllerTest {
                         }
                         """.trimIndent(),
                     ),
-            ).andExpect(status().isOk)
+            ).andExpect(status().isCreated)
             .andExpect(jsonPath("$.success").value(true))
             .andExpect(jsonPath("$.result.username").value("newuser"))
     }
@@ -180,7 +180,7 @@ class UserControllerTest {
         val userController = UserController(userService, authService, mock())
         val response: ResponseEntity<Response<User>> = userController.getUserProfile()
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+        assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
         assertEquals(false, response.body?.success)
         assertEquals(null, response.body?.result)
         assertEquals(ErrorMessages.USER_NOT_FOUND, response.body?.error)

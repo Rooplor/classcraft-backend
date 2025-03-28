@@ -7,6 +7,7 @@ import com.rooplor.classcraftbackend.dtos.Response
 import com.rooplor.classcraftbackend.dtos.StatusDTO
 import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.Classroom
+import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.services.AuthService
 import com.rooplor.classcraftbackend.services.ClassService
 import com.rooplor.classcraftbackend.services.FormSubmissionService
@@ -14,6 +15,7 @@ import com.rooplor.classcraftbackend.types.DateWithVenue
 import io.swagger.v3.oas.annotations.Operation
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -66,7 +68,11 @@ class ClassController
                     ),
                 )
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                if (e.message == ErrorMessages.CLASS_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
 
         @Operation(summary = "Get class by id")
@@ -84,7 +90,11 @@ class ClassController
                     ),
                 )
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                if (e.message == ErrorMessages.CLASS_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
 
         @Operation(summary = "Insert a new class")
@@ -93,7 +103,7 @@ class ClassController
             @RequestBody addedClass: InitClassDTO,
         ): ResponseEntity<Response<Classroom>> =
             try {
-                ResponseEntity.ok(
+                ResponseEntity.status(HttpStatus.CREATED).body(
                     Response(
                         success = true,
                         result =
@@ -121,7 +131,11 @@ class ClassController
                     ),
                 )
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                if (e.message == ErrorMessages.CLASS_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
 
         @Operation(summary = "Update meeting url of a class")
@@ -140,7 +154,11 @@ class ClassController
                     ),
                 )
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                if (e.message == ErrorMessages.CLASS_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
 
         @Operation(summary = "Update content of a class")
@@ -159,7 +177,11 @@ class ClassController
                     ),
                 )
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                if (e.message == ErrorMessages.CLASS_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
 
         @Operation(summary = "Update registration url of a class")
@@ -178,7 +200,11 @@ class ClassController
                     ),
                 )
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                if (e.message == ErrorMessages.CLASS_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
 
         @Operation(summary = "Set registration status of a class")
@@ -197,7 +223,11 @@ class ClassController
                     ),
                 )
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                if (e.message == ErrorMessages.CLASS_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
 
         @Operation(summary = "Set publish status of a class")
@@ -216,7 +246,11 @@ class ClassController
                     ),
                 )
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                if (e.message == ErrorMessages.CLASS_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
 
         @Operation(summary = "Remove a class")
@@ -234,7 +268,11 @@ class ClassController
                     ),
                 )
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                if (e.message == ErrorMessages.CLASS_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
 
         @Operation(summary = "Update classroom stepper status")
@@ -253,7 +291,11 @@ class ClassController
                     ),
                 )
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                if (e.message == ErrorMessages.CLASS_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
 
         @Operation(summary = "Reserve a venue for a class")
@@ -266,7 +308,11 @@ class ClassController
                 classService.reservationVenue(classService.findClassById(id), reservation)
                 ResponseEntity.ok(Response(success = true, result = true, error = null))
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = false, error = e.message))
+                if (e.message == ErrorMessages.CLASS_NOT_FOUND || e.message == ErrorMessages.USER_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
 
         @Operation(summary = "Update venue status of a class")
@@ -286,7 +332,11 @@ class ClassController
                     ),
                 )
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                if (e.message == ErrorMessages.CLASS_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
 
         @Operation(summary = "Search classes by title or details")
@@ -327,7 +377,11 @@ class ClassController
                     ),
                 )
             } catch (e: Exception) {
-                ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                if (e.message == ErrorMessages.CLASS_NOT_FOUND) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response(success = false, result = null, error = e.message))
+                } else {
+                    ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+                }
             }
 
         private fun mapToClassroomResponse(classroom: Classroom): ClassroomResponse {

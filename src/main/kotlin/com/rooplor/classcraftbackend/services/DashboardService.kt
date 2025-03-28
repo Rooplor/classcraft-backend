@@ -31,7 +31,7 @@ class DashboardService(
 ) {
     fun getDashboardData(classroomId: String): DashboardData {
         val userId = authService.getUserId()
-        val classroom = classroomRepository.findById(classroomId).orElseThrow { Exception("Classroom not found") }
+        val classroom = classroomRepository.findById(classroomId).orElseThrow { Exception(ErrorMessages.CLASS_NOT_FOUND) }
         if (classroom.owner != userId) {
             throw Exception(ErrorMessages.OWNER_NOT_MATCH)
         }
@@ -52,7 +52,7 @@ class DashboardService(
     private fun getClassroomDetails(classroom: Classroom): ClassroomDetails {
         val venues =
             classroom.dates.flatMap { it.venueId }.distinct().map { venueId ->
-                venueRepository.findById(venueId).orElseThrow { Exception("Venue not found for id: $venueId") }
+                venueRepository.findById(venueId).orElseThrow { Exception(ErrorMessages.VENUE_NOT_FOUND) }
             }
         val venueDetails =
             venues.map { venue ->

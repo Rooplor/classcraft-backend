@@ -117,7 +117,7 @@ class ClassService
         }
 
         fun findClassById(id: String): Classroom {
-            val classroom = classRepository.findById(id).orElseThrow()
+            val classroom = classRepository.findById(id).orElseThrow { Exception(ErrorMessages.CLASS_NOT_FOUND) }
             classroom.viewCount += 1
             classRepository.save(classroom)
             return classroom
