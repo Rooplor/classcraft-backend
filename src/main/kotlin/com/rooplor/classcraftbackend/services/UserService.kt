@@ -26,6 +26,7 @@ class UserService(
         existingUser.username = updatedUser.username
         existingUser.email = updatedUser.email
         existingUser.profilePicture = updatedUser.profilePicture
+        existingUser.bio = updatedUser.bio
         return userRepository.save(existingUser)
     }
 

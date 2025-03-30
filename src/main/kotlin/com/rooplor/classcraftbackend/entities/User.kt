@@ -10,5 +10,6 @@ data class User(
     var username: String = "",
     var email: String = "",
     var profilePicture: String? = null,
+    var bio: String? = null,
     var myClassroom: List<String>? = emptyList(),
 )
