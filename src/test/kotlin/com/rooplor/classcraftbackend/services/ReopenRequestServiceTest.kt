@@ -1,7 +1,10 @@
 package com.rooplor.classcraftbackend.services
 
+import com.rooplor.classcraftbackend.dtos.ClassroomDetail
+import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.entities.ReopenRequest
+import com.rooplor.classcraftbackend.entities.RequestDetail
 import com.rooplor.classcraftbackend.entities.User
 import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.repositories.ReopenRequestRepository
@@ -14,6 +17,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import java.time.LocalDateTime
 import kotlin.test.Test
 
 class ReopenRequestServiceTest {
@@ -69,7 +73,9 @@ class ReopenRequestServiceTest {
         val classroomId = "class1"
         val userId = "user1"
         val user = User(id = userId, email = "mail@mail.com", username = "user1", profilePicture = "profilePic")
-        val existingRequest = ReopenRequest(classroomId = classroomId, ownerId = "owner1", requestList = emptyList())
+        val classroomDetail = ClassroomDetail(coverImage = "cover1", title = "title1")
+        val existingRequest =
+            ReopenRequest(classroomId = "class1", classroomDetail = classroomDetail, ownerId = "owner1", requestList = emptyList())
 
         `when`(authService.getUserId()).thenReturn(userId)
         `when`(authService.getAuthenticatedUserDetails()).thenReturn(user)
@@ -87,11 +93,13 @@ class ReopenRequestServiceTest {
     @Test
     fun `getRequestByOwnerId should return list of requests`() {
         val ownerId = "owner1"
-        val requests = listOf(ReopenRequest(classroomId = "class1", ownerId = ownerId, requestList = emptyList()))
+        val classroomDetail = ClassroomDetail(coverImage = "cover1", title = "title1")
+        val requests = listOf(ReopenRequest(classroomDetail = classroomDetail, ownerId = ownerId, requestList = emptyList()))
 
+        `when`(authService.getUserId()).thenReturn(ownerId)
         `when`(reopenRequestRepository.findByOwnerId(ownerId)).thenReturn(requests)
 
-        val result = reopenRequestService.getRequestByOwnerId(ownerId)
+        val result = reopenRequestService.getRequestByOwnerId()
 
         assertNotNull(result)
         assertEquals(1, result.size)
@@ -107,5 +115,81 @@ class ReopenRequestServiceTest {
         reopenRequestService.deleteRequest(classroomId)
 
         verify(reopenRequestRepository, times(1)).deleteByClassroomId(classroomId)
+    }
+
+    @Test
+    fun `requestExists should return true if request exists`() {
+        val classroomId = "class1"
+        val requestList =
+            listOf(
+                RequestDetail(
+                    requestedBy = UserDetailDTO(id = "user1", username = "user1", profilePicture = "profilePic"),
+                    requestedAt = LocalDateTime.now(),
+                ),
+            )
+        val request =
+            ReopenRequest(
+                classroomId = classroomId,
+                classroomDetail = ClassroomDetail(coverImage = "cover1", title = "title1"),
+                ownerId = "owner1",
+                requestList = requestList,
+            )
+        `when`(authService.getUserId()).thenReturn("user1")
+        `when`(reopenRequestRepository.findByClassroomId(classroomId)).thenReturn(request)
+        val result = reopenRequestService.requestExists(classroomId)
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun `requestExists should return false if request does not exist`() {
+        val classroomId = "class1"
+        val requestList =
+            listOf(
+                RequestDetail(
+                    requestedBy = UserDetailDTO(id = "user2", username = "user1", profilePicture = "profilePic"),
+                    requestedAt = LocalDateTime.now(),
+                ),
+            )
+        val request =
+            ReopenRequest(
+                classroomId = classroomId,
+                classroomDetail = ClassroomDetail(coverImage = "cover1", title = "title1"),
+                ownerId = "owner1",
+                requestList = requestList,
+            )
+        `when`(authService.getUserId()).thenReturn("user1")
+        `when`(reopenRequestRepository.findByClassroomId(classroomId)).thenReturn(request)
+        val result = reopenRequestService.requestExists(classroomId)
+        assertEquals(false, result)
+    }
+
+    @Test
+    fun `getRequestByByUserId should return list of requests`() {
+        val userId = "user1"
+        val classroomDetail = ClassroomDetail(coverImage = "cover1", title = "title1")
+        val requests =
+            listOf(
+                ReopenRequest(
+                    classroomId = "class1",
+                    classroomDetail = classroomDetail,
+                    ownerId = "owner1",
+                    requestList =
+                        listOf(
+                            RequestDetail(
+                                requestedBy = UserDetailDTO(id = userId, username = "user1", profilePicture = "profilePic"),
+                                requestedAt = LocalDateTime.now(),
+                            ),
+                        ),
+                ),
+            )
+
+        `when`(authService.getUserId()).thenReturn(userId)
+        `when`(reopenRequestRepository.findAll()).thenReturn(requests)
+
+        val result = reopenRequestService.getRequestByByUserId()
+
+        assertNotNull(result)
+        assertEquals(1, result.size)
+        assertEquals("class1", result[0].classroomId)
     }
 }

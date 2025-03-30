@@ -1,6 +1,9 @@
 package com.rooplor.classcraftbackend.repositories
 
+import com.rooplor.classcraftbackend.dtos.ClassroomDetail
 import com.rooplor.classcraftbackend.entities.ReopenRequest
+import com.rooplor.classcraftbackend.enums.ClassType
+import com.rooplor.classcraftbackend.enums.Format
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -18,7 +21,18 @@ class ReopenRequestRepositoryTest {
     @Test
     fun `should find ReopenRequest by classroomId`() {
         val classroomId = "class1"
-        val reopenRequest = ReopenRequest(classroomId = classroomId, ownerId = "owner1", requestList = emptyList())
+        val classroomDetail =
+            ClassroomDetail(
+                coverImage = "cover1",
+                title = "title1",
+                format = Format.ONSITE,
+                type = ClassType.LECTURE,
+                capacity = 100,
+                instructorName = "instructor1",
+                instructorAvatar = "avatar1",
+            )
+        val reopenRequest =
+            ReopenRequest(classroomId = classroomId, classroomDetail = classroomDetail, ownerId = "owner1", requestList = emptyList())
         `when`(reopenRequestRepository.save(reopenRequest)).thenReturn(reopenRequest)
         `when`(reopenRequestRepository.findByClassroomId(classroomId)).thenReturn(reopenRequest)
 
@@ -31,7 +45,18 @@ class ReopenRequestRepositoryTest {
     @Test
     fun `should find ReopenRequest by ownerId`() {
         val ownerId = "owner1"
-        val reopenRequest = ReopenRequest(classroomId = "class1", ownerId = ownerId, requestList = emptyList())
+        val classroomDetail =
+            ClassroomDetail(
+                coverImage = "cover1",
+                title = "title1",
+                format = Format.ONSITE,
+                type = ClassType.LECTURE,
+                capacity = 100,
+                instructorName = "instructor1",
+                instructorAvatar = "avatar1",
+            )
+        val reopenRequest =
+            ReopenRequest(classroomId = "class1", classroomDetail = classroomDetail, ownerId = ownerId, requestList = emptyList())
         `when`(reopenRequestRepository.save(reopenRequest)).thenReturn(reopenRequest)
         `when`(reopenRequestRepository.findByOwnerId(ownerId)).thenReturn(listOf(reopenRequest))
 
@@ -44,7 +69,18 @@ class ReopenRequestRepositoryTest {
     @Test
     fun `should delete ReopenRequest by classroomId`() {
         val classroomId = "class1"
-        val reopenRequest = ReopenRequest(classroomId = classroomId, ownerId = "owner1", requestList = emptyList())
+        val classroomDetail =
+            ClassroomDetail(
+                coverImage = "cover1",
+                title = "title1",
+                format = Format.ONSITE,
+                type = ClassType.LECTURE,
+                capacity = 100,
+                instructorName = "instructor1",
+                instructorAvatar = "avatar1",
+            )
+        val reopenRequest =
+            ReopenRequest(classroomId = "class1", classroomDetail = classroomDetail, ownerId = "owner1", requestList = emptyList())
         reopenRequestRepository.save(reopenRequest)
 
         reopenRequestRepository.deleteByClassroomId(classroomId)

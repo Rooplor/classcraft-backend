@@ -7,4 +7,5 @@ data class UserRequest(
     var username: String = "",
     var email: String = "",
     var profilePicture: String? = null,
+    var bio: String? = null,
 )

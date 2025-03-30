@@ -30,12 +30,10 @@ class ReopenRequestController(
     }
 
     @Operation(summary = "get requests by owner id")
-    @GetMapping("/owner/{ownerId}")
-    fun getRequestByOwnerId(
-        @PathVariable ownerId: String,
-    ): ResponseEntity<Response<List<ReopenRequest>>> {
+    @GetMapping("/owner")
+    fun getRequestByOwnerId(): ResponseEntity<Response<List<ReopenRequest>>> {
         try {
-            val requests = reopenRequestService.getRequestByOwnerId(ownerId)
+            val requests = reopenRequestService.getRequestByOwnerId()
             return ResponseEntity.ok(Response(success = true, result = requests, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
@@ -50,6 +48,30 @@ class ReopenRequestController(
         try {
             reopenRequestService.deleteRequest(classroomId)
             return ResponseEntity.ok(Response(success = true, result = "Request deleted", error = null))
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+        }
+    }
+
+    @Operation(summary = "Check if a request exists")
+    @GetMapping("/exists/{classroomId}")
+    fun requestExists(
+        @PathVariable classroomId: String,
+    ): ResponseEntity<Response<Boolean>> {
+        try {
+            val exists = reopenRequestService.requestExists(classroomId)
+            return ResponseEntity.ok(Response(success = true, result = exists, error = null))
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+        }
+    }
+
+    @Operation(summary = "Get My Requests")
+    @GetMapping("/my-requests")
+    fun getMyRequests(): ResponseEntity<Response<List<ReopenRequest>>> {
+        try {
+            val requests = reopenRequestService.getRequestByByUserId()
+            return ResponseEntity.ok(Response(success = true, result = requests, error = null))
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
         }
