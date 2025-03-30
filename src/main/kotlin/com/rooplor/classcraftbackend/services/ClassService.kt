@@ -301,7 +301,7 @@ class ClassService
             to: String,
             isUpdate: Boolean = false,
         ) {
-            println("[reservationVenue] classroom_id: ${classroom.id}")
+            println("[reservationVenue] classroom_id: ${classroom.owner}")
             isOwnerOfClass(classroom)
             val username = authService.getAuthenticatedUser() ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
             val user = userService.findByUsername(username)
