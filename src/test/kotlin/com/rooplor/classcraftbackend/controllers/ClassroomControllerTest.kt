@@ -623,7 +623,7 @@ class ClassroomControllerTest {
             """.trimIndent()
 
         `when`(classService.findClassById(classId)).thenReturn(classroom)
-        doNothing().`when`(classService).reservationVenue(classroom, dateWithVenue)
+        doNothing().`when`(classService).reservationVenue(classroom, dateWithVenue, "reservation", "staff@mail.com")
 
         // Act & Assert
         mockMvc

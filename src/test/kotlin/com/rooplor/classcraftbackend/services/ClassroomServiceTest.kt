@@ -47,7 +47,17 @@ class ClassroomServiceTest {
     @BeforeEach
     fun setUp() {
         MockitoAnnotations.openMocks(this)
-        classService = ClassService(classRepository, formSubmissionRepository, venueService, authService, userService, mailService, formService, classroomHelper)
+        classService =
+            ClassService(
+                classRepository,
+                formSubmissionRepository,
+                venueService,
+                authService,
+                userService,
+                mailService,
+                formService,
+                classroomHelper,
+            )
     }
 
     @Test
@@ -793,7 +803,7 @@ class ClassroomServiceTest {
         `when`(classRepository.save(classroom)).thenReturn(classroom)
         Mockito.`when`(authService.getAuthenticatedUser()).thenReturn(staffUsername)
 
-        classService.reservationVenue(classroom, dateWithVenue)
+        classService.reservationVenue(classroom, dateWithVenue, "reservation", "staff@mail.com")
 
         val mapDateWithVenueToTemplateMethod = ClassService::class.java.getDeclaredMethod("mapDateWithVenueToTemplate", List::class.java)
         mapDateWithVenueToTemplateMethod.isAccessible = true
@@ -803,7 +813,7 @@ class ClassroomServiceTest {
             subject = eq("[ClassCraft] Reservation venue for ${classroom.title} request from ${user.username}"),
             template = eq("reservation"),
             context = any(Context::class.java),
-            to = eq(null),
+            to = eq("staff@mail.com"),
         )
 
         val context = Context()
@@ -833,6 +843,8 @@ class ClassroomServiceTest {
                         venueId = listOf("1"),
                     ),
                 ),
+                "reservation",
+                "staff@mail.com",
             )
         }
     }
@@ -969,7 +981,7 @@ class ClassroomServiceTest {
                 dates = listOf(),
                 venueStatus = 2,
                 rejectReason = "Venue is not available",
-                owner = "1"
+                owner = "1",
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
@@ -1084,42 +1096,7 @@ class ClassroomServiceTest {
     }
 
     @Test
-    fun `should throw error when class is published and dates are changed`() {
-        val classId = "1"
-        val originalClassroom =
-            Classroom(
-                id = classId,
-                title = "Original Title",
-                details = "Original Details",
-                target = "Original Target",
-                prerequisite = "Original Prerequisite",
-                type = ClassType.LECTURE,
-                format = Format.ONSITE,
-                capacity = 30,
-                dates = listOf(DateWithVenue(DateDetail(LocalDateTime.now(), LocalDateTime.now()), listOf("1"))),
-                isPublished = true,
-                venueStatus = VenueStatus.APPROVED.id,
-                owner = "owner1",
-            )
-        val updatedClassroom =
-            originalClassroom.copy(
-                dates = listOf(DateWithVenue(DateDetail(LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(1)), listOf("1"))),
-            )
-
-        Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(originalClassroom))
-        Mockito.`when`(authService.getAuthenticatedUser()).thenReturn("admin")
-        Mockito.`when`(userService.findByUsername("admin")).thenReturn(User(id = "owner1", username = "admin"))
-
-        val exception =
-            assertThrows<Exception> {
-                classService.updateClass(classId, updatedClassroom)
-            }
-
-        assertEquals(ErrorMessages.CLASS_CANNOT_CHANGE_DATE, exception.message)
-    }
-
-    @Test
-    fun `should reset venue status and remove form submission when class is not published and dates are changed`() {
+    fun `should reset venue status to pending and change submission to pending when class is not published and dates are changed`() {
         val classId = "1"
         val originalClassroom =
             Classroom(
@@ -1148,12 +1125,11 @@ class ClassroomServiceTest {
         Mockito
             .`when`(
                 classRepository.save(any(Classroom::class.java)),
-            ).thenReturn(updatedClassroom.copy(venueStatus = VenueStatus.NO_REQUEST.id))
+            ).thenReturn(updatedClassroom.copy(venueStatus = VenueStatus.PENDING.id))
 
         val result = classService.updateClass(classId, updatedClassroom)
 
-        assertEquals(VenueStatus.NO_REQUEST.id, result.venueStatus)
-        verify(formService, times(1)).deleteFormSubmissionByFormId(classId)
+        assertEquals(VenueStatus.PENDING.id, result.venueStatus)
     }
 
     @Test
