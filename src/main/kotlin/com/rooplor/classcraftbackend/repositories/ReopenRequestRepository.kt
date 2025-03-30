@@ -9,6 +9,4 @@ interface ReopenRequestRepository : MongoRepository<ReopenRequest, String> {
     fun findByOwnerId(ownerId: String): List<ReopenRequest>
 
     fun deleteByClassroomId(classroomId: String)
-
-    fun existsByClassroomId(classroomId: String): Boolean
 }

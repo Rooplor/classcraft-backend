@@ -120,22 +120,46 @@ class ReopenRequestServiceTest {
     @Test
     fun `requestExists should return true if request exists`() {
         val classroomId = "class1"
-
-        `when`(reopenRequestRepository.existsByClassroomId(classroomId)).thenReturn(true)
-
+        val requestList =
+            listOf(
+                RequestDetail(
+                    requestedBy = UserDetailDTO(id = "user1", username = "user1", profilePicture = "profilePic"),
+                    requestedAt = LocalDateTime.now(),
+                ),
+            )
+        val request =
+            ReopenRequest(
+                classroomId = classroomId,
+                classroomDetail = ClassroomDetail(coverImage = "cover1", title = "title1"),
+                ownerId = "owner1",
+                requestList = requestList,
+            )
+        `when`(authService.getUserId()).thenReturn("user1")
+        `when`(reopenRequestRepository.findByClassroomId(classroomId)).thenReturn(request)
         val result = reopenRequestService.requestExists(classroomId)
-
         assertEquals(true, result)
     }
 
     @Test
     fun `requestExists should return false if request does not exist`() {
         val classroomId = "class1"
-
-        `when`(reopenRequestRepository.existsByClassroomId(classroomId)).thenReturn(false)
-
+        val requestList =
+            listOf(
+                RequestDetail(
+                    requestedBy = UserDetailDTO(id = "user2", username = "user1", profilePicture = "profilePic"),
+                    requestedAt = LocalDateTime.now(),
+                ),
+            )
+        val request =
+            ReopenRequest(
+                classroomId = classroomId,
+                classroomDetail = ClassroomDetail(coverImage = "cover1", title = "title1"),
+                ownerId = "owner1",
+                requestList = requestList,
+            )
+        `when`(authService.getUserId()).thenReturn("user1")
+        `when`(reopenRequestRepository.findByClassroomId(classroomId)).thenReturn(request)
         val result = reopenRequestService.requestExists(classroomId)
-
         assertEquals(false, result)
     }
 
