@@ -72,7 +72,11 @@ class ReopenRequestService(
         reopenRequestRepository.deleteByClassroomId(classroomId)
     }
 
-    fun requestExists(classroomId: String): Boolean = reopenRequestRepository.existsByClassroomId(classroomId)
+    fun requestExists(classroomId: String): Boolean {
+        val request = reopenRequestRepository.findByClassroomId(classroomId)
+        val userId = authService.getUserId()
+        return request?.requestList?.any { it.requestedBy.id == userId } ?: false
+    }
 
     fun getRequestByByUserId(): List<ReopenRequest> {
         val userId = authService.getUserId()

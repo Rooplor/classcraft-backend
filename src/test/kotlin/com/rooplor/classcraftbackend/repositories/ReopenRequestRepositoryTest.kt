@@ -87,27 +87,4 @@ class ReopenRequestRepositoryTest {
         val foundRequest = reopenRequestRepository.findByClassroomId(classroomId)
         assertNull(foundRequest)
     }
-
-    @Test
-    fun `should check if ReopenRequest exists by classroomId`() {
-        val classroomId = "class1"
-        val classroomDetail =
-            ClassroomDetail(
-                coverImage = "cover1",
-                title = "title1",
-                format = Format.ONSITE,
-                type = ClassType.LECTURE,
-                capacity = 100,
-                instructorName = "instructor1",
-                instructorAvatar = "avatar1",
-            )
-        val reopenRequest =
-            ReopenRequest(classroomId = "class1", classroomDetail = classroomDetail, ownerId = "owner1", requestList = emptyList())
-        `when`(reopenRequestRepository.save(reopenRequest)).thenReturn(reopenRequest)
-        `when`(reopenRequestRepository.existsByClassroomId(classroomId)).thenReturn(true)
-
-        reopenRequestRepository.save(reopenRequest)
-        val exists = reopenRequestRepository.existsByClassroomId(classroomId)
-        assertEquals(true, exists)
-    }
 }
