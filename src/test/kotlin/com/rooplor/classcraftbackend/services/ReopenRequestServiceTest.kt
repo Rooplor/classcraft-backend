@@ -96,9 +96,10 @@ class ReopenRequestServiceTest {
         val classroomDetail = ClassroomDetail(coverImage = "cover1", title = "title1")
         val requests = listOf(ReopenRequest(classroomDetail = classroomDetail, ownerId = ownerId, requestList = emptyList()))
 
+        `when`(authService.getUserId()).thenReturn(ownerId)
         `when`(reopenRequestRepository.findByOwnerId(ownerId)).thenReturn(requests)
 
-        val result = reopenRequestService.getRequestByOwnerId(ownerId)
+        val result = reopenRequestService.getRequestByOwnerId()
 
         assertNotNull(result)
         assertEquals(1, result.size)
