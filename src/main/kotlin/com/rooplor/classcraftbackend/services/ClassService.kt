@@ -79,19 +79,31 @@ class ClassService
         ): Classroom {
             classroomHelper.validateClassroom(updatedClassroom)
             val classToUpdate = findClassById(id)
+            updatedClassroom.owner = classToUpdate.owner
             isOwnerOfClass(classToUpdate)
             val originalDates = classToUpdate.dates
             val updatedDates = updatedClassroom.dates
             val isDateChange = originalDates != updatedDates
             if (classToUpdate.isPublished == true) {
-                if (isDateChange) {
-                    throw Exception(ErrorMessages.CLASS_CANNOT_CHANGE_DATE)
+                val submission = formSubmissionRepository.findByClassroomId(id)
+                if (submission.isNotEmpty()) {
+                    formSubmissionRepository.saveAll(
+                        submission.map {
+                            it.isApprovedByOwner = false
+                            it
+                        },
+                    )
                 }
+                submission.forEach({
+                    reservationVenue(updatedClassroom, updatedDates, "confirmGoing", userService.findUserById(it.submittedBy!!).email)
+                })
             }
             if (classToUpdate.venueStatus == VenueStatus.APPROVED.id) {
                 if (isDateChange) {
-                    classToUpdate.venueStatus = VenueStatus.NO_REQUEST.id
-                    formService.deleteFormSubmissionByFormId(classToUpdate.id!!)
+                    classToUpdate.venueStatus = VenueStatus.PENDING.id
+                    if (staffEmail != null) {
+                        reservationVenue(updatedClassroom, updatedDates, "reservation", staffEmail, true)
+                    }
                 }
             }
             classToUpdate.title = updatedClassroom.title
@@ -285,14 +297,32 @@ class ClassService
         fun reservationVenue(
             classroom: Classroom,
             dateWithVenue: List<DateWithVenue>,
+            template: String,
+            to: String,
+            isUpdate: Boolean = false,
         ) {
+            println("[reservationVenue] classroom_id: ${classroom.owner}")
             isOwnerOfClass(classroom)
             val username = authService.getAuthenticatedUser() ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
             val user = userService.findByUsername(username)
             val owner = userService.findUserById(classroom.owner).username
+            var subject = "[ClassCraft] Reservation venue for ${classroom.title} request from ${user.username}"
+            var header = "There's a new venue reservation request from"
+
+            if (isUpdate) {
+                subject = "[ClassCraft] Update reservation venue for ${classroom.title} request from ${user.username}"
+                header = "There's an update venue reservation request from"
+            }
+
+            if (template == "confirmGoing") {
+                subject =
+                    "[ClassCraft] The ${classroom.title} class date has been updated. Please confirm if you are still attending this class."
+                header = ""
+            }
 
             val context = Context()
 
+            context.setVariable("header", header)
             context.setVariable("username", staffUsername)
             context.setVariable("className", classroom.title)
             context.setVariable("profilePicture", user.profilePicture)
@@ -304,9 +334,10 @@ class ClassService
             context.setVariable("rejectUrl", staffDomain + "/class/${classroom.id}/reservation/rejected")
 
             mailService.sendEmail(
-                subject = "[ClassCraft] Reservation venue for ${classroom.title} request from ${user.username}",
-                template = "reservation", // reference to src/main/resources/templates/reservation.html
+                subject = subject,
+                template = template, // reference to src/main/resources/templates/{template}.html
                 context = context,
+                to = to,
             )
 
             updateDateWithVenueClass(classroom.id!!, dateWithVenue)
@@ -350,6 +381,8 @@ class ClassService
         private fun isOwnerOfClass(classroom: Classroom) {
             val username = authService.getAuthenticatedUser() ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
             val user = userService.findByUsername(username)
+            println("classroom.owner: ${classroom.owner}")
+            println("user.id: ${user.id}")
             if (classroom.owner != user.id) {
                 throw Exception(ErrorMessages.FORBIDDEN)
             }

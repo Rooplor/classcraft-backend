@@ -15,6 +15,7 @@ import com.rooplor.classcraftbackend.types.DateWithVenue
 import io.swagger.v3.oas.annotations.Operation
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -38,6 +39,9 @@ class ClassController
         private val formSubmissionService: FormSubmissionService,
         private val authService: AuthService,
     ) {
+        @Value("\${staff.email}")
+        private val staffMail: String? = null
+
         @Operation(summary = "Get all classes with registration status and published status, or by owners if provided")
         @GetMapping("")
         fun findAllClassPublishedOrByOwners(
@@ -305,7 +309,7 @@ class ClassController
             @RequestBody reservation: List<DateWithVenue>,
         ): ResponseEntity<Response<Boolean>> =
             try {
-                classService.reservationVenue(classService.findClassById(id), reservation)
+                classService.reservationVenue(classService.findClassById(id), reservation, "reservation", staffMail!!)
                 ResponseEntity.ok(Response(success = true, result = true, error = null))
             } catch (e: Exception) {
                 if (e.message == ErrorMessages.CLASS_NOT_FOUND || e.message == ErrorMessages.USER_NOT_FOUND) {

@@ -32,18 +32,20 @@ class MailService
             context: Context?,
             to: String? = staffMail,
         ) {
-            try {
-                val mailMessage = javaMailSender!!.createMimeMessage()
-                val helper = MimeMessageHelper(mailMessage, true)
-                helper.setFrom(from!!)
-                helper.setTo(to!!)
-                helper.setSubject(subject!!)
+            GlobalScope.launch {
+                try {
+                    val mailMessage = javaMailSender!!.createMimeMessage()
+                    val helper = MimeMessageHelper(mailMessage, true)
+                    helper.setFrom(from!!)
+                    helper.setTo(to!!)
+                    helper.setSubject(subject!!)
 
-                val htmlTemplate: String = templateEngine?.process(template, context) ?: ""
-                helper.setText(htmlTemplate, true)
-                javaMailSender.send(mailMessage)
-            } catch (e: Exception) {
-                throw RuntimeException(e.message)
+                    val htmlTemplate: String = templateEngine?.process(template, context) ?: ""
+                    helper.setText(htmlTemplate, true)
+                    javaMailSender.send(mailMessage)
+                } catch (e: Exception) {
+                    throw RuntimeException(e.message)
+                }
             }
         }
 

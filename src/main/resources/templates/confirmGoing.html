@@ -153,10 +153,9 @@
 <div>
     <div class="container_header">
         <p class="header">Hi, <strong th:text="${username}">Anutra</strong></p>
-        <p th:text="${header}">There's a new venue reservation request from</p>
-            <br> <strong th:text="${requester}">Naronkrach's</strong> "<span
+        <p>This class has been rescheduled. Kindly confirm if the updated date is convenient for you.</p>
+        <br> <strong th:text="${requester}">Naronkrach's</strong> "<span
                 th:text="${className}">Astro 101</span>" class</p>
-        <p>Link to SIT Booking System: https://webapp3.sit.kmutt.ac.th/booking/web/announce.htm</p>
     </div>
     <div class="container">
         <div class="class-info" th:text="${className}">Astro 101</div>
@@ -183,7 +182,6 @@
                         class="icon-time">
                     <span class="date-info" th:text="${dateWithVenueDetail.dates.startDateTime.time}">10:00</span> - <span class="date-info" th:text="${dateWithVenueDetail.dates.endDateTime.time}">16:00</span>
                 </p>
-                <p class="reservation-venue">Would like to reserve venues </p>
                 <div class="venue-container">
                     <div class="venue-detail" th:each="venue : ${dateWithVenueDetail.venue}">
                         <p th:text="${venue.room}">Venue 1</p>
@@ -193,8 +191,8 @@
             </div>
         </div>
         <div class="button-group">
-            <a style="cursor: pointer" th:href="${approveUrl}"><button type="submit" class="button approve-button">Approve</button></a>
-            <a style="cursor: pointer" th:href="${rejectUrl}"><button type="submit" class="button reject-button">Reject</button></a>
+            <a style="cursor: pointer" th:href="${approveUrl}"><button type="submit" class="button approve-button">Still going</button></a>
+            <a style="cursor: pointer" th:href="${rejectUrl}"><button type="submit" class="button reject-button">Not going</button></a>
         </div>
     </div>
 </div>
