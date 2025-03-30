@@ -2,7 +2,9 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.configs.TestConfig
 import com.rooplor.classcraftbackend.configs.TestSecurityConfig
+import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.ReopenRequest
+import com.rooplor.classcraftbackend.entities.RequestDetail
 import com.rooplor.classcraftbackend.services.ReopenRequestService
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.doNothing
@@ -19,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.LocalDateTime
 
 @WebMvcTest(ReopenRequestController::class)
 @Import(TestSecurityConfig::class, TestConfig::class)
@@ -69,5 +72,58 @@ class ReopenRequestControllerTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.success").value(true))
             .andExpect(jsonPath("$.result").value("Request deleted"))
+    }
+
+    @Test
+    fun `requestExists should return true if request exists`() {
+        val classroomId = "class1"
+        `when`(reopenRequestService.requestExists(classroomId)).thenReturn(true)
+
+        mockMvc
+            .perform(get("/api/request/exists/{classroomId}", classroomId))
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.result").value(true))
+    }
+
+    @Test
+    fun `requestExists should return false if request does not exist`() {
+        val classroomId = "class1"
+        `when`(reopenRequestService.requestExists(classroomId)).thenReturn(false)
+
+        mockMvc
+            .perform(get("/api/request/exists/{classroomId}", classroomId))
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.result").value(false))
+    }
+
+    @Test
+    fun `getMyRequests should return list of requests`() {
+        val userId = "user1"
+        val reopenRequests =
+            listOf(
+                ReopenRequest(
+                    classroomId = "class1",
+                    ownerId = "owner1",
+                    requestList =
+                        listOf(
+                            RequestDetail(
+                                requestedBy = UserDetailDTO(id = userId, username = "user1", profilePicture = "profile1"),
+                                requestedAt = LocalDateTime.now(),
+                            ),
+                        ),
+                ),
+            )
+        `when`(reopenRequestService.getRequestByByUserId()).thenReturn(reopenRequests)
+
+        mockMvc
+            .perform(get("/api/request/my-requests"))
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.result[0].requestList[0].requestedBy.id").value(userId))
     }
 }

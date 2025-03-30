@@ -54,4 +54,28 @@ class ReopenRequestController(
             return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
         }
     }
+
+    @Operation(summary = "Check if a request exists")
+    @GetMapping("/exists/{classroomId}")
+    fun requestExists(
+        @PathVariable classroomId: String,
+    ): ResponseEntity<Response<Boolean>> {
+        try {
+            val exists = reopenRequestService.requestExists(classroomId)
+            return ResponseEntity.ok(Response(success = true, result = exists, error = null))
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+        }
+    }
+
+    @Operation(summary = "Get My Requests")
+    @GetMapping("/my-requests")
+    fun getMyRequests(): ResponseEntity<Response<List<ReopenRequest>>> {
+        try {
+            val requests = reopenRequestService.getRequestByByUserId()
+            return ResponseEntity.ok(Response(success = true, result = requests, error = null))
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(Response(success = false, result = null, error = e.message))
+        }
+    }
 }
