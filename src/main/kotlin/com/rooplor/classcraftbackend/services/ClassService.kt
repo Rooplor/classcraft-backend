@@ -379,6 +379,8 @@ class ClassService
         private fun isOwnerOfClass(classroom: Classroom) {
             val username = authService.getAuthenticatedUser() ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
             val user = userService.findByUsername(username)
+            println("classroom.owner: ${classroom.owner}")
+            println("user.id: ${user.id}")
             if (classroom.owner != user.id) {
                 throw Exception(ErrorMessages.FORBIDDEN)
             }
