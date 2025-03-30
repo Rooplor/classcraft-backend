@@ -62,8 +62,9 @@ class ReopenRequestService(
         }
     }
 
-    fun getRequestByOwnerId(ownerId: String): List<ReopenRequest> {
-        val response = reopenRequestRepository.findByOwnerId(ownerId)
+    fun getRequestByOwnerId(): List<ReopenRequest> {
+        val userId = authService.getUserId()
+        val response = reopenRequestRepository.findByOwnerId(userId)
         return response.sortedByDescending { it.requestList.size }
     }
 

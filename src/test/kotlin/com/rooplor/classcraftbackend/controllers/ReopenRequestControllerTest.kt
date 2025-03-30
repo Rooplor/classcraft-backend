@@ -81,10 +81,10 @@ class ReopenRequestControllerTest {
             )
         val reopenRequests =
             listOf(ReopenRequest(classroomId = "class1", classroomDetail = classroomDetail, ownerId = ownerId, requestList = emptyList()))
-        `when`(reopenRequestService.getRequestByOwnerId(ownerId)).thenReturn(reopenRequests)
+        `when`(reopenRequestService.getRequestByOwnerId()).thenReturn(reopenRequests)
 
         mockMvc
-            .perform(get("/api/request/owner/{ownerId}", ownerId))
+            .perform(get("/api/request/owner", ownerId))
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.success").value(true))
