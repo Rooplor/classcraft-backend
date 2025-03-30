@@ -79,6 +79,7 @@ class ClassService
         ): Classroom {
             classroomHelper.validateClassroom(updatedClassroom)
             val classToUpdate = findClassById(id)
+            updatedClassroom.owner = classToUpdate.owner
             isOwnerOfClass(classToUpdate)
             val originalDates = classToUpdate.dates
             val updatedDates = updatedClassroom.dates
@@ -300,6 +301,7 @@ class ClassService
             to: String,
             isUpdate: Boolean = false,
         ) {
+            println("[reservationVenue] classroom_id: ${classroom.id}")
             isOwnerOfClass(classroom)
             val username = authService.getAuthenticatedUser() ?: throw Exception(ErrorMessages.USER_NOT_FOUND)
             val user = userService.findByUsername(username)
