@@ -20,7 +20,7 @@ class AuthService(
     fun login(idToken: String): Token? {
         val decodedToken = validateIdToken(idToken)
         if (decodedToken != null) {
-            val existingUser = userService.isUserExistByUsername(decodedToken.name)
+            val existingUser = userService.isUserExistByEmail(decodedToken.email)
             if (!existingUser) {
                 val newUser =
                     User(
