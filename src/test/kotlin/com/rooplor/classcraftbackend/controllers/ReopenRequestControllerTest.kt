@@ -2,9 +2,12 @@ package com.rooplor.classcraftbackend.controllers
 
 import com.rooplor.classcraftbackend.configs.TestConfig
 import com.rooplor.classcraftbackend.configs.TestSecurityConfig
+import com.rooplor.classcraftbackend.dtos.ClassroomDetail
 import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.ReopenRequest
 import com.rooplor.classcraftbackend.entities.RequestDetail
+import com.rooplor.classcraftbackend.enums.ClassType
+import com.rooplor.classcraftbackend.enums.Format
 import com.rooplor.classcraftbackend.services.ReopenRequestService
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.doNothing
@@ -36,7 +39,23 @@ class ReopenRequestControllerTest {
     @Test
     fun `upsertRequest should return created request`() {
         val classroomId = "class1"
-        val reopenRequest = ReopenRequest(classroomId = classroomId, ownerId = "owner1", requestList = emptyList())
+        val classroomDetail =
+            ClassroomDetail(
+                coverImage = "cover1",
+                title = "title1",
+                format = Format.ONSITE,
+                type = ClassType.LECTURE,
+                capacity = 100,
+                instructorName = "instructor1",
+                instructorAvatar = "avatar1",
+            )
+        val reopenRequest =
+            ReopenRequest(
+                classroomId = classroomId,
+                classroomDetail = classroomDetail,
+                ownerId = "owner1",
+                requestList = emptyList(),
+            )
         `when`(reopenRequestService.upsertRequest(classroomId)).thenReturn(reopenRequest)
 
         mockMvc
@@ -50,7 +69,18 @@ class ReopenRequestControllerTest {
     @Test
     fun `getRequestByOwnerId should return list of requests`() {
         val ownerId = "owner1"
-        val reopenRequests = listOf(ReopenRequest(classroomId = "class1", ownerId = ownerId, requestList = emptyList()))
+        val classroomDetail =
+            ClassroomDetail(
+                coverImage = "cover1",
+                title = "title1",
+                format = Format.ONSITE,
+                type = ClassType.LECTURE,
+                capacity = 100,
+                instructorName = "instructor1",
+                instructorAvatar = "avatar1",
+            )
+        val reopenRequests =
+            listOf(ReopenRequest(classroomId = "class1", classroomDetail = classroomDetail, ownerId = ownerId, requestList = emptyList()))
         `when`(reopenRequestService.getRequestByOwnerId(ownerId)).thenReturn(reopenRequests)
 
         mockMvc
@@ -103,10 +133,21 @@ class ReopenRequestControllerTest {
     @Test
     fun `getMyRequests should return list of requests`() {
         val userId = "user1"
+        val classroomDetail =
+            ClassroomDetail(
+                coverImage = "cover1",
+                title = "title1",
+                format = Format.ONSITE,
+                type = ClassType.LECTURE,
+                capacity = 100,
+                instructorName = "instructor1",
+                instructorAvatar = "avatar1",
+            )
         val reopenRequests =
             listOf(
                 ReopenRequest(
                     classroomId = "class1",
+                    classroomDetail = classroomDetail,
                     ownerId = "owner1",
                     requestList =
                         listOf(

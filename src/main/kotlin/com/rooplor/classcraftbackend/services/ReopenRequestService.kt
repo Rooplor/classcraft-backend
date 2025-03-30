@@ -1,5 +1,6 @@
 package com.rooplor.classcraftbackend.services
 
+import com.rooplor.classcraftbackend.dtos.ClassroomDetail
 import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.ReopenRequest
 import com.rooplor.classcraftbackend.entities.RequestDetail
@@ -31,9 +32,20 @@ class ReopenRequestService(
             if (classroom.owner == userId) {
                 throw Exception(ErrorMessages.REQUEST_OWNER_CANNOT_REQUEST)
             }
+            val classroomDetail =
+                ClassroomDetail(
+                    coverImage = classroom.coverImage,
+                    title = classroom.title,
+                    format = classroom.format,
+                    type = classroom.type,
+                    capacity = classroom.capacity,
+                    instructorName = classroom.instructorName,
+                    instructorAvatar = classroom.instructorAvatar,
+                )
             val newRequest =
                 ReopenRequest(
                     classroomId = classroomId,
+                    classroomDetail = classroomDetail,
                     ownerId = classroom.owner,
                     requestList = listOf(newRequestDetail),
                 )
@@ -50,7 +62,10 @@ class ReopenRequestService(
         }
     }
 
-    fun getRequestByOwnerId(ownerId: String): List<ReopenRequest> = reopenRequestRepository.findByOwnerId(ownerId)
+    fun getRequestByOwnerId(ownerId: String): List<ReopenRequest> {
+        val response = reopenRequestRepository.findByOwnerId(ownerId)
+        return response.sortedByDescending { it.requestList.size }
+    }
 
     fun deleteRequest(classroomId: String) {
         reopenRequestRepository.deleteByClassroomId(classroomId)
@@ -60,6 +75,7 @@ class ReopenRequestService(
 
     fun getRequestByByUserId(): List<ReopenRequest> {
         val userId = authService.getUserId()
-        return reopenRequestRepository.findAll().filter { it.requestList.any { it.requestedBy.id == userId } }
+        val response = reopenRequestRepository.findAll().filter { it.requestList.any { it.requestedBy.id == userId } }
+        return response.sortedByDescending { it.requestList.size }
     }
 }

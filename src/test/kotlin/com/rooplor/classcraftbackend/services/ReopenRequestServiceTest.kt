@@ -1,5 +1,6 @@
 package com.rooplor.classcraftbackend.services
 
+import com.rooplor.classcraftbackend.dtos.ClassroomDetail
 import com.rooplor.classcraftbackend.dtos.UserDetailDTO
 import com.rooplor.classcraftbackend.entities.Classroom
 import com.rooplor.classcraftbackend.entities.ReopenRequest
@@ -72,7 +73,9 @@ class ReopenRequestServiceTest {
         val classroomId = "class1"
         val userId = "user1"
         val user = User(id = userId, email = "mail@mail.com", username = "user1", profilePicture = "profilePic")
-        val existingRequest = ReopenRequest(classroomId = classroomId, ownerId = "owner1", requestList = emptyList())
+        val classroomDetail = ClassroomDetail(coverImage = "cover1", title = "title1")
+        val existingRequest =
+            ReopenRequest(classroomId = "class1", classroomDetail = classroomDetail, ownerId = "owner1", requestList = emptyList())
 
         `when`(authService.getUserId()).thenReturn(userId)
         `when`(authService.getAuthenticatedUserDetails()).thenReturn(user)
@@ -90,7 +93,8 @@ class ReopenRequestServiceTest {
     @Test
     fun `getRequestByOwnerId should return list of requests`() {
         val ownerId = "owner1"
-        val requests = listOf(ReopenRequest(classroomId = "class1", ownerId = ownerId, requestList = emptyList()))
+        val classroomDetail = ClassroomDetail(coverImage = "cover1", title = "title1")
+        val requests = listOf(ReopenRequest(classroomDetail = classroomDetail, ownerId = ownerId, requestList = emptyList()))
 
         `when`(reopenRequestRepository.findByOwnerId(ownerId)).thenReturn(requests)
 
@@ -137,10 +141,12 @@ class ReopenRequestServiceTest {
     @Test
     fun `getRequestByByUserId should return list of requests`() {
         val userId = "user1"
+        val classroomDetail = ClassroomDetail(coverImage = "cover1", title = "title1")
         val requests =
             listOf(
                 ReopenRequest(
                     classroomId = "class1",
+                    classroomDetail = classroomDetail,
                     ownerId = "owner1",
                     requestList =
                         listOf(
