@@ -225,7 +225,7 @@ class FormSubmissionService(
             topic = MailMessage.CHECKIN_SUBJECT + "\"${title}\"\n",
             description = MailMessage.CHECKIN_SUCCESS,
             classroomId = formSubmission.classroomId,
-            to = userService.findUserById(userId).email,
+            to = userService.findUserById(formSubmission.submittedBy!!).email,
         )
         return formSubmissionRepository.save(formSubmission)
     }
