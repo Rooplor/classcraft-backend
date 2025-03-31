@@ -12,6 +12,7 @@ import com.rooplor.classcraftbackend.messages.ErrorMessages
 import com.rooplor.classcraftbackend.messages.MailMessage
 import com.rooplor.classcraftbackend.repositories.ClassroomRepository
 import com.rooplor.classcraftbackend.repositories.FormSubmissionRepository
+import com.rooplor.classcraftbackend.repositories.ReopenRequestRepository
 import com.rooplor.classcraftbackend.services.mail.MailService
 import com.rooplor.classcraftbackend.types.DateWithVenue
 import com.rooplor.classcraftbackend.utils.JsonValid.isValidJson
@@ -30,6 +31,7 @@ class ClassService
     constructor(
         private val classRepository: ClassroomRepository,
         private val formSubmissionRepository: FormSubmissionRepository,
+        private val reopenRequestRepository: ReopenRequestRepository,
         private val venueService: VenueService,
         private val authService: AuthService,
         private val userService: UserService,
@@ -243,6 +245,7 @@ class ClassService
                 )
             }
             formService.deleteFormById(id)
+            reopenRequestRepository.deleteByClassroomId(id)
             if (staffEmail != null) {
                 mailService.announcementEmail(
                     subject =
