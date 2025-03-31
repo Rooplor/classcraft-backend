@@ -69,7 +69,12 @@ class ReopenRequestService(
     }
 
     fun deleteRequest(classroomId: String) {
-        reopenRequestRepository.deleteByClassroomId(classroomId)
+        val request = reopenRequestRepository.findByClassroomId(classroomId)
+        val userId = authService.getUserId()
+        if (request != null) {
+            request.requestList = request.requestList.filterNot { it.requestedBy.id == userId }
+            reopenRequestRepository.save(request)
+        }
     }
 
     fun requestExists(classroomId: String): Boolean {
