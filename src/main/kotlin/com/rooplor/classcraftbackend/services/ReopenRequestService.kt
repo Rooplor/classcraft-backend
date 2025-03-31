@@ -68,6 +68,8 @@ class ReopenRequestService(
         return response.sortedByDescending { it.requestList.size }
     }
 
+    fun deleteRequestList(classroomId: String) = reopenRequestRepository.deleteByClassroomId(classroomId)
+
     fun deleteRequest(classroomId: String) {
         val request = reopenRequestRepository.findByClassroomId(classroomId)
         val userId = authService.getUserId()

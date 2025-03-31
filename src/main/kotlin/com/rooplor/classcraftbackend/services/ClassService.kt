@@ -35,6 +35,7 @@ class ClassService
         private val userService: UserService,
         private val mailService: MailService,
         private val formService: FormService,
+        private val reopenRequestService: ReopenRequestService,
         private val classroomHelper: ClassroomHelper,
     ) {
         @Value("\${staff.username}")
@@ -242,6 +243,7 @@ class ClassService
                     isDeleteClass = true,
                 )
             }
+            reopenRequestService.deleteRequestList(id)
             formService.deleteFormById(id)
             if (staffEmail != null) {
                 mailService.announcementEmail(
