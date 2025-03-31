@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.any
-import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -107,14 +106,36 @@ class ReopenRequestServiceTest {
     }
 
     @Test
-    fun `deleteRequest should delete request by classroomId`() {
+    fun `deleteRequest should remove the request made by the current user`() {
         val classroomId = "class1"
+        val userId = "user1"
+        val requestList =
+            listOf(
+                RequestDetail(
+                    requestedBy = UserDetailDTO(id = userId, username = "user1", profilePicture = "profilePic"),
+                    requestedAt = LocalDateTime.now(),
+                ),
+                RequestDetail(
+                    requestedBy = UserDetailDTO(id = "user2", username = "user2", profilePicture = "profilePic"),
+                    requestedAt = LocalDateTime.now(),
+                ),
+            )
+        val request =
+            ReopenRequest(
+                classroomId = classroomId,
+                classroomDetail = ClassroomDetail(coverImage = "cover1", title = "title1"),
+                ownerId = "owner1",
+                requestList = requestList,
+            )
 
-        doNothing().`when`(reopenRequestRepository).deleteByClassroomId(classroomId)
+        `when`(authService.getUserId()).thenReturn(userId)
+        `when`(reopenRequestRepository.findByClassroomId(classroomId)).thenReturn(request)
 
         reopenRequestService.deleteRequest(classroomId)
 
-        verify(reopenRequestRepository, times(1)).deleteByClassroomId(classroomId)
+        verify(reopenRequestRepository, times(1)).save(request)
+        assertEquals(1, request.requestList.size)
+        assertEquals("user2", request.requestList[0].requestedBy.id)
     }
 
     @Test
