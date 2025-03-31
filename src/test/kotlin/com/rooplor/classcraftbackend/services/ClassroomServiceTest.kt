@@ -42,24 +42,12 @@ class ClassroomServiceTest {
     private val mailService: MailService = Mockito.mock(MailService::class.java)
     private var classService: ClassService = Mockito.mock(ClassService::class.java)
     private val formService: FormService = Mockito.mock(FormService::class.java)
-    private val reopenRequestService: ReopenRequestService = Mockito.mock(ReopenRequestService::class.java)
     private val classroomHelper: ClassroomHelper = Mockito.mock(ClassroomHelper::class.java)
 
     @BeforeEach
     fun setUp() {
         MockitoAnnotations.openMocks(this)
-        classService =
-            ClassService(
-                classRepository,
-                formSubmissionRepository,
-                venueService,
-                authService,
-                userService,
-                mailService,
-                formService,
-                reopenRequestService,
-                classroomHelper,
-            )
+        classService = ClassService(classRepository, formSubmissionRepository, venueService, authService, userService, mailService, formService, classroomHelper)
     }
 
     @Test
@@ -981,7 +969,7 @@ class ClassroomServiceTest {
                 dates = listOf(),
                 venueStatus = 2,
                 rejectReason = "Venue is not available",
-                owner = "1",
+                owner = "1"
             )
         Mockito.`when`(classRepository.findById(classId)).thenReturn(Optional.of(classroomObj))
         Mockito.`when`(classRepository.save(classroomObj)).thenReturn(classroomObj)
