@@ -49,7 +49,7 @@ class ClassService
         private val staffEmail: String? = null
 
         fun findAllClassPublishedWithRegistrationCondition(registrationStatus: Boolean): List<Classroom> =
-            classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(registrationStatus)
+            classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhenDesc(registrationStatus)
 
         fun findAllClassPublished(): List<Classroom> = classRepository.findByIsPublishedTrueOrderByCreatedWhen()
 
