@@ -93,7 +93,7 @@ class ClassroomServiceTest {
                 ),
             )
         Mockito
-            .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(true))
+            .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhenDesc(true))
             .thenReturn(classrooms)
 
         val result = classService.findAllClassPublishedWithRegistrationCondition(true)
@@ -130,7 +130,7 @@ class ClassroomServiceTest {
                 ),
             )
         Mockito
-            .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(false))
+            .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhenDesc(false))
             .thenReturn(classrooms)
 
         val result = classService.findAllClassPublishedWithRegistrationCondition(false)
@@ -155,7 +155,7 @@ class ClassroomServiceTest {
                 ),
             )
         Mockito
-            .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(false))
+            .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhenDesc(false))
             .thenReturn(classrooms)
 
         val result = classService.findAllClassPublishedWithRegistrationCondition(false)
@@ -180,7 +180,7 @@ class ClassroomServiceTest {
                 ),
             )
         Mockito
-            .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhen(true))
+            .`when`(classRepository.findByRegistrationStatusAndIsPublishedTrueOrderByCreatedWhenDesc(true))
             .thenReturn(classrooms)
 
         val result = classService.findAllClassPublishedWithRegistrationCondition(true)
